@@ -1,0 +1,34 @@
+{
+	"FileVersion": 3,
+	"Version": 30900001,
+	"VersionName": "3.9.0",
+	"FriendlyName": "TapBootstrap",
+	"Description": "TapTap Bootstrap",
+	"Category": "TapTap",
+	"CreatedBy": "TapTap Develop Service",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "TapBootstrap",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "TapCommon",
+			"Enabled": true
+		},
+		{
+			"Name": "TapLogin",
+			"Enabled": true
+		}
+	]
+}

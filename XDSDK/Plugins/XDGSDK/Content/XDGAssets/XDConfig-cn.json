@@ -1,0 +1,26 @@
+{
+    "region_type":"CN",
+    "bundle_id":"com.xd.sdkdemo1",
+    "client_id":"d4bjgwom9zk84wk",
+    "app_id":"1010",
+    "game_name":"XD-CN Demo",
+    "report_url":"https://www.xd.com/service",
+    "logout_url":"https://logout-xdsdk.xd.cn/",
+    "webpay_url":"https://sdkpay-test.xd.cn/",
+    "tapsdk":{
+        "client_id":"0RiAlMny7jiz086FaU",
+        "client_token":"8V8wemqkpkxmAN7qKhvlh6v0pXc8JJzEZe3JFUnU",
+        "server_url":"https://0rialmny.cloud.tds1.tapapis.cn",
+        "db_config":{
+            "enable":true,
+            "channel":"test_channel",
+            "game_version":"6.4.0.1"
+        },
+        "permissions":[
+            "public_profile",
+            "user_friends",
+            "email"
+        ]
+    },
+    "login_entries":["TapTap"]
+}

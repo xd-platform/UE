@@ -1,0 +1,39 @@
+{
+	"FileVersion": 3,
+	"Version": 60501001,
+	"VersionName": "6.5.1",
+	"FriendlyName": "XDGSDK",
+	"Description": "",
+	"Category": "XinDong",
+	"CreatedBy": "XinDong TDS",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "XDGSDK",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		}
+	],
+
+	"Plugins": [
+		{
+			"Name": "TapCommon",
+			"Enabled": true
+		},
+		{
+			"Name": "TapBootstrap",
+			"Enabled": true
+		},
+		{
+			"Name": "TapLogin",
+			"Enabled": true
+		}
+	]
+}

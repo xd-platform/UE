@@ -1,0 +1,29 @@
+{
+    "region_type":"Global",
+    "bundle_id":"com.xd.sdkdemo1",
+    "client_id":"hn5RcJei2JxCYlS0",
+    "app_id":"1111",
+    "game_name":"XD-Intl Demo",
+    "report_url":"https://tds.d1ds4p8wk7q4rf.amplifyapp.com?client_id={{client_id}}&access_token={{access_token}}&user_id={{user_id}}&role_id={{role_id}}&role_name={{role_name}}&region={{region}}_{{pt}}&server_id={{server_id}}&sdk_ver={{sdk_ver}}&sdk_lang={{sdk_lang}}&app_ver={{app_ver}}&app_ver_code={{app_ver_code}}&res={{res}}&cpu={{cpu}}&mem={{mem}}&pt={{pt}}&os={{os}}&brand={{brand}}&mod={{mod}}&game_name={{game_name}}",
+    "logout_url":"https://logout-xdsdk.xd.com",
+    "webpay_url":"可选",
+    "tapsdk":{
+        "client_id":"KFV9Pm9ojdmWkkRJeb",
+        "client_token":"7mpVJdXIOLQxvQdqjEEpiz7eLf82cMwYkdgoAZqF",
+        "server_url":"https://kfv9pm9o.cloud.ap-sg.tapapis.com",
+        "db_config":{
+            "enable":true,
+            "channel":"test_channel",
+            "game_version":"6.4.0.2"
+        },
+        "permissions":[
+            "public_profile",
+            "user_friends",
+            "email"
+        ]
+    },
+    "login_entries":["TapTap", "Google"],
+    "google":{
+        "CLIENT_ID_FOR_PC":"888194877532-qtsvqehpob7kinfvo9j441emn3sh2tf3.apps.googleusercontent.com"
+    }
+}

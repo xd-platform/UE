@@ -14,10 +14,6 @@
   <iosPListUpdates>
     <addElements tag="dict" once="true">
 
-      <!-- //测试代码   iOS设置测试环境 -->
-      <key>isTestMode</key>
-	    <true/>
-
       <!-- 可选：1.文案可以修改成自己想要的，2.不要IDFA 不可以 加对应的描述配置 -->
         <key>NSCameraUsageDescription</key>
         <string>想要使用相机</string>

@@ -192,24 +192,7 @@ void XDGCommonIOS::SetCountryRegion(FString region){
 }
 
 void XDGCommonIOS::DevelopInit(int32 num){
-    //测试代码--start 
-        NSLog(@"初始化num: %d", num);
-        if(num == 0){ //海外正式
-            [XDGCoreService updateConfigFileName:@"XDConfig-release.json"]; 
 
-        }else if(num == 1){ //海外测试
-            [XDGCoreService updateConfigFileName:@"XDConfig.json"]; 
-            [XDGCoreService setDevelopUrl]; 
-            
-        }else if(num == 2){ //国内正式
-            [XDGCoreService updateConfigFileName:@"XDConfig-cn-release.json"]; 
-            
-        }else if(num == 3){ //国内测试
-            [XDGCoreService updateConfigFileName:@"XDConfig-cn.json"]; 
-            [XDGCoreService setDevelopUrl]; 
-        }
-        XDGCommonIOS::InitSDK();
-    //测试代码--end
 }
 
 void XDGCommonIOS::TrackAchievement(){

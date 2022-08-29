@@ -62,12 +62,6 @@ void XDGPaymentIOS::PayWithProduct(FString orderId,
            NSString* pid = productId.GetNSString();
            NSString* rid = roleId.GetNSString();     
 
-           //测试代码---start
-            oid = @"";
-            NSUserDefaults* df = [NSUserDefaults standardUserDefaults];
-            rid = [df objectForKey:@"demo_tmp_userId"];
-            NSLog(@"payment saved userId df get:%@", rid);
-           //测试代码---end
 
         [XDGPayment payWithOrderId:oid productId:pid roleId:rid serverId:serverId.GetNSString() ext:ext.GetNSString() completionHandler:^(XDGOrderInfo * _Nonnull orderInfo, NSError * _Nonnull error) {
             [XDGUE4PaymentTool bridgePayCallback:orderInfo error:error];
@@ -132,8 +126,7 @@ void XDGPaymentIOS::PayWithWeb(
 					FString extras){
     //空,安卓才有网页支付
 
-    //测试代码
-    [XDGCoreService clearAllUserDefaultsData]; 
+
 }
 
 void XDGPaymentIOS::PurchaseToken(FString transactionIdentifier,

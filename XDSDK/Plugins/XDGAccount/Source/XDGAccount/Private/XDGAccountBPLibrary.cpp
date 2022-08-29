@@ -60,8 +60,6 @@ void UXDGAccountBPLibrary::OpenAccountCancellation(){
 bool UXDGAccountBPLibrary::IsTokenActiveWithType(FString loginType){
    bool value = GetXDGAccountBridge()->IsTokenActiveWithType(loginType);
 
-   //测试代码
-   GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("结果：" + FString::FromInt(value)));
 
    return value;
 }

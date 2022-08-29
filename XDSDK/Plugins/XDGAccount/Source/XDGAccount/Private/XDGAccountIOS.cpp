@@ -180,13 +180,6 @@ NSTimeInterval gapTime = 1000;   //点击间隔毫秒
         }   
         NSLog(@"成功：%@", res);
 
-        //测试代码--start
-            NSString* uid = user.userId;
-            NSUserDefaults* df = [NSUserDefaults standardUserDefaults];
-            [df setValue:uid forKey:@"demo_tmp_userId"];
-            [df synchronize];
-            NSLog(@"saved userId df get:%@", [df objectForKey:@"demo_tmp_userId"]);
-        //测试代码--end
 
     }else{
         if(isLogin){

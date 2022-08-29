@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+    <init>
+        <log text="XDSDK Android Build init"/>
+    </init>
+
+    <proguardAdditions>
+        <insert>
+            -dontwarn com.xd.**
+            -keep class com.xd.XDGCommonUnreal4{
+                *;
+            }
+            -keep class com.xd.**{
+                *;
+            }
+        </insert>
+    </proguardAdditions>
+
+   <resourceCopies>
+        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/googleJson/" dst="$S(BuildDir)/gradle/app/" />
+        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Configs/" dst="$S(BuildDir)/assets/" />
+        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/res/" dst="$S(BuildDir)/res/" />
+        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/libs/" dst="$S(BuildDir)/libs/" />
+        <copyDir src="$S(PluginDir)/../../Build/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
+    </resourceCopies>
+
+
+    <androidManifestUpdates>
+        <setStringFromAttribute result="PackageName" tag="manifest" name="package"/>
+        <addPermission android:name="com.android.vending.BILLING"/>
+        <addPermission android:name="android.permission.INTERNET"/>
+        <addPermission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+        <addPermission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+        <addPermission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+        <addAttribute tag="application" name="android:usesCleartextTraffic" value="true"/>
+
+    <queries>
+        <package android:name="com.taptap" />
+        <package android:name="com.taptap.pad" />
+        <package android:name="com.taptap.global" />
+        <!-- Toss -->
+        <package android:name="viva.republica.toss" />
+        <!-- gojek -->
+        <package android:name="com.gojek.app" />
+        <!-- line -->
+        <package android:name="jp.naver.line.android" />
+        <!-- facebook -->
+        <package android:name="com.facebook.katana" />
+        <!-- Twitter -->
+        <package android:name="com.twitter.android"/>
+        <!-- LINE -->
+        <package android:name="jp.naver.line.android"/>
+     </queries>
+
+        <!--1. 为保证游客账号在卸载重装之后游客账号不丢失的问题，可以节点添加以下配置来关闭**分区存储**， 需要的话就放开下面一行代码-->
+        <!-- <addAttribute tag="application" name="android:requestLegacyExternalStorage" value="true"/> -->
+
+        <!--2. 测试代码用的，为了UE4打包的安卓能抓包，发布的时候注销，或游戏自己注销调  //测试代码 就放开 -->
+        <addAttribute tag="application" name="android:networkSecurityConfig" value="@xml/network_security_config"/>
+
+
+        <!--3. 可选：把下面的 333676195299012 配置成自己的facebook参数，没有可以删除  -->
+        <addElements tag="application"> 
+            <meta-data
+                android:name="com.facebook.sdk.ApplicationId"
+                android:value="\333676195299012" />
+
+            <meta-data
+                android:name="firebase_performance_logcat_enabled"
+                android:value="true" />
+
+            <activity
+                android:name="com.facebook.FacebookActivity"
+                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                android:label="@string/app_name" />
+
+            <activity
+                android:name="com.facebook.CustomTabActivity"
+                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                android:exported="true">
+                <intent-filter><action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="fb333676195299012" />
+                </intent-filter>
+            </activity>
+
+            <provider
+                android:name="com.facebook.FacebookContentProvider"
+                android:authorities="com.facebook.app.FacebookContentProvider333676195299012"
+                android:exported="true" />
+        </addElements>
+    </androidManifestUpdates>
+
+
+    <buildGradleAdditions>
+        <insert>
+            repositories {
+                flatDir{ dirs 'src/main/libs/' }
+            }
+            dependencies { 
+                implementation(name: 'XDGCommon_6.5.1',ext:'aar')
+                implementation(name: 'XDGThirdLogin_6.5.1',ext:'aar')
+                implementation(name: 'XDGThirdTrack_6.5.1',ext:'aar')
+
+                implementation(name: 'reactor-0.0.8.5',ext:'aar')
+                implementation(name: 'skynet-1.0.16',ext:'aar')
+                implementation 'com.android.billingclient:billing:4.1.0'
+                implementation 'org.conscrypt:conscrypt-android:2.2.1'
+                implementation "com.android.installreferrer:installreferrer:2.2"
+ 
+                <!-- firebase -->
+                implementation "com.google.firebase:firebase-core:18.0.0"
+				implementation "com.google.firebase:firebase-messaging:21.1.0"
+
+                <!-- appsflyer -->
+                implementation "com.appsflyer:af-android-sdk:6.5.2"
+
+                <!-- adjust -->
+                implementation "com.adjust.sdk:adjust-android:4.24.1"
+
+                <!-- Facebook -->
+				implementation "com.facebook.android:facebook-login:12.0.0"
+				implementation "com.facebook.android:facebook-share:12.0.0"
+
+				<!-- twitter -->
+				implementation "com.twitter.sdk.android:twitter:3.3.0"
+				implementation "com.twitter.sdk.android:tweet-composer:3.3.0"
+                
+				<!-- line -->
+				implementation "com.linecorp:linesdk:5.0.1"
+        }
+        </insert>
+    </buildGradleAdditions>
+
+   
+   <gameActivityImportAdditions>   
+        <insert>
+            import com.xd.XDGCommonUnreal4;
+            import android.annotation.SuppressLint;
+        </insert>
+    </gameActivityImportAdditions>
+    <gameActivityOnCreateAdditions>
+        <insert>
+            XDGCommonUnreal4.onCreate(this);
+        </insert>
+    </gameActivityOnCreateAdditions>
+    <gameActivityOnResumeAdditions>
+	    <insert>
+            XDGCommonUnreal4.onResume(containerFrameLayout, this);
+	    </insert>
+    </gameActivityOnResumeAdditions>
+    <gameActivityOnStopAdditions>
+	    <insert>
+            XDGCommonUnreal4.onStop(this);
+	    </insert>
+    </gameActivityOnStopAdditions>
+    <gameActivityClassAdditions> 
+        <insert>
+         @SuppressLint("WrongConstant")
+         @Override
+         public void setRequestedOrientation(int requestedOrientation) {
+            super.setRequestedOrientation(XDGCommonUnreal4.orientation != -1 ? XDGCommonUnreal4.orientation : requestedOrientation);
+         }
+        </insert> 
+    </gameActivityClassAdditions>
+
+</root>

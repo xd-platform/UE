@@ -112,7 +112,7 @@ void UXDServiceWidgetPayment::OnPayWithWebClicked()
 	const FString ExtrasStr = ETB_PayWithWeb_Extras->GetText().ToString();
 
 
-#if PLATFORM_IOS || PLATFORM_ANDROID
+#if PLATFORM_ANDROID
 	UXDGPaymentBPLibrary::PayWithWeb(OrderIDStr, ProductIDStr, ProductNameStr, PayAmount, RoleIDStr, ServerIDStr, ExtrasStr);
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
 	auto Callback = [](XUType::PayResult Result)

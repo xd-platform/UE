@@ -13,15 +13,15 @@ class UServiceItemWidget;
 UENUM()
 enum class ETempDemoLoginType : uint8
 {
-	Default	= 0,	// 自动登录
-	Guest = 1,		// 游客登录
-	// WeChat = 2,		
-	// Apple = 3,		
-	Google = 4,		
-	// Facebook = 5,		
-	TapTap = 6,		// TapTap登录
-	// Line = 7,
-	// Twitter = 8
+	Guest = 0,		// 游客登录
+	// WeChat = 1,		
+	// Apple = 2,		
+	Google = 3,		
+	// Facebook = 4,		
+	TapTap = 5,		// TapTap登录
+	// Line = 6,
+	// Twitter = 7,
+	Default	= 100,	// 自动登录
 };
 
 /**

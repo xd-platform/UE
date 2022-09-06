@@ -82,11 +82,11 @@ void UXDServiceWidgetAccount::OnGetUserClicked()
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
 	if (TSharedPtr<FXUUser> User = XDUE::GetUserInfo())
 	{
-		DEMO_LOG(TEXT("GetUser success."));
+		DEMO_LOG(TEXT("GetUser success. %s"), *TUJsonHelper::GetJsonString(User));
 	}
 	else
 	{
-		DEMO_LOG(TEXT("GetUser failed."));
+		DEMO_LOG(TEXT("GetUser failed. Plase login."));
 	}
 #endif
 }

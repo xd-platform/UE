@@ -36,21 +36,7 @@ TSharedPtr<XUType::Config> FXULocalConfig::GenerateXUConfig() {
 	ConfigPtr->AppID = app_id;
 	// ConfigPtr->IdfaEnabled = idfa_enabled;
 	ConfigPtr->GameName = game_name;
-	
-	// if (logos.Num() == 0) {
-	// 	ConfigPtr->Logos = {
-	// 		"https://res.xdcdn.net/TDS/Global/res/xd_logo.png",
-	// 		"https://res.xdcdn.net/TDS/Global/res/xd_logo.png",
-	// 		"https://res.xdcdn.net/TDS/Global/res/xd_logo.png"};
-	// } else {
-	// 	ConfigPtr->Logos = logos;
-	// }
-	if (login_entries.Num() == 0) {
-		ConfigPtr->LoginEntries = {
-			"TapTap"};
-	} else {
-		ConfigPtr->LoginEntries = login_entries;
-	}
+
 	// tap sdk
 	ConfigPtr->LogoutUrl = logout_url;
 	ConfigPtr->ReportUrl = report_url;
@@ -76,20 +62,7 @@ TSharedPtr<XUType::Config> FXULocalConfig::GenerateXUConfig() {
 	// ConfigPtr->TwitterInfo.ConsumerSecret = twitter.consumer_secret;
 
 	ConfigPtr->GoogleInfo.ClientID = google.CLIENT_ID_FOR_PC;
-	// ConfigPtr->GoogleInfo.ApiKey = google.API_KEY;
-	// ConfigPtr->GoogleInfo.IsSigninEnabled = google.IS_SIGNIN_ENABLED;
-	// ConfigPtr->GoogleInfo.GoogleAppID = google.GOOGLE_APP_ID;
-	// ConfigPtr->GoogleInfo.IsGCMEnabled = google.IS_GCM_ENABLED;
-	// ConfigPtr->GoogleInfo.ReversedClientID = google.REVERSED_CLIENT_ID;
-	// ConfigPtr->GoogleInfo.GCMSenderID = google.GCM_SENDER_ID;
-	// ConfigPtr->GoogleInfo.BundleID = google.BUNDLE_ID;
-	// ConfigPtr->GoogleInfo.IsAppInviteEnabled = google.IS_APPINVITE_ENABLED;
-	// ConfigPtr->GoogleInfo.DatabaseURL = google.DATABASE_URL;
-	// ConfigPtr->GoogleInfo.IsAnalyticsEnabled = google.IS_ANALYTICS_ENABLED;
-	// ConfigPtr->GoogleInfo.ProjectID = google.PROJECT_ID;
-	// ConfigPtr->GoogleInfo.IsAdsEnabled = google.IS_ADS_ENABLED;
-	// ConfigPtr->GoogleInfo.PlistVersion = google.PLIST_VERSION;
-	// ConfigPtr->GoogleInfo.StorageBucket = google.STORAGE_BUCKET;
+	ConfigPtr->AppleInfo.ServerID = apple.service_id;
 
 	// for (auto Event : adjust.events) {
 	// 	XUType::AdjustEvent Temp;

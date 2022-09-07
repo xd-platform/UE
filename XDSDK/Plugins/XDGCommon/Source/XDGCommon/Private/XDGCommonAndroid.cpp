@@ -102,9 +102,9 @@ void XDGCommonAndroid::Report(FString serverId, FString roleId, FString roleName
                                               "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jServerId = env->NewStringUTF(TCHAR_TO_ANSI(*serverId));
-            auto jRoleId = env->NewStringUTF(TCHAR_TO_ANSI(*roleId));
-            auto jRoleName = env->NewStringUTF(TCHAR_TO_ANSI(*roleName));
+            auto jServerId = env->NewStringUTF(TCHAR_TO_UTF8(*serverId));
+            auto jRoleId = env->NewStringUTF(TCHAR_TO_UTF8(*roleId));
+            auto jRoleName = env->NewStringUTF(TCHAR_TO_UTF8(*roleName));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jServerId, jRoleId, jRoleName);
             env->DeleteLocalRef(jServerId);
@@ -143,8 +143,8 @@ void XDGCommonAndroid::ShareFlavors(int32 type, FString uri, FString message){
                                               "(ILjava/lang/String;Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jUri = env->NewStringUTF(TCHAR_TO_ANSI(*uri));
-            auto jMessage = env->NewStringUTF(TCHAR_TO_ANSI(*message));
+            auto jUri = env->NewStringUTF(TCHAR_TO_UTF8(*uri));
+            auto jMessage = env->NewStringUTF(TCHAR_TO_UTF8(*message));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, (jint)type, jUri, jMessage);
             env->DeleteLocalRef(jUri);
@@ -166,7 +166,7 @@ void XDGCommonAndroid::ShareImage(int32 type, FString imagePath){
                                               "(ILjava/lang/String;)V");
         if (jMethod)
         {
-            auto jImagePath = env->NewStringUTF(TCHAR_TO_ANSI(*imagePath));
+            auto jImagePath = env->NewStringUTF(TCHAR_TO_UTF8(*imagePath));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, (jint)type, jImagePath);
             env->DeleteLocalRef(jImagePath);
@@ -186,7 +186,7 @@ void XDGCommonAndroid::TrackUser(FString userId){
                                               "(Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jUserId = env->NewStringUTF(TCHAR_TO_ANSI(*userId));
+            auto jUserId = env->NewStringUTF(TCHAR_TO_UTF8(*userId));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jUserId);
             env->DeleteLocalRef(jUserId);
@@ -208,9 +208,9 @@ void XDGCommonAndroid::TrackRole(FString serverId, FString roleId, FString roleN
         if (jMethod)
         {
             auto jActivity = FAndroidApplication::GetGameActivityThis();
-            auto jServerId = env->NewStringUTF(TCHAR_TO_ANSI(*serverId));
-            auto jRoleId = env->NewStringUTF(TCHAR_TO_ANSI(*roleId));
-            auto jRoleName = env->NewStringUTF(TCHAR_TO_ANSI(*roleName));
+            auto jServerId = env->NewStringUTF(TCHAR_TO_UTF8(*serverId));
+            auto jRoleId = env->NewStringUTF(TCHAR_TO_UTF8(*roleId));
+            auto jRoleName = env->NewStringUTF(TCHAR_TO_UTF8(*roleName));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jActivity, jServerId, jRoleId, jRoleName, (jint)level);
             env->DeleteLocalRef(jServerId);
@@ -233,7 +233,7 @@ void XDGCommonAndroid::TrackEvent(FString eventName){
                                               "(Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jEventName = env->NewStringUTF(TCHAR_TO_ANSI(*eventName));
+            auto jEventName = env->NewStringUTF(TCHAR_TO_UTF8(*eventName));
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jEventName);
             
             env->DeleteLocalRef(jEventName);
@@ -340,7 +340,7 @@ void XDGCommonAndroid::SetCountryRegion(FString region){
                                               "(Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jRegion = env->NewStringUTF(TCHAR_TO_ANSI(*region));
+            auto jRegion = env->NewStringUTF(TCHAR_TO_UTF8(*region));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jRegion);
             env->DeleteLocalRef(jRegion);

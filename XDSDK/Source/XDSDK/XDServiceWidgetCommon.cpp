@@ -86,7 +86,10 @@ void UXDServiceWidgetCommon::OnTrackUserClicked()
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	const FString UserIDStr = ETB_User_UserID->GetText().ToString();
 	UXDGCommonBPLibrary::TrackUser(UserIDStr);
-#endif	
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	const FString UserIDStr = ETB_User_UserID->GetText().ToString();
+	XDUE::TrackUser(UserIDStr);
+#endif
 }
 
 void UXDServiceWidgetCommon::OnTrackRoleClicked()
@@ -97,7 +100,13 @@ void UXDServiceWidgetCommon::OnTrackRoleClicked()
 	const FString RoleNameStr = ETB_Role_RoleName->GetText().ToString();
 	const int32 Level = FCString::Atoi(*ETB_Role_Level->GetText().ToString());
 	UXDGCommonBPLibrary::TrackRole(ServerIDStr, RoleIDStr, RoleNameStr, Level);
-#endif	
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	const FString ServerIDStr = ETB_Role_ServerID->GetText().ToString();
+	const FString RoleIDStr = ETB_Role_RoleID->GetText().ToString();
+	const FString RoleNameStr = ETB_Role_RoleName->GetText().ToString();
+	const int32 Level = FCString::Atoi(*ETB_Role_Level->GetText().ToString());
+    XDUE::TrackRole(ServerIDStr, RoleIDStr, RoleNameStr, Level);
+#endif
 }
 
 void UXDServiceWidgetCommon::OnTrackEventClicked()
@@ -105,7 +114,10 @@ void UXDServiceWidgetCommon::OnTrackEventClicked()
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	const FString EventNameStr = ETB_Event_EventName->GetText().ToString();
 	UXDGCommonBPLibrary::TrackEvent(EventNameStr);
-#endif	
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	const FString EventNameStr = ETB_Event_EventName->GetText().ToString();
+	XDUE::TrackEvent(EventNameStr);
+#endif
 }
 
 void UXDServiceWidgetCommon::OnSetCurrentUserPushServiceEnableClicked()
@@ -209,6 +221,7 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 	UEnum* RegionEnum = StaticEnum<ETempDemoRegionType>();
 	if (CB_Init_EnvironmentBox->GetSelectedOption() == EnvEnum->GetNameStringByValue(static_cast<int32>(ETempDemoEnvironmentType::RND)))
 	{
+		TUDebuger::IsTest = true;
 		if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::CN)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-cn-rnd.json");
@@ -220,6 +233,7 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 	}
 	else if (CB_Init_EnvironmentBox->GetSelectedOption() == EnvEnum->GetNameStringByValue(static_cast<int32>(ETempDemoEnvironmentType::Default)))
 	{
+		TUDebuger::IsTest = false;
 		if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::CN)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-cn.json");

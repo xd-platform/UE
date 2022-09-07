@@ -26,7 +26,7 @@ void XDGAccountAndroid::Login(FString loginTypeList){
                                               "(Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jLists = env->NewStringUTF(TCHAR_TO_ANSI(*loginTypeList));
+            auto jLists = env->NewStringUTF(TCHAR_TO_UTF8(*loginTypeList));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jLists);
 
@@ -46,7 +46,7 @@ void XDGAccountAndroid::LoginByType(FString loginType){
                                               "(Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jLoginType = env->NewStringUTF(TCHAR_TO_ANSI(*loginType));
+            auto jLoginType = env->NewStringUTF(TCHAR_TO_UTF8(*loginType));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jLoginType);
             env->DeleteLocalRef(jLoginType);
@@ -148,7 +148,7 @@ bool XDGAccountAndroid::IsTokenActiveWithType(FString loginType){
                                               "(Ljava/lang/String;)Z");
         if (jMethod)
         {
-            auto jLoginType = env->NewStringUTF(TCHAR_TO_ANSI(*loginType));
+            auto jLoginType = env->NewStringUTF(TCHAR_TO_UTF8(*loginType));
 
             isActive = (bool)(env->CallStaticBooleanMethod(jXDSDKUnreal4Class, jMethod, jLoginType));
 
@@ -170,7 +170,7 @@ void XDGAccountAndroid::BindByType(FString loginType){
                                               "(Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jLoginType = env->NewStringUTF(TCHAR_TO_ANSI(*loginType));
+            auto jLoginType = env->NewStringUTF(TCHAR_TO_UTF8(*loginType));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jLoginType);
 

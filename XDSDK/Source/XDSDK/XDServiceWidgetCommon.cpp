@@ -245,7 +245,11 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 	}
 	auto Callback = [](bool Result, FString Message)
 	{
-		DEMO_LOG_STRING(Message);
+		if (Result) {
+			TUDebuger::DisplayShow(TEXT("初始化成功：") + Message);
+		} else {
+			TUDebuger::ErrorShow(TEXT("初始化失败：") + Message);
+		}
 	};
 	XDUE::InitSDK(TEXT("1.2.3"), Callback);
 #endif
@@ -348,8 +352,8 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	TUDebuger::ReplaceHosts.Add("https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track", "https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-test/track");
 	TUDebuger::ReplaceHosts.Add("https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track", "https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-test/track");
 
-	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.cn", "https://xd-website.oss-cn-beijing.aliyuncs.com/xd-order-sgp/v1.0-dev/test/index.html");
-	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.com", "https://xd-website.oss-cn-beijing.aliyuncs.com/xd-order-sgp/v1.0-dev/test/index.html");
+	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.cn", "http://39.107.229.24:12008");
+	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.com", "https://login-xdsdk-test.xd-cf-2022.workers.dev");
 
 	XDUE::OnLogout.AddLambda([]() {
 		TUDebuger::DisplayShow(TEXT("游戏账号应登出"));

@@ -209,6 +209,7 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 	UEnum* RegionEnum = StaticEnum<ETempDemoRegionType>();
 	if (CB_Init_EnvironmentBox->GetSelectedOption() == EnvEnum->GetNameStringByValue(static_cast<int32>(ETempDemoEnvironmentType::RND)))
 	{
+		TUDebuger::IsTest = true;
 		if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::CN)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-cn-rnd.json");
@@ -220,6 +221,7 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 	}
 	else if (CB_Init_EnvironmentBox->GetSelectedOption() == EnvEnum->GetNameStringByValue(static_cast<int32>(ETempDemoEnvironmentType::Default)))
 	{
+		TUDebuger::IsTest = false;
 		if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::CN)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-cn.json");

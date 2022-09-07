@@ -56,6 +56,7 @@ public class XDGSDK : ModuleRules
 				"TapWebBrowser",
 				"TapLogin",
 				"HTTPServer",
+				"TapDB"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

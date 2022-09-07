@@ -77,6 +77,23 @@ public:
 	static void SetPushServiceEnable(bool enable);
 	static bool IsPushServiceEnable(); //***UXDGCommonBPLibrary::IsCurrentUserPushServiceEnable
 
+	//TapDB 统计用户
+	static void TrackUser(FString userId);
+
+	//TapDB 设置属性
+	static void TrackRole(FString serverId, FString roleId, FString roleName, int32 level);
+
+	//TapDB 事件埋点
+	static void TrackEvent(FString eventName);
+
+	//TapDB 成就埋点
+	static void TrackAchievement();
+
+	//TapDB 完成新手引导埋点
+	static void EventCompletedTutorial();
+
+	//TapDB 创建角色埋点
+	static void EventCreateRole();
 
 #if !UE_BUILD_SHIPPING
 	// only test

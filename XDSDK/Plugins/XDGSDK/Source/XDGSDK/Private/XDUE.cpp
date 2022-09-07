@@ -1,5 +1,6 @@
 #include "XDUE.h"
 
+#include "TapUEDB.h"
 #include "TapUELogin.h"
 #include "TUDebuger.h"
 #include "XUConfigManager.h"
@@ -161,6 +162,46 @@ void XDUE::SetPushServiceEnable(bool enable) {
 
 bool XDUE::IsPushServiceEnable() {
 	return FXUUser::IsPushServiceEnable();
+}
+
+
+//TapDB 统计用户
+void XDUE::TrackUser(FString userId)
+{
+	TapUEDB::SetUserWithLoginType(userId, "");
+}
+
+//TapDB 设置属性
+void XDUE::TrackRole(FString serverId, FString roleId, FString roleName, int32 level)
+{
+	//目前移动SDK也没有使用这个 roleId 
+	TapUEDB::SetLevel(level);
+	TapUEDB::SetName(roleName);
+	TapUEDB::SetServer(serverId);
+}
+
+//TapDB 事件埋点
+void XDUE::TrackEvent(FString eventName)
+{
+	TapUEDB::TrackEvent(eventName, nullptr);
+}
+
+//TapDB 成就埋点
+void XDUE::TrackAchievement()
+{
+	//没有tap db 只有第三方
+}
+
+//TapDB 完成新手引导埋点
+void XDUE::EventCompletedTutorial()
+{
+	//没有tap db 只有第三方
+}
+
+//TapDB 创建角色埋点
+static void EventCreateRole()
+{
+	//没有tap db 只有第三方
 }
 
 #if !UE_BUILD_SHIPPING

@@ -7,7 +7,10 @@
 #include "TUError.h"
 #if PLATFORM_WINDOWS
 #include "Windows/AllowWindowsPlatformTypes.h"
+#include <ShlObj.h>
+#include "Windows/HideWindowsPlatformTypes.h"
 #endif
+
 #define TAPCOMMON_REGION_CODE_ID "TAPCOMMON_REGION_CODE_ID"
 #define TAPCOMMON_IS_TAPTAP_INSTALLED_ID "TAPCOMMON_IS_TAPTAP_INSTALLED_ID"
 #define TAPCOMMON_IS_TAPGLOBAL_INSTALLED_ID "TAPCOMMON_IS_TAPGLOBAL_INSTALLED_ID"

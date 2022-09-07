@@ -3,6 +3,7 @@
 
 #include "XDServiceWidgetAccount.h"
 
+#include "TUDebuger.h"
 #include "XDGAccount.h"
 #include "XDGAccountBPLibrary.h"
 #include "XDUE.h"
@@ -29,7 +30,7 @@ void UXDServiceWidgetAccount::OnLoginByTypeClicked()
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
 	auto Success = [](FXUUser User)
 	{
-		DEMO_LOG(TEXT("LoginSuccess：\r\n"), *TUJsonHelper::GetJsonString(User));
+		TUDebuger::DisplayShow(FString::Printf(TEXT("LoginSuccess：%s\r\n"), *TUJsonHelper::GetJsonString(User)));
 	};
 
 	auto Failed = [](FXUError Error)

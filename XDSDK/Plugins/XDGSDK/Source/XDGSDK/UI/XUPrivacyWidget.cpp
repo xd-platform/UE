@@ -2,6 +2,8 @@
 
 
 #include "XUPrivacyWidget.h"
+
+#include "TapCommonBPLibrary.h"
 #include "XULanguageManager.h"
 #include "TUHelper.h"
 #include "TUHUD.h"
@@ -119,7 +121,7 @@ bool UXUPrivacyWidget::OnWebBeforeNavigation(const FString& Url, const FWebNavig
 	if (OriginURL == Url) {
 		return false;
 	}  else {
-		FPlatformProcess::LaunchURL(*Url, nullptr, nullptr);
+		UTapCommonBPLibrary::LaunchURL(*Url, TEXT("--new-window "), nullptr);
 		return true;
 	}
 }

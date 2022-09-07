@@ -1,4 +1,6 @@
 #include "XUImpl.h"
+
+#include "TapCommonBPLibrary.h"
 #include "TapUEBootstrap.h"
 #include "XUStorage.h"
 #include "TUDeviceInfo.h"
@@ -243,7 +245,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	if (XUConfigManager::IsCN()) {
 		UXUPayWebWidget::Show(UrlStr, CallBack);
 	} else {
-		FPlatformProcess::LaunchURL(*UrlStr, nullptr, nullptr);
+		UTapCommonBPLibrary::LaunchURL(*UrlStr, TEXT("--new-window "), nullptr);
 	}
 }
 

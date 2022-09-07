@@ -65,7 +65,8 @@ class TAPCOMMON_API UTapCommonBPLibrary : public UBlueprintFunctionLibrary
 	static bool CheckResult(const FTapResult result);
 
 	void OnBridgeCallback(const FString &result);
-	
+
+	static void LaunchURL(const TCHAR* URL, const TCHAR* Param, FString* Error);
 };
 
 

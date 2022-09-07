@@ -1,5 +1,6 @@
 #include "XDUE.h"
 
+#include "TapCommonBPLibrary.h"
 #include "TapUELogin.h"
 #include "TUDebuger.h"
 #include "XUConfigManager.h"
@@ -144,7 +145,7 @@ void XDUE::OpenCustomerCenter(const FString& ServerId, const FString& RoleId, co
 	if (UrlStr.IsEmpty()) {
 		TUDebuger::ErrorLog("please login first");
 	} else {
-		FPlatformProcess::LaunchURL(*UrlStr, nullptr, nullptr);
+		UTapCommonBPLibrary::LaunchURL(*UrlStr, TEXT("--new-window "), nullptr);
 	}
 }
 

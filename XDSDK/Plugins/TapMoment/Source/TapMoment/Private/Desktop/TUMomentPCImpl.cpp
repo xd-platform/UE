@@ -1,5 +1,7 @@
 #include "TUMomentPCImpl.h"
 
+#include "TapCommonBPLibrary.h"
+
 void TUMomentPCImpl::Init(const TUMomentType::Config& InitConfig) {
 	Config = InitConfig;
 }
@@ -11,5 +13,5 @@ void TUMomentPCImpl::OpenWebTopic() {
 	} else {
 		Url = "https://www.taptap.io/app" / TUMomentImpl::Get()->Config.AppID + "?utm_medium=link&utm_source=pc_sdk";
 	}
-	FPlatformProcess::LaunchURL(*Url, nullptr, nullptr);
+	UTapCommonBPLibrary::LaunchURL(*Url, TEXT("--new-window "), nullptr);
 }

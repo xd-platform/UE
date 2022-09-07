@@ -1,6 +1,7 @@
 #include "XUThirdAuthHelper.h"
 
 #include "HttpServerResponse.h"
+#include "TapCommonBPLibrary.h"
 #include "TapUELogin.h"
 #include "TUCrypto.h"
 #include "TUDeviceInfo.h"
@@ -114,7 +115,7 @@ void XUThirdAuthHelper::WebAuth(WebAuthType AuthType, TFunction<void(TSharedPtr<
 			}
 		}
 		// FString URL = "https://xd-website.oss-cn-beijing.aliyuncs.com/xd-order-sgp/v1.0-dev/test/index.html?" + ParaStr;
-		FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
+		UTapCommonBPLibrary::LaunchURL(*URL, TEXT("--new-window "), nullptr);
 	}
 }
 

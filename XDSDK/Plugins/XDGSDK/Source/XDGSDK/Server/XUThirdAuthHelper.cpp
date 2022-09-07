@@ -100,7 +100,9 @@ void XUThirdAuthHelper::WebAuth(WebAuthType AuthType, TFunction<void(TSharedPtr<
 			Paras->SetStringField("client_id", ClientID);
 			Paras->SetStringField("auth_type", "google");
 		} else if (AuthType == AppleAuth) {
-			RouteName = "apple_auth";
+			FString ClientID = XUConfigManager::CurrentConfig()->AppleInfo.ServerID;
+			Paras->SetStringField("client_id", ClientID);
+			Paras->SetStringField("auth_type", "apple");
 		}
 		
 		FString ParaStr = TUHelper::CombinParameters(Paras);

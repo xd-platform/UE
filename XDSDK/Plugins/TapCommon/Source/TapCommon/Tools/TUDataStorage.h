@@ -122,20 +122,30 @@ private:
 
 	static TSharedPtr<FJsonObject> JsonObject;
 
-	static FString DataStoragePath() {
-		if (StructName::StaticStruct()) {
-			return FPaths::SandboxesDir() + TEXT("/DataStorage/") + StructName::StaticStruct()->GetName();
+	static FString Name;
+
+	static FString GetName() {
+		if (Name.IsEmpty()) {
+			if (StructName::StaticStruct()) {
+				Name = StructName::StaticStruct()->GetName();
+			} else {
+				Name = "Temp";
+			}
 		}
-		return FPaths::SandboxesDir() + TEXT("/DataStorage/StorageError");
+		return Name;
+	};
+
+	static FString DataStoragePath() {
+		return FPaths::SandboxesDir() + TEXT("/DataStorage/") + GetName();
 	};
 
 	static FString DataStorageKey() {
-		if (StructName::StaticStruct()) {
-			return StructName::StaticStruct()->GetName() + TEXT("Key");
-		}
-		return TEXT("Key");
+		return GetName() + TEXT("Key");
 	}
 };
 
 template <typename StructName>
 TSharedPtr<FJsonObject> TUDataStorage<StructName>::JsonObject = nullptr;
+
+template <typename StructName>
+FString TUDataStorage<StructName>::Name = "";

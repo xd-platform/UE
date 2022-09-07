@@ -38,6 +38,11 @@ void UXUUserCenterItemWidget::SetBindModel(const TSharedPtr<FXUBindModel>& Model
 			nullptr, TEXT("Texture2D'/XDGSDK/Images/type_icon_google.type_icon_google'"));
 		TitleImage->SetBrushFromTexture(TapTexture);
 	}
+	else if (Model->loginType == (int)XUType::Apple) {
+		UTexture2D* TapTexture = LoadObject<UTexture2D>(
+			nullptr, TEXT("Texture2D'/XDGSDK/Images/type_icon_apple.type_icon_apple'"));
+		TitleImage->SetBrushFromTexture(TapTexture);
+	}
 	if (Model->status == FXDGBindType::Bind)
 	{
 		BindLabel->SetText(FText::FromString(langModel->tds_unbind));
@@ -49,6 +54,7 @@ void UXUUserCenterItemWidget::SetBindModel(const TSharedPtr<FXUBindModel>& Model
 		BindLabel->SetColorAndOpacity(FLinearColor::Black);
 		ArrowImage->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/arrow_black.arrow_black'")));
 	}
+	ProcessShowOrNot();
 }
 
 void UXUUserCenterItemWidget::NativeConstruct()
@@ -73,9 +79,9 @@ void UXUUserCenterItemWidget::ProcessShowOrNot() {
 	for (auto BindEntry : md->BindEntries) {
 		if (BindModel->loginName.ToLower() == BindEntry.EntryName.ToLower()) {
 			if (BindModel->status == FXDGBindType::Bind) {
-				ShowBindBt(BindEntry.CanBind);
-			} else {
 				ShowBindBt(BindEntry.CanUnbind);
+			} else {
+				ShowBindBt(BindEntry.CanBind);
 			}
 			break;
 		}

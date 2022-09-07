@@ -121,6 +121,14 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 				resultBlock(AuthParas);
 			}, ErrorBlock);
 	}
+	else if (LoginType == XUType::Apple) {
+		TUDebuger::DisplayLog("Apple Login");
+		XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::AppleAuth,
+			[=](TSharedPtr<FJsonObject> AuthParas) {
+				AuthParas->SetNumberField("type", (int)LoginType);
+				resultBlock(AuthParas);
+			}, ErrorBlock);
+	}
 	else {
 		ErrorBlock(FXUError("No Login Param"));
 	}

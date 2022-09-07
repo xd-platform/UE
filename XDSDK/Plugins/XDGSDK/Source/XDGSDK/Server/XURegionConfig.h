@@ -6,6 +6,7 @@ public:
 	virtual ~XURegionConfig() = default;
 	virtual FString BaseHost() = 0;
 	virtual FString LoginWebHost() = 0;
+	virtual FString TrackHost() = 0;
 
 	//获取配置
 	FString InitSDKUrl();
@@ -33,7 +34,9 @@ public:
 
 	// 上报同意协议版本
 	FString UploadAgreementUrl();
-	
+
+	// 跟踪日志上报
+	FString TrackUrl();
 
 	static TSharedPtr<XURegionConfig>& Get();
 

@@ -78,9 +78,9 @@ FString UXUUserCenterWidget::GetLoginTypeName() {
 	} else if (userMd->GetLoginType() == XUType::Google) {
 		result = "Google";
 	}
-	// else if (userMd->GetLoginType() == XUType::Apple) {
-	// 	result = "Apple";
-	// }
+	else if (userMd->GetLoginType() == XUType::Apple) {
+		result = "Apple";
+	}
 	FString unitStr = langModel->tds_account_format;
 	return unitStr.Replace(TEXT("%s"), *result);
 }
@@ -152,18 +152,7 @@ void UXUUserCenterWidget::ShouldShowErrorButton(bool Should) {
 }
 
 TArray<XULoginTypeModel> UXUUserCenterWidget::GetSupportTypes() {
-	TArray<XULoginTypeModel> list;
-	TArray<XULoginTypeModel> SDKList = XULoginTypeModel::GetSDKSupportTypes();
-	auto md = XUConfigManager::CurrentConfig();
-	for (auto Model : SDKList) {
-		for (auto BindEntry : md->LoginEntries) {
-			if (Model.TypeName.ToLower() == BindEntry.ToLower()) {
-				list.Add(Model);
-				break;
-			}
-		}
-	}
-	return list;
+	return XULoginTypeModel::GetSDKSupportTypes();
 }
 
 void UXUUserCenterWidget::DeleteAccount(const FString& Tip) {

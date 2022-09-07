@@ -23,6 +23,9 @@ struct XULoginTypeModel
 		else if (Type == (int)XUType::Google) {
 			return "Google";
 		}
+		else if (Type == (int)XUType::Apple) {
+			return "Apple";
+		}
 		return "";
 	}
 
@@ -30,6 +33,7 @@ struct XULoginTypeModel
 		TArray<XULoginTypeModel> List;
 		List.Add(XULoginTypeModel(XUType::TapTap));
 		List.Add(XULoginTypeModel(XUType::Google));
+		List.Add(XULoginTypeModel(XUType::Apple));
 		return List;
 	}
 

@@ -3,12 +3,9 @@
 
 #include "XDServiceWidgetCommon.h"
 
-#include "TapUEMoment.h"
 #include "TUDebuger.h"
 #include "XDGCommon.h"
 #include "XDSDK/SubWidgets/ServiceItemWidget.h"
-
-#include "XDGCommonBPLibrary.h"
 #include "XDUE.h"
 #include "Components/CheckBox.h"
 #include "Components/ComboBoxString.h"
@@ -16,6 +13,10 @@
 #include "XDSDK/XDSDK.h"
 #include "XDGSDK.h"
 #include "XUSettings.h"
+#if PLATFORM_IOS || PLATFORM_ANDROID
+#include "TapUEMoment.h"
+#include "XDGCommonBPLibrary.h"
+#endif
 
 void UXDServiceWidgetCommon::OnGetSDKVersionNameClicked()
 {
@@ -204,28 +205,35 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 	}
 	UXDGCommonBPLibrary::DevelopInit(Num);
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
-	if (CB_Init_EnvironmentBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoEnvironmentType::RND))
+	UEnum* EnvEnum = StaticEnum<ETempDemoEnvironmentType>();
+	UEnum* RegionEnum = StaticEnum<ETempDemoRegionType>();
+	if (CB_Init_EnvironmentBox->GetSelectedOption() == EnvEnum->GetNameStringByValue(static_cast<int32>(ETempDemoEnvironmentType::RND)))
 	{
-		if (CB_Init_RegionBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoRegionType::CN))
+		if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::CN)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-cn-rnd.json");
 		}
-		else if (CB_Init_RegionBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoRegionType::Global))
+		else if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::Global)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-rnd.json");
 		}
 	}
-	else if (CB_Init_EnvironmentBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoEnvironmentType::Default))
+	else if (CB_Init_EnvironmentBox->GetSelectedOption() == EnvEnum->GetNameStringByValue(static_cast<int32>(ETempDemoEnvironmentType::Default)))
 	{
-		if (CB_Init_RegionBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoRegionType::CN))
+		if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::CN)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-cn.json");
 		}
-		else if (CB_Init_RegionBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoRegionType::Global))
+		else if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::Global)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig.json");
 		}
 	}
+	auto Callback = [](bool Result, FString Message)
+	{
+		DEMO_LOG_STRING(Message);
+	};
+	XDUE::InitSDK(TEXT("1.2.3"), Callback);
 #endif
 }
 

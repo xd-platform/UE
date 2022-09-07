@@ -41,8 +41,8 @@ void UXUPrivacyWidget::NativeConstruct()
 	DeclineButton->OnClicked.AddUniqueDynamic(this, &UXUPrivacyWidget::OnDeclineBtnClick);
 	LoadErrorBtn->OnClicked.AddUniqueDynamic(this, &UXUPrivacyWidget::OnLoadErrorBtnClick);
 
-	// OriginURL =  XUConfigManager::GetAgreementUrl();
-	OriginURL = "https://protocol.xd.com/sdk/merger-test.html?language=ru_RU";
+	OriginURL =  XUConfigManager::GetAgreementUrl();
+	// OriginURL = "https://protocol.xd.com/sdk/merger-test.html?language=ru_RU";
 	if (OriginURL.Contains("?")) { // 加个时间戳，用于浏览器清除缓存
 		OriginURL += FString::Printf(TEXT("&timestamp=%lld"), FDateTime::UtcNow().ToUnixTimestamp());
 	} else {

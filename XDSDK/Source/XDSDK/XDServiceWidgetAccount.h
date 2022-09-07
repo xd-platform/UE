@@ -15,7 +15,7 @@ enum class ETempDemoLoginType : uint8
 {
 	Guest = 0,		// 游客登录
 	// WeChat = 1,		
-	// Apple = 2,		
+	Apple = 2,		
 	Google = 3,		
 	// Facebook = 4,		
 	TapTap = 5,		// TapTap登录

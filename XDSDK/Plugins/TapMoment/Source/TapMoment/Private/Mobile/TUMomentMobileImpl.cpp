@@ -32,7 +32,7 @@ void TUMomentMobileImpl::SetCallback(TFunction<void(int Code, const FString& Msg
 		auto ResultPtr = TUJsonHelper::GetJsonObject(ResultJsonStr);
 		if (ResultPtr.IsValid()) {
 			ResultPtr->TryGetNumberField("code", Code);
-			ResultPtr->TryGetStringField("code", Msg);
+			ResultPtr->TryGetStringField("message", Msg);
 		}
 		CallBack(Code, Msg);
 	}, false);

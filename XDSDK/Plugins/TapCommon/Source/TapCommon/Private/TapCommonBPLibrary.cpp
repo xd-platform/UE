@@ -6,9 +6,8 @@
 #include "TapJson.h"
 #include "TUError.h"
 #if PLATFORM_WINDOWS
-#include "Windows/AllowWindowsPlatformTypes.h"
-#include <ShlObj.h>
-#include "Windows/HideWindowsPlatformTypes.h"
+#include "Windows/WindowsWindow.h"
+#include "Widgets/SWindow.h"
 #endif
 
 #define TAPCOMMON_REGION_CODE_ID "TAPCOMMON_REGION_CODE_ID"
@@ -346,39 +345,23 @@ void LaunchWebURL( const FString& URLParams, FString* Error )
 
 void UTapCommonBPLibrary::LaunchURL(const TCHAR* URL, const TCHAR* Param, FString* Error)
 {
-#if WINDOWS_USE_FEATURE_PLATFORMPROCESS_CLASS
-    check(URL);
-
-    if (FCoreDelegates::ShouldLaunchUrl.IsBound() && !FCoreDelegates::ShouldLaunchUrl.Execute(URL))
-    {
-        if (Error)
-        {
-            *Error = TEXT("LaunchURL cancelled by delegate");
-        }
-    }
-    else
-    {
-        // Initialize the error to empty string.
-        if (Error)
-        {
-            *Error = TEXT("");
-        }
-
-        // Use the default handler if we have a URI scheme name that doesn't look like a Windows path, and is not http: or https:
-        FString SchemeName;
-        if (FParse::SchemeNameFromURI(URL, SchemeName) && SchemeName.Len() > 1 && SchemeName != TEXT("http") && SchemeName != TEXT("https"))
-        {
-            FPlatformProcess::LaunchURL(URL, Param, Error);
-        }
-        else
-        {
-            FString URLParams = FString::Printf(TEXT("%s %s"), URL, Param ? Param : TEXT("")).TrimEnd();
-            LaunchWebURL(URLParams, Error);
-        }
-    }
-#else
-    FPlatformProcess::LaunchURL(URL, Param, Error);
+#if PLATFORM_WINDOWS
+	if (GWorld)
+	{
+		if (UGameViewportClient* Viewport = GWorld->GetGameViewport())
+		{
+			if (FGenericWindow* Window = Viewport->GetWindow()->GetNativeWindow().Get())
+			{
+				if (Window->GetWindowMode() == EWindowMode::Fullscreen)
+				{
+					FWindowsWindow* Win = static_cast<FWindowsWindow*>(Window);
+					SetWindowPos(Win->GetHWnd(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+				}
+			}
+		}
+	}
 #endif
+	FPlatformProcess::LaunchURL(URL, Param, Error);
 }
 
 bool UTapCommonBPLibrary::CheckResult(const FTapResult result)

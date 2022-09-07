@@ -13,5 +13,5 @@ void TUMomentPCImpl::OpenWebTopic() {
 	} else {
 		Url = "https://www.taptap.io/app" / TUMomentImpl::Get()->Config.AppID + "?utm_medium=link&utm_source=pc_sdk";
 	}
-	UTapCommonBPLibrary::LaunchURL(*Url, TEXT("--new-window "), nullptr);
+	UTapCommonBPLibrary::LaunchURL(*Url, nullptr, nullptr);
 }

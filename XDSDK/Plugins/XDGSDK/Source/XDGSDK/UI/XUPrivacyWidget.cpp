@@ -121,7 +121,7 @@ bool UXUPrivacyWidget::OnWebBeforeNavigation(const FString& Url, const FWebNavig
 	if (OriginURL == Url) {
 		return false;
 	}  else {
-		UTapCommonBPLibrary::LaunchURL(*Url, TEXT("--new-window "), nullptr);
+		UTapCommonBPLibrary::LaunchURL(*Url, nullptr, nullptr);
 		return true;
 	}
 }

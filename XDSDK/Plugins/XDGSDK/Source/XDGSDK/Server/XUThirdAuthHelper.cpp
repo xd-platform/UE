@@ -117,7 +117,7 @@ void XUThirdAuthHelper::WebAuth(WebAuthType AuthType, TFunction<void(TSharedPtr<
 			}
 		}
 		// FString URL = "https://xd-website.oss-cn-beijing.aliyuncs.com/xd-order-sgp/v1.0-dev/test/index.html?" + ParaStr;
-		UTapCommonBPLibrary::LaunchURL(*URL, TEXT("--new-window "), nullptr);
+		UTapCommonBPLibrary::LaunchURL(*URL, nullptr, nullptr);
 	}
 }
 

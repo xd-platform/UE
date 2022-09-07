@@ -145,7 +145,7 @@ void XDUE::OpenCustomerCenter(const FString& ServerId, const FString& RoleId, co
 	if (UrlStr.IsEmpty()) {
 		TUDebuger::ErrorLog("please login first");
 	} else {
-		UTapCommonBPLibrary::LaunchURL(*UrlStr, TEXT("--new-window "), nullptr);
+		UTapCommonBPLibrary::LaunchURL(*UrlStr, nullptr, nullptr);
 	}
 }
 

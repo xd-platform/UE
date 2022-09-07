@@ -38,7 +38,7 @@ bool TauWebAuthHelper::ProcessWebAuth(const TArray<FString>& NeedPermissions,
 		return false;
 	} else {
 		RedirectUri = TempRedirectUri;
-		UTapCommonBPLibrary::LaunchURL(*GenerateWebAuthUrl(), TEXT(" --new-window "), nullptr);
+		UTapCommonBPLibrary::LaunchURL(*GenerateWebAuthUrl(), nullptr, nullptr);
 		return true;
 	}
 

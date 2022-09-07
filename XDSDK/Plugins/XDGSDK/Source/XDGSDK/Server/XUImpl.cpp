@@ -253,7 +253,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	if (XUConfigManager::IsCN()) {
 		UXUPayWebWidget::Show(UrlStr, CallBack);
 	} else {
-		UTapCommonBPLibrary::LaunchURL(*UrlStr, TEXT("--new-window "), nullptr);
+		UTapCommonBPLibrary::LaunchURL(*UrlStr, nullptr, nullptr);
 	}
 }
 

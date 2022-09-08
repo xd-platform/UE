@@ -117,6 +117,10 @@ TSharedRef<SWidget> UTUWebBrowser::RebuildWidget()
 			.BrowserFrameRate(60.f)
 			.OnBeforePopup(BIND_UOBJECT_DELEGATE(FOnBeforePopupDelegate, HandleOnBeforePopup));
 
+		if (ITextInputMethodSystem* InputSys = FSlateApplication::Get().GetTextInputMethodSystem())
+		{
+			WebBrowserWidget->BindInputMethodSystem(InputSys);
+		}
 		return WebBrowserWidget.ToSharedRef();
 	}
 }

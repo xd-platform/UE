@@ -114,6 +114,7 @@ TSharedRef<SWidget> UTUWebBrowser::RebuildWidget()
 			// .OnDismissAllDialogs(OnDismissAllDialogs)
 			// .OnSuppressContextMenu(OnSuppressContextMenu)
 			// .OnDragWindow(OnDragWindow)
+			.BrowserFrameRate(60.f)
 			.OnBeforePopup(BIND_UOBJECT_DELEGATE(FOnBeforePopupDelegate, HandleOnBeforePopup));
 
 		return WebBrowserWidget.ToSharedRef();

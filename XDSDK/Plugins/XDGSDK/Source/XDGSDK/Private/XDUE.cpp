@@ -199,8 +199,7 @@ void XDUE::EventCompletedTutorial()
 }
 
 //TapDB 创建角色埋点
-static void EventCreateRole()
-{
+void XDUE::EventCreateRole() {
 	//没有tap db 只有第三方
 }
 

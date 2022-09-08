@@ -92,20 +92,15 @@ void UXUUserCenterWidget::RequestList() {
 		if (Model.IsValid()) {
 			ShouldShowErrorButton(false);
 			BindModels.Reset();
-			auto SupportList = GetSupportTypes();
-			for (auto st : SupportList) {
-				TSharedPtr<FXUBindModel> md = MakeShareable(new FXUBindModel);
-				md->loginType = st.TypeValue;
-				md->loginName = st.TypeName;
-				md->status = (int)FXDGBindType::UnBind;
-				for (auto netMd : Model->data) {
-					if (st.TypeValue == netMd.loginType && netMd.status == (int)FXDGBindType::Bind) {
-						md->status = netMd.status; //1未绑定
-						md->bindDate = netMd.bindDate;
+			auto SupportItemModels = GetSupportItemModels();
+			for (auto SupportItemModel : SupportItemModels) {
+				for (auto NetMd : Model->data) {
+					if (SupportItemModel.LoginType == NetMd.loginType && NetMd.status == (int)FXDGBindState::Bind) {
+						SupportItemModel.BindState = FXDGBindState::Bind; //1未绑定
 						break;
 					}
 				}
-				BindModels.Add(md);
+				BindModels.Add(SupportItemModel);
 			}
 			ResetListBox();
 		}
@@ -122,12 +117,12 @@ void UXUUserCenterWidget::ResetListBox() {
 		UXUUserCenterItemWidget* Item = UXUUserCenterItemWidget::GenerateItem();
 		Item->SetBindModel(FxdgBindModel);
 		ListBox->AddChild(Item);
-		Item->BindCallBack = [=](UXUUserCenterItemWidget* CurrentWidget, TSharedPtr<FXUBindModel> Model) {
-			if (Model->status == FXDGBindType::Bind) {
+		Item->BindCallBack = [=](UXUUserCenterItemWidget* CurrentWidget, const XUUserCenterItemModel& Model) {
+			if (Model.BindState == FXDGBindState::Bind) {
 				enum UXUUserCenterTipWidget::AlertType AlertType = GetBindCount() <= 1
 					                                                   ? UXUUserCenterTipWidget::DeleteThird
 					                                                   : UXUUserCenterTipWidget::UnbindThird;
-				UXUUserCenterTipWidget::Show(AlertType, (XUType::LoginType)Model->loginType, [=]() {
+				UXUUserCenterTipWidget::Show(AlertType, Model.LoginType, [=]() {
 					UnBind(CurrentWidget, Model);
 				}, nullptr);
 			}
@@ -151,8 +146,28 @@ void UXUUserCenterWidget::ShouldShowErrorButton(bool Should) {
 	}
 }
 
-TArray<XULoginTypeModel> UXUUserCenterWidget::GetSupportTypes() {
-	return XULoginTypeModel::GetSDKSupportTypes();
+TArray<XUUserCenterItemModel> UXUUserCenterWidget::GetSupportItemModels() {
+	TArray<XUUserCenterItemModel> UserCenterItemModels;
+	auto MD = XUConfigManager::CurrentConfig();
+	if (!MD.IsValid()) {
+		return UserCenterItemModels;
+	}
+
+	auto SDKSupportTypes = XULoginTypeModel::GetSDKSupportTypes();
+	for (auto SDKSupportType : SDKSupportTypes) {
+		XUUserCenterItemModel Model;
+		Model.LoginType = SDKSupportType.Type;
+		Model.LoginTypeName = SDKSupportType.TypeName;
+		for (auto BindEntry : MD->BindEntries) {
+			if (Model.LoginTypeName.ToLower() == BindEntry.EntryName.ToLower()) {
+				Model.CanBind = BindEntry.CanBind;
+				Model.CanUnbind = BindEntry.CanUnbind;
+				UserCenterItemModels.Add(Model);
+				break;
+			}
+		}
+	}
+	return UserCenterItemModels;
 }
 
 void UXUUserCenterWidget::DeleteAccount(const FString& Tip) {
@@ -162,14 +177,15 @@ void UXUUserCenterWidget::DeleteAccount(const FString& Tip) {
 	RemoveFromParent();
 }
 
-void UXUUserCenterWidget::Bind(UXUUserCenterItemWidget* CurrentWidget, TSharedPtr<FXUBindModel> Model) {
+void UXUUserCenterWidget::Bind(UXUUserCenterItemWidget* CurrentWidget, const XUUserCenterItemModel& Model) {
 	TFunction<void(TSharedPtr<FJsonObject> paras)> BindBlock = [=](TSharedPtr<FJsonObject> Paras) {
 		UTUHUD::ShowWait();
 		XUNet::Bind(Paras, [=](TSharedPtr<FXUResponseModel> ResponseModel, FXUError Error) {
 			UTUHUD::Dismiss();
 			if (ResponseModel.IsValid()) {
-				Model->status = (int)FXDGBindType::Bind;
-				CurrentWidget->SetBindModel(Model);
+				auto TempModel = Model;
+				TempModel.BindState = FXDGBindState::Bind;
+				CurrentWidget->SetBindModel(TempModel);
 				UTUHUD::ShowToast(langModel->tds_bind_success);
 			}
 			else {
@@ -191,7 +207,7 @@ void UXUUserCenterWidget::Bind(UXUUserCenterItemWidget* CurrentWidget, TSharedPt
 		});
 	};
 
-	XUImpl::Get()->GetAuthParam((XUType::LoginType)Model->loginType, [=](TSharedPtr<FJsonObject> Paras) {
+	XUImpl::Get()->GetAuthParam(Model.LoginType, [=](TSharedPtr<FJsonObject> Paras) {
 		                             BindBlock(Paras);
 	                             }, [=](FXUError error) {
 		                             if (error.code == 80081) {
@@ -203,17 +219,18 @@ void UXUUserCenterWidget::Bind(UXUUserCenterItemWidget* CurrentWidget, TSharedPt
 	                             });
 }
 
-void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TSharedPtr<FXUBindModel> Model) {
+void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, const XUUserCenterItemModel& Model) {
 	UTUHUD::ShowWait();
-	XUNet::Unbind(Model->loginType, [=](TSharedPtr<FXUResponseModel> ResponseModel, FXUError Error) {
+	XUNet::Unbind(Model.LoginType, [=](TSharedPtr<FXUResponseModel> ResponseModel, FXUError Error) {
 		UTUHUD::Dismiss();
 		if (ResponseModel.IsValid()) {
 			if (GetBindCount() <= 1) {
 				DeleteAccount(langModel->tds_unbind_delete_success_return_sign);
 			}
 			else {
-				Model->status = (int)FXDGBindType::UnBind;
-				CurrentWidget->SetBindModel(Model);
+				auto TempModel = Model;
+				TempModel.BindState = FXDGBindState::UnBind;
+				CurrentWidget->SetBindModel(TempModel);
 				UTUHUD::ShowToast(langModel->tds_unbind_success);
 			}
 		}
@@ -230,7 +247,7 @@ void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TShared
 			if (!ResponseModel.IsValid()) {
 				TempError = MakeShareable(new FXUError(Error));
 			}
-			UnbindCallBack((XUType::LoginType)Model->loginType, TempError);
+			UnbindCallBack(Model.LoginType, TempError);
 		}
 	});
 
@@ -239,7 +256,7 @@ void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TShared
 int UXUUserCenterWidget::GetBindCount() {
 	int num = 0;
 	for (auto FxdgBindModel : BindModels) {
-		if (FxdgBindModel->status == FXDGBindType::Bind) {
+		if (FxdgBindModel.BindState == FXDGBindState::Bind) {
 			num++;
 		}
 	}

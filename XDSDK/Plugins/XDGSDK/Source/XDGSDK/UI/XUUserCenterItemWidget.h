@@ -1,12 +1,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TULoginType.h"
 #include "XUBindModel.h"
+#include "XUType.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "XUUserCenterItemWidget.generated.h"
+
+class XUUserCenterItemModel {
+public:
+	XUType::LoginType LoginType = XUType::Default;
+	FString LoginTypeName = "";
+	bool CanBind = true;
+	bool CanUnbind = true;
+	FXDGBindState BindState = UnBind;
+};
 
 
 UCLASS()
@@ -19,9 +30,9 @@ public:
 
 	static UXUUserCenterItemWidget * GenerateItem();
 
-	void SetBindModel(const TSharedPtr<FXUBindModel>& Model);
+	void SetBindModel(const XUUserCenterItemModel& Model);
 
-	TFunction<void(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<FXUBindModel> Model)> BindCallBack;
+	TFunction<void(UXUUserCenterItemWidget *CurrentWidget, const XUUserCenterItemModel& Model)> BindCallBack;
 
 protected:
 
@@ -48,10 +59,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* ArrowImage;
 
-	TSharedPtr<FXUBindModel> BindModel;
-	// TFunction<void(bool result)> Completed;
-
-	void ProcessShowOrNot();
+	XUUserCenterItemModel BindModel;
 
 	void ShowBindBt(int Show);
 	

@@ -1,4 +1,6 @@
 #include "TULanguage.h"
+
+#include "TUType.h"
 #include "Internationalization/Culture.h"
 
 TULanguage* TULanguage::SingleInstance = nullptr;
@@ -53,7 +55,11 @@ TULanguage::Type TULanguage::GetNativeType() {
 	FString Name = FTextLocalizationManager::Get().GetNativeCultureName(ELocalizedTextSourceCategory::Game);
 	const Type * FindKey = Get().LanguageMap.Find(Name);
 	if (FindKey == nullptr) {
-		return EN;
+		if (TUType::Config::Get()->RegionType == TUType::CN) {
+			return ZH_HANS;
+		} else {
+			return EN;
+		}
 	}
 	return *FindKey;
 }
@@ -65,7 +71,11 @@ TULanguage::Type TULanguage::GetCurrentType() {
 	FString Name = FInternationalization::Get().GetCurrentCulture().Get().GetName();
 	const Type * FindKey = Get().LanguageMap.Find(Name);
 	if (FindKey == nullptr) {
-		return EN;
+		if (TUType::Config::Get()->RegionType == TUType::CN) {
+			return ZH_HANS;
+		} else {
+			return EN;
+		}
 	}
 	return *FindKey;
 }

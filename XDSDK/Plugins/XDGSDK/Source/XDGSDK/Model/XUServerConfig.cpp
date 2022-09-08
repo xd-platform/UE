@@ -31,10 +31,8 @@ TSharedPtr<FXUServerConfig>& FXUServerConfig::GetLocalModel()
 bool FXUServerConfig::CanShowPrivacyAlert()
 {
 	auto md = GetLocalModel();
-	if (!md.IsValid())
-	{
-		TUDebuger::WarningLog(TEXT("请先初始化"));
-		return false;
+	if (!md.IsValid()) { // 没有缓存，表示首次启动
+		return true;
 	}
 	auto preStr = TUDataStorage<FXUStorage>::LoadString(FXUStorage::PrivacyKey);
 	FString currentStr = FString::Printf(TEXT("%s-%s-%s"), *md->version, *md->configs.serviceAgreementUrl, *md->configs.serviceTermsUrl);

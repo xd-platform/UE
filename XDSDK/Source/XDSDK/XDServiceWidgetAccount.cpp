@@ -35,6 +35,7 @@ void UXDServiceWidgetAccount::OnLoginByTypeClicked()
 
 	auto Failed = [](FXUError Error)
 	{
+		DEMO_LOG(TEXT("登录失败：\r\n%s \r\n%s"), *TUJsonHelper::GetJsonString(Error), *TUJsonHelper::GetJsonString(Error.ExtraData));
 		if (Error.code == 40021 && Error.ExtraData.IsValid())
 		{
 			FString Platform = Error.ExtraData->GetStringField("loginType");
@@ -56,10 +57,6 @@ void UXDServiceWidgetAccount::OnLoginByTypeClicked()
 			Content += TEXT("，请使用该邮箱所关联的其他平台游戏账号登录后进入「账号安全中心」手动进行账号绑定、解绑操作。");
 			DEMO_LOG(TEXT("%s"), *Content);
 		}
-		else
-		{
-			DEMO_LOG(TEXT("登录失败：\r\n%s \r\n%s"), *TUJsonHelper::GetJsonString(Error), *TUJsonHelper::GetJsonString(Error.ExtraData));
-		};
 	};
 	const int32 Index = CB_LoginByType_LoginType->GetSelectedIndex();
 	XUType::LoginType Type = static_cast<XUType::LoginType>(StaticEnum<ETempDemoLoginType>()->GetValueByIndex(Index));

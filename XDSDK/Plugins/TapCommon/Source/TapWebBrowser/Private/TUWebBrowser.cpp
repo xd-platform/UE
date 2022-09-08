@@ -97,6 +97,7 @@ TSharedRef<SWidget> UTUWebBrowser::RebuildWidget()
 	}
 	else {
 		WebBrowserWidget = SNew(SWebBrowser)
+			.ViewportSize(FVector2D(800.f, 480.f))
 			.InitialURL(InitialURL)
 			.ShowControls(false)
 			.ShowErrorMessage(false)
@@ -164,6 +165,8 @@ void UTUWebBrowser::SynchronizeProperties()
 void UTUWebBrowser::HandleOnUrlChanged(const FText& InText)
 {
 	OnUrlChanged.Broadcast(InText.ToString());
+	const TCHAR* JSCode = TEXT("window.oncontextmenu = function(event){	event.preventDefault();	event.stopPropagation();	return false; };");
+	ExecuteJavascript(JSCode);
 }
 
 void UTUWebBrowser::HandleOnTitleChanged(const FText& Text) {

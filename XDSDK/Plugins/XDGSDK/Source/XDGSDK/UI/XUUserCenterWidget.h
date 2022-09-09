@@ -93,17 +93,17 @@ private:
 
 	void ShouldShowErrorButton(bool Should);
 
-	TArray<XUUserCenterItemModel> GetSupportItemModels();
+	TArray<TSharedPtr<XUUserCenterItemModel>> GetSupportItemModels();
 
-	TArray<XUUserCenterItemModel> BindModels;
+	TArray<TSharedPtr<XUUserCenterItemModel>> BindModels;
 
 	void DeleteAccount(const FString& Tip);
 
 	int GetBindCount();
 
-	void Bind(UXUUserCenterItemWidget *CurrentWidget, const XUUserCenterItemModel& Model);
+	void Bind(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model);
 
-	void UnBind(UXUUserCenterItemWidget *CurrentWidget, const XUUserCenterItemModel& Model);
+	void UnBind(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model);
 
 	
 

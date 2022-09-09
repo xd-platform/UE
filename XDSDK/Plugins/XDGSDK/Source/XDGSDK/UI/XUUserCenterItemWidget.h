@@ -30,9 +30,9 @@ public:
 
 	static UXUUserCenterItemWidget * GenerateItem();
 
-	void SetBindModel(const XUUserCenterItemModel& Model);
+	void SetBindModel(TSharedPtr<XUUserCenterItemModel> Model);
 
-	TFunction<void(UXUUserCenterItemWidget *CurrentWidget, const XUUserCenterItemModel& Model)> BindCallBack;
+	TFunction<void(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model)> BindCallBack;
 
 protected:
 
@@ -59,7 +59,7 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* ArrowImage;
 
-	XUUserCenterItemModel BindModel;
+	TSharedPtr<XUUserCenterItemModel> BindModel;
 
 	void ShowBindBt(int Show);
 	

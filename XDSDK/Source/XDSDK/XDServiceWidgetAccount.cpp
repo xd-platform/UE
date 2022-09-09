@@ -59,8 +59,8 @@ void UXDServiceWidgetAccount::OnLoginByTypeClicked()
 		}
 	};
 	const int32 Index = CB_LoginByType_LoginType->GetSelectedIndex();
-	XUType::LoginType Type = static_cast<XUType::LoginType>(StaticEnum<ETempDemoLoginType>()->GetValueByIndex(Index));
-	XDUE::LoginByType(Type, Success, Failed);
+	ETempDemoLoginType TempType = static_cast<ETempDemoLoginType>(StaticEnum<ETempDemoLoginType>()->GetValueByIndex(Index));
+	XDUE::LoginByType(TempType == ETempDemoLoginType::Default ? XUType::LoginType::Default : static_cast<XUType::LoginType>(TempType), Success, Failed);
 #endif
 }
 

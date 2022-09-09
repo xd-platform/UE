@@ -3,6 +3,7 @@
 
 #include "XDServiceWidgetCommon.h"
 
+#include "TapUEMoment.h"
 #include "TUDebuger.h"
 #include "XDGCommon.h"
 #include "XDSDK/SubWidgets/ServiceItemWidget.h"
@@ -289,6 +290,19 @@ void UXDServiceWidgetCommon::OnOpenMomentClicked()
 #if !UE_BUILD_SHIPPING && (PLATFORM_IOS || PLATFORM_ANDROID)
 	TapUEMoment::Open(TUMomentType::Orientation::LANDSCAPE);
 #endif
+
+}
+
+void UXDServiceWidgetCommon::OnOpenWebTopicClicked()
+{
+#if PLATFORM_WINDOWS || PLATFORM_MAC
+	TUMomentType::Config Config;
+	Config.ClientID = TUType::Config::Get()->ClientID;
+    Config.RegionType = TUType::Config::Get()->RegionType;
+	Config.AppID = ETB_Topic_AppID->GetText().ToString();
+	TapUEMoment::Init(Config);
+	TapUEMoment::OpenWebTopic();
+#endif
 }
 
 void UXDServiceWidgetCommon::NativeOnInitialized()
@@ -341,6 +355,8 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	
 	ResetPrivacy->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnResetPrivacyClicked);
 	OpenMoment->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenMomentClicked);
+
+	OpenWebTopic->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenWebTopicClicked);
 
 	CB_Init_EnvironmentBox->OnSelectionChanged.AddDynamic(this, &UXDServiceWidgetCommon::OnEnvironmentSelectChanged);
 

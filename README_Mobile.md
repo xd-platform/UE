@@ -1,7 +1,7 @@
 ## XDGSDK-UE4配置
 
 #### 1.添加Plugins文件夹里的插件
-![plugins](./Demo_4.27/image/plugins.png)
+![plugins](image/plugins.png)
 
 
 #### 2.配置
@@ -13,9 +13,9 @@
 
 
 #### 3.如果接入的时候有报谷歌gms包冲突的话，可以修改 `Engine/Build/Android/Java/aar-imports.txt`中对应的gms版本号。
-![plugins](./Demo_4.27/image/gms01.png)
-![plugins](./Demo_4.27/image/gms02.png)
-![plugins](./Demo_4.27/image/gms03.png)
+![plugins](image/gms01.png)
+![plugins](image/gms02.png)
+![plugins](image/gms03.png)
 
 
 ## XDGCommon 使用

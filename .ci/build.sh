@@ -6,7 +6,7 @@ PROJECT_DIR=$(pwd)
 
 doBuild() {
     export LANG="C"
-    sh /Users/Shared/Epic\ Games/UE_$1/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=$2 -package -ue4exe=/Users/Shared/Epic\ Games/UE_$1/Engine/Binaries/Mac/UE4Editor.app/Contents/MacOS/UE4Editor -targetplatform=$3 -cookflavor=ETC2 -stage -archive -archivedirectory=$4 -clientconfig=Development -distribution -target=TapSDK_UE2 -build -nocompile -pak -cook -allmaps -noP4 -clean -uft8output
+    sh /Users/Shared/Epic\ Games/UE_$1/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun -project=$2 -package -ue4exe=/Users/Shared/Epic\ Games/UE_$1/Engine/Binaries/Mac/UE4Editor.app/Contents/MacOS/UE4Editor -targetplatform=$3 -cookflavor=ETC2 -stage -archive -archivedirectory=$4 -clientconfig=Development -distribution -target=XDSDK -build -nocompile -pak -cook -allmaps -noP4 -clean -uft8output
     export LANG="en_US.UTF-8"
 }
 

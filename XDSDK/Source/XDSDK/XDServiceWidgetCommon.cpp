@@ -376,10 +376,10 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	});
 
 #if PLATFORM_IOS || PLATFORM_ANDROID
-	FXDGCommonModule::OnXDGSDKInitCompleted.AddUObject(this, &UServiceWidgetCommon::OnXDGSDKInitCompleted);
-	FXDGCommonModule::OnXDGSDKShareCompleted.AddUObject(this, &UServiceWidgetCommon::OnXDGSDKShareCompleted);
-	FXDGCommonModule::OnXDGSDKGetRegionInfoCompleted.AddUObject(this, &UServiceWidgetCommon::OnXDGSDKGetRegionInfoCompleted);
-	FXDGCommonModule::OnXDGSDKGetXDGInfoJsonCompleted.AddUObject(this, &UServiceWidgetCommon::OnXDGSDKGetXDGInfoJsonCompleted);
+	FXDGCommonModule::OnXDGSDKInitCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKInitCompleted);
+	FXDGCommonModule::OnXDGSDKShareCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKShareCompleted);
+	FXDGCommonModule::OnXDGSDKGetRegionInfoCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKGetRegionInfoCompleted);
+	FXDGCommonModule::OnXDGSDKGetXDGInfoJsonCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKGetXDGInfoJsonCompleted);
 #endif
 }
 

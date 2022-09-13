@@ -179,12 +179,12 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 	BindByType->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnBindByTypeClicked);
 
 #if PLATFORM_IOS || PLATFORM_ANDROID
-	FXDGAccountModule::OnXDGSDKLoginSucceed.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKLoginSucceed);
-	FXDGAccountModule::OnXDGSDKLoginFailed.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKLoginFailed);
-	FXDGAccountModule::OnXDGSDKGetUserSucceed.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKGetUserSucceed);
-	FXDGAccountModule::OnXDGSDKGetUserFailed.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKGetUserFailed);
-	FXDGAccountModule::OnXDGSDKUserStateChanged.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKUserStateChanged);
-	FXDGAccountModule::OnXDGSDKBindByTypeCompleted.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKBindByTypeCompleted);
+	FXDGAccountModule::OnXDGSDKLoginSucceed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKLoginSucceed);
+	FXDGAccountModule::OnXDGSDKLoginFailed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKLoginFailed);
+	FXDGAccountModule::OnXDGSDKGetUserSucceed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKGetUserSucceed);
+	FXDGAccountModule::OnXDGSDKGetUserFailed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKGetUserFailed);
+	FXDGAccountModule::OnXDGSDKUserStateChanged.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKUserStateChanged);
+	FXDGAccountModule::OnXDGSDKBindByTypeCompleted.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKBindByTypeCompleted);
 #endif
 }
 

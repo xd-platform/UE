@@ -2,6 +2,8 @@
 
 
 #include "XUPrivacyWidget.h"
+
+#include "TapCommonBPLibrary.h"
 #include "XULanguageManager.h"
 #include "TUHelper.h"
 #include "TUHUD.h"
@@ -40,6 +42,7 @@ void UXUPrivacyWidget::NativeConstruct()
 	LoadErrorBtn->OnClicked.AddUniqueDynamic(this, &UXUPrivacyWidget::OnLoadErrorBtnClick);
 
 	OriginURL =  XUConfigManager::GetAgreementUrl();
+	// OriginURL = "https://protocol.xd.com/sdk/merger-test.html?language=ru_RU";
 	if (OriginURL.Contains("?")) { // 加个时间戳，用于浏览器清除缓存
 		OriginURL += FString::Printf(TEXT("&timestamp=%lld"), FDateTime::UtcNow().ToUnixTimestamp());
 	} else {
@@ -119,7 +122,7 @@ bool UXUPrivacyWidget::OnWebBeforeNavigation(const FString& Url, const FWebNavig
 	if (OriginURL == Url) {
 		return false;
 	}  else {
-		FPlatformProcess::LaunchURL(*Url, nullptr, nullptr);
+		UTapCommonBPLibrary::LaunchURL(*Url, nullptr, nullptr);
 		return true;
 	}
 }

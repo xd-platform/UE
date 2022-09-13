@@ -87,47 +87,16 @@ struct FXULocalConfigGoogle
 	UPROPERTY()
 	FString CLIENT_ID_FOR_PC;
 
-	// UPROPERTY()
-	// FString REVERSED_CLIENT_ID;
-	//
-	// UPROPERTY()
-	// FString API_KEY;
-	//
-	// UPROPERTY()
-	// FString GCM_SENDER_ID;
-	//
-	// UPROPERTY()
-	// int PLIST_VERSION;
-	//
-	// UPROPERTY()
-	// FString BUNDLE_ID;
-	//
-	// UPROPERTY()
-	// FString PROJECT_ID;
-	//
-	// UPROPERTY()
-	// FString STORAGE_BUCKET;
-	//
-	// UPROPERTY()
-	// bool IS_ADS_ENABLED;
-	//
-	// UPROPERTY()
-	// bool IS_ANALYTICS_ENABLED;
-	//
-	// UPROPERTY()
-	// bool IS_APPINVITE_ENABLED;
-	//
-	// UPROPERTY()
-	// bool IS_GCM_ENABLED;
-	//
-	// UPROPERTY()
-	// bool IS_SIGNIN_ENABLED;
-	//
-	// UPROPERTY()
-	// FString GOOGLE_APP_ID;
-	//
-	// UPROPERTY()
-	// FString DATABASE_URL;
+};
+
+USTRUCT()
+struct FXULocalConfigApple
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString service_id;
+
 };
 
 // USTRUCT()
@@ -208,9 +177,6 @@ struct FXULocalConfig
 	// UPROPERTY()
 	// TArray<FString> logos;
 
-	UPROPERTY()
-	TArray<FString> login_entries;
-
 	// UPROPERTY()
 	// FXULocalConfigFacebook facebook;
 	//
@@ -222,6 +188,9 @@ struct FXULocalConfig
 
 	UPROPERTY()
 	FXULocalConfigGoogle google;
+
+	UPROPERTY()
+	FXULocalConfigApple apple;
 
 	// UPROPERTY()
 	// FXULocalConfigAdjust adjust;

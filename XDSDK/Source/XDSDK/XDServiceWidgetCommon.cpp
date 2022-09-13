@@ -7,8 +7,6 @@
 #include "TUDebuger.h"
 #include "XDGCommon.h"
 #include "XDSDK/SubWidgets/ServiceItemWidget.h"
-
-#include "XDGCommonBPLibrary.h"
 #include "XDUE.h"
 #include "Components/CheckBox.h"
 #include "Components/ComboBoxString.h"
@@ -16,6 +14,10 @@
 #include "XDSDK/XDSDK.h"
 #include "XDGSDK.h"
 #include "XUSettings.h"
+#if PLATFORM_IOS || PLATFORM_ANDROID
+#include "TapUEMoment.h"
+#include "XDGCommonBPLibrary.h"
+#endif
 
 void UXDServiceWidgetCommon::OnGetSDKVersionNameClicked()
 {
@@ -85,7 +87,10 @@ void UXDServiceWidgetCommon::OnTrackUserClicked()
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	const FString UserIDStr = ETB_User_UserID->GetText().ToString();
 	UXDGCommonBPLibrary::TrackUser(UserIDStr);
-#endif	
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	const FString UserIDStr = ETB_User_UserID->GetText().ToString();
+	XDUE::TrackUser(UserIDStr);
+#endif
 }
 
 void UXDServiceWidgetCommon::OnTrackRoleClicked()
@@ -96,7 +101,13 @@ void UXDServiceWidgetCommon::OnTrackRoleClicked()
 	const FString RoleNameStr = ETB_Role_RoleName->GetText().ToString();
 	const int32 Level = FCString::Atoi(*ETB_Role_Level->GetText().ToString());
 	UXDGCommonBPLibrary::TrackRole(ServerIDStr, RoleIDStr, RoleNameStr, Level);
-#endif	
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	const FString ServerIDStr = ETB_Role_ServerID->GetText().ToString();
+	const FString RoleIDStr = ETB_Role_RoleID->GetText().ToString();
+	const FString RoleNameStr = ETB_Role_RoleName->GetText().ToString();
+	const int32 Level = FCString::Atoi(*ETB_Role_Level->GetText().ToString());
+    XDUE::TrackRole(ServerIDStr, RoleIDStr, RoleNameStr, Level);
+#endif
 }
 
 void UXDServiceWidgetCommon::OnTrackEventClicked()
@@ -104,7 +115,10 @@ void UXDServiceWidgetCommon::OnTrackEventClicked()
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	const FString EventNameStr = ETB_Event_EventName->GetText().ToString();
 	UXDGCommonBPLibrary::TrackEvent(EventNameStr);
-#endif	
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	const FString EventNameStr = ETB_Event_EventName->GetText().ToString();
+	XDUE::TrackEvent(EventNameStr);
+#endif
 }
 
 void UXDServiceWidgetCommon::OnSetCurrentUserPushServiceEnableClicked()
@@ -204,28 +218,41 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 	}
 	UXDGCommonBPLibrary::DevelopInit(Num);
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
-	if (CB_Init_EnvironmentBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoEnvironmentType::RND))
+	UEnum* EnvEnum = StaticEnum<ETempDemoEnvironmentType>();
+	UEnum* RegionEnum = StaticEnum<ETempDemoRegionType>();
+	if (CB_Init_EnvironmentBox->GetSelectedOption() == EnvEnum->GetNameStringByValue(static_cast<int32>(ETempDemoEnvironmentType::RND)))
 	{
-		if (CB_Init_RegionBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoRegionType::CN))
+		TUDebuger::IsTest = true;
+		if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::CN)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-cn-rnd.json");
 		}
-		else if (CB_Init_RegionBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoRegionType::Global))
+		else if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::Global)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-rnd.json");
 		}
 	}
-	else if (CB_Init_EnvironmentBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoEnvironmentType::Default))
+	else if (CB_Init_EnvironmentBox->GetSelectedOption() == EnvEnum->GetNameStringByValue(static_cast<int32>(ETempDemoEnvironmentType::Default)))
 	{
-		if (CB_Init_RegionBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoRegionType::CN))
+		TUDebuger::IsTest = false;
+		if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::CN)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig-cn.json");
 		}
-		else if (CB_Init_RegionBox->GetSelectedOption() == UEnum::GetValueAsString(ETempDemoRegionType::Global))
+		else if (CB_Init_RegionBox->GetSelectedOption() == RegionEnum->GetNameStringByValue(static_cast<int32>(ETempDemoRegionType::Global)))
 		{
 			XUSettings::UpdateConfigFileName("XDConfig.json");
 		}
 	}
+	auto Callback = [](bool Result, FString Message)
+	{
+		if (Result) {
+			TUDebuger::DisplayShow(TEXT("初始化成功：") + Message);
+		} else {
+			TUDebuger::ErrorShow(TEXT("初始化失败：") + Message);
+		}
+	};
+	XDUE::InitSDK(TEXT("1.2.3"), Callback);
 #endif
 }
 
@@ -262,6 +289,19 @@ void UXDServiceWidgetCommon::OnOpenMomentClicked()
 {
 #if !UE_BUILD_SHIPPING && (PLATFORM_IOS || PLATFORM_ANDROID)
 	TapUEMoment::Open(TUMomentType::Orientation::LANDSCAPE);
+#endif
+
+}
+
+void UXDServiceWidgetCommon::OnOpenWebTopicClicked()
+{
+#if PLATFORM_WINDOWS || PLATFORM_MAC
+	TUMomentType::Config Config;
+	Config.ClientID = TUType::Config::Get()->ClientID;
+    Config.RegionType = TUType::Config::Get()->RegionType;
+	Config.AppID = ETB_Topic_AppID->GetText().ToString();
+	TapUEMoment::Init(Config);
+	TapUEMoment::OpenWebTopic();
 #endif
 }
 
@@ -316,6 +356,8 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	ResetPrivacy->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnResetPrivacyClicked);
 	OpenMoment->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenMomentClicked);
 
+	OpenWebTopic->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenWebTopicClicked);
+
 	CB_Init_EnvironmentBox->OnSelectionChanged.AddDynamic(this, &UXDServiceWidgetCommon::OnEnvironmentSelectChanged);
 
 	TUDebuger::IsTest = false;
@@ -326,18 +368,18 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	TUDebuger::ReplaceHosts.Add("https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track", "https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-test/track");
 	TUDebuger::ReplaceHosts.Add("https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track", "https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-test/track");
 
-	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.cn", "https://xd-website.oss-cn-beijing.aliyuncs.com/xd-order-sgp/v1.0-dev/test/index.html");
-	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.com", "https://xd-website.oss-cn-beijing.aliyuncs.com/xd-order-sgp/v1.0-dev/test/index.html");
+	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.cn", "https://login-xdsdk.xd.cn");
+	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.com", "https://login-xdsdk-test.xd-cf-2022.workers.dev");
 
 	XDUE::OnLogout.AddLambda([]() {
 		TUDebuger::DisplayShow(TEXT("游戏账号应登出"));
 	});
 
 #if PLATFORM_IOS || PLATFORM_ANDROID
-	FXDGCommonModule::OnXDGSDKInitCompleted.AddUObject(this, &UServiceWidgetCommon::OnXDGSDKInitCompleted);
-	FXDGCommonModule::OnXDGSDKShareCompleted.AddUObject(this, &UServiceWidgetCommon::OnXDGSDKShareCompleted);
-	FXDGCommonModule::OnXDGSDKGetRegionInfoCompleted.AddUObject(this, &UServiceWidgetCommon::OnXDGSDKGetRegionInfoCompleted);
-	FXDGCommonModule::OnXDGSDKGetXDGInfoJsonCompleted.AddUObject(this, &UServiceWidgetCommon::OnXDGSDKGetXDGInfoJsonCompleted);
+	FXDGCommonModule::OnXDGSDKInitCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKInitCompleted);
+	FXDGCommonModule::OnXDGSDKShareCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKShareCompleted);
+	FXDGCommonModule::OnXDGSDKGetRegionInfoCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKGetRegionInfoCompleted);
+	FXDGCommonModule::OnXDGSDKGetXDGInfoJsonCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKGetXDGInfoJsonCompleted);
 #endif
 }
 

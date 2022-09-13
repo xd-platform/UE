@@ -51,7 +51,7 @@ void UXUUserCenterTipWidget::OnGreenBtnClick()
 		FString Content = TextBox->Text.ToString();
 		if (AlertType == DeleteGuest || AlertType == DeleteThird)
 		{
-			if (Content == "Delete")
+			if (Content.Equals(TEXT("Delete")))
 			{
 				if (SureCallBack)
 				{
@@ -67,7 +67,7 @@ void UXUUserCenterTipWidget::OnGreenBtnClick()
 			}
 		} else
 		{
-			if (Content == "Confirm")
+			if (Content.Equals(TEXT("Confirm")))
 			{
 				if (SureCallBack)
 				{

@@ -2,6 +2,7 @@
 
 #include "HttpServerModule.h"
 #include "HttpServerResponse.h"
+#include "TapCommonBPLibrary.h"
 #include "TULoginImpl.h"
 #include "TUCrypto.h"
 #include "TUHelper.h"
@@ -37,7 +38,7 @@ bool TauWebAuthHelper::ProcessWebAuth(const TArray<FString>& NeedPermissions,
 		return false;
 	} else {
 		RedirectUri = TempRedirectUri;
-		FPlatformProcess::LaunchURL(*GenerateWebAuthUrl(), nullptr, nullptr);
+		UTapCommonBPLibrary::LaunchURL(*GenerateWebAuthUrl(), nullptr, nullptr);
 		return true;
 	}
 

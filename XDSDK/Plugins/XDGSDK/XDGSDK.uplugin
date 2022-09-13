@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 60501001,
-	"VersionName": "6.5.1",
+	"Version": 60502001,
+	"VersionName": "6.5.2",
 	"FriendlyName": "XDGSDK",
 	"Description": "",
 	"Category": "XinDong",
@@ -33,6 +33,10 @@
 		},
 		{
 			"Name": "TapLogin",
+			"Enabled": true
+		},
+		{
+			"Name": "TapDB",
 			"Enabled": true
 		}
 	]

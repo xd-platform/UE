@@ -5,6 +5,10 @@
 #include "TapBridge.h"
 #include "TapJson.h"
 #include "TUError.h"
+#if PLATFORM_WINDOWS
+#include "Windows/WindowsWindow.h"
+#include "Widgets/SWindow.h"
+#endif
 
 #define TAPCOMMON_REGION_CODE_ID "TAPCOMMON_REGION_CODE_ID"
 #define TAPCOMMON_IS_TAPTAP_INSTALLED_ID "TAPCOMMON_IS_TAPTAP_INSTALLED_ID"
@@ -255,6 +259,27 @@ void UTapCommonBPLibrary::OnBridgeCallback(const FString &result)
         return;
     }
 #endif 
+}
+
+void UTapCommonBPLibrary::LaunchURL(const TCHAR* URL, const TCHAR* Param, FString* Error)
+{
+#if PLATFORM_WINDOWS
+	if (GWorld)
+	{
+		if (UGameViewportClient* Viewport = GWorld->GetGameViewport())
+		{
+			if (FGenericWindow* Window = Viewport->GetWindow()->GetNativeWindow().Get())
+			{
+				if (Window->GetWindowMode() == EWindowMode::Fullscreen)
+				{
+					FWindowsWindow* Win = static_cast<FWindowsWindow*>(Window);
+					SetWindowPos(Win->GetHWnd(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+				}
+			}
+		}
+	}
+#endif
+	FPlatformProcess::LaunchURL(URL, Param, Error);
 }
 
 bool UTapCommonBPLibrary::CheckResult(const FTapResult result)

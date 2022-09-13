@@ -1,4 +1,6 @@
 #include "XUImpl.h"
+
+#include "TapCommonBPLibrary.h"
 #include "TapUEBootstrap.h"
 #include "XUStorage.h"
 #include "TUDeviceInfo.h"
@@ -116,6 +118,14 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 	else if (LoginType == XUType::Google) {
 		TUDebuger::DisplayLog("Google Login");
 		XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::GoogleAuth,
+			[=](TSharedPtr<FJsonObject> AuthParas) {
+				AuthParas->SetNumberField("type", (int)LoginType);
+				resultBlock(AuthParas);
+			}, ErrorBlock);
+	}
+	else if (LoginType == XUType::Apple) {
+		TUDebuger::DisplayLog("Apple Login");
+		XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::AppleAuth,
 			[=](TSharedPtr<FJsonObject> AuthParas) {
 				AuthParas->SetNumberField("type", (int)LoginType);
 				resultBlock(AuthParas);
@@ -243,7 +253,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	if (XUConfigManager::IsCN()) {
 		UXUPayWebWidget::Show(UrlStr, CallBack);
 	} else {
-		FPlatformProcess::LaunchURL(*UrlStr, nullptr, nullptr);
+		UTapCommonBPLibrary::LaunchURL(*UrlStr, nullptr, nullptr);
 	}
 }
 

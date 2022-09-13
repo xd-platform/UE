@@ -97,6 +97,7 @@ TSharedRef<SWidget> UTUWebBrowser::RebuildWidget()
 	}
 	else {
 		WebBrowserWidget = SNew(SWebBrowser)
+			.ViewportSize(FVector2D(800.f, 480.f))
 			.InitialURL(InitialURL)
 			.ShowControls(false)
 			.ShowErrorMessage(false)
@@ -114,8 +115,13 @@ TSharedRef<SWidget> UTUWebBrowser::RebuildWidget()
 			// .OnDismissAllDialogs(OnDismissAllDialogs)
 			// .OnSuppressContextMenu(OnSuppressContextMenu)
 			// .OnDragWindow(OnDragWindow)
+			.BrowserFrameRate(60.f)
 			.OnBeforePopup(BIND_UOBJECT_DELEGATE(FOnBeforePopupDelegate, HandleOnBeforePopup));
 
+		if (ITextInputMethodSystem* InputSys = FSlateApplication::Get().GetTextInputMethodSystem())
+		{
+			WebBrowserWidget->BindInputMethodSystem(InputSys);
+		}
 		return WebBrowserWidget.ToSharedRef();
 	}
 }
@@ -159,6 +165,8 @@ void UTUWebBrowser::SynchronizeProperties()
 void UTUWebBrowser::HandleOnUrlChanged(const FText& InText)
 {
 	OnUrlChanged.Broadcast(InText.ToString());
+	const TCHAR* JSCode = TEXT("window.oncontextmenu = function(event){	event.preventDefault();	event.stopPropagation();	return false; };");
+	ExecuteJavascript(JSCode);
 }
 
 void UTUWebBrowser::HandleOnTitleChanged(const FText& Text) {

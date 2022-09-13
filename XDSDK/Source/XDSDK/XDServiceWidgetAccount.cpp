@@ -3,6 +3,7 @@
 
 #include "XDServiceWidgetAccount.h"
 
+#include "TUDebuger.h"
 #include "XDGAccount.h"
 #include "XDGAccountBPLibrary.h"
 #include "XDUE.h"
@@ -29,11 +30,12 @@ void UXDServiceWidgetAccount::OnLoginByTypeClicked()
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
 	auto Success = [](FXUUser User)
 	{
-		DEMO_LOG(TEXT("LoginSuccess：\r\n"), *TUJsonHelper::GetJsonString(User));
+		TUDebuger::DisplayShow(FString::Printf(TEXT("LoginSuccess：%s\r\n"), *TUJsonHelper::GetJsonString(User)));
 	};
 
 	auto Failed = [](FXUError Error)
 	{
+		DEMO_LOG(TEXT("登录失败：\r\n%s \r\n%s"), *TUJsonHelper::GetJsonString(Error), *TUJsonHelper::GetJsonString(Error.ExtraData));
 		if (Error.code == 40021 && Error.ExtraData.IsValid())
 		{
 			FString Platform = Error.ExtraData->GetStringField("loginType");
@@ -55,14 +57,10 @@ void UXDServiceWidgetAccount::OnLoginByTypeClicked()
 			Content += TEXT("，请使用该邮箱所关联的其他平台游戏账号登录后进入「账号安全中心」手动进行账号绑定、解绑操作。");
 			DEMO_LOG(TEXT("%s"), *Content);
 		}
-		else
-		{
-			DEMO_LOG(TEXT("登录失败：\r\n%s \r\n%s"), *TUJsonHelper::GetJsonString(Error), *TUJsonHelper::GetJsonString(Error.ExtraData));
-		};
 	};
 	const int32 Index = CB_LoginByType_LoginType->GetSelectedIndex();
-	XUType::LoginType Type = static_cast<XUType::LoginType>(StaticEnum<ETempDemoLoginType>()->GetValueByIndex(Index));
-	XDUE::LoginByType(Type, Success, Failed);
+	ETempDemoLoginType TempType = static_cast<ETempDemoLoginType>(StaticEnum<ETempDemoLoginType>()->GetValueByIndex(Index));
+	XDUE::LoginByType(TempType == ETempDemoLoginType::Default ? XUType::LoginType::Default : static_cast<XUType::LoginType>(TempType), Success, Failed);
 #endif
 }
 
@@ -82,11 +80,11 @@ void UXDServiceWidgetAccount::OnGetUserClicked()
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
 	if (TSharedPtr<FXUUser> User = XDUE::GetUserInfo())
 	{
-		DEMO_LOG(TEXT("GetUser success."));
+		DEMO_LOG(TEXT("GetUser success. %s"), *TUJsonHelper::GetJsonString(User));
 	}
 	else
 	{
-		DEMO_LOG(TEXT("GetUser failed."));
+		DEMO_LOG(TEXT("GetUser failed. Plase login."));
 	}
 #endif
 }
@@ -181,12 +179,12 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 	BindByType->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnBindByTypeClicked);
 
 #if PLATFORM_IOS || PLATFORM_ANDROID
-	FXDGAccountModule::OnXDGSDKLoginSucceed.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKLoginSucceed);
-	FXDGAccountModule::OnXDGSDKLoginFailed.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKLoginFailed);
-	FXDGAccountModule::OnXDGSDKGetUserSucceed.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKGetUserSucceed);
-	FXDGAccountModule::OnXDGSDKGetUserFailed.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKGetUserFailed);
-	FXDGAccountModule::OnXDGSDKUserStateChanged.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKUserStateChanged);
-	FXDGAccountModule::OnXDGSDKBindByTypeCompleted.AddUObject(this, &UServiceWidgetAccount::OnXDGSDKBindByTypeCompleted);
+	FXDGAccountModule::OnXDGSDKLoginSucceed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKLoginSucceed);
+	FXDGAccountModule::OnXDGSDKLoginFailed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKLoginFailed);
+	FXDGAccountModule::OnXDGSDKGetUserSucceed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKGetUserSucceed);
+	FXDGAccountModule::OnXDGSDKGetUserFailed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKGetUserFailed);
+	FXDGAccountModule::OnXDGSDKUserStateChanged.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKUserStateChanged);
+	FXDGAccountModule::OnXDGSDKBindByTypeCompleted.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKBindByTypeCompleted);
 #endif
 }
 

@@ -1,8 +1,8 @@
 #pragma once
 #include "XUIpInfoModel.h"
-#include "XUServerConfig.h"
 #include "XUType.h"
 
+struct FXUServerConfig;
 typedef TFunction<void(TSharedPtr<XUType::Config> Config, const FString& Msg)> XUConfigHandler;
 
 class XUConfigManager {

@@ -27,7 +27,7 @@ void XDGPaymentAndroid::QueryWithProductIds(FString listJson){
                                               "(Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jListJson = env->NewStringUTF(TCHAR_TO_ANSI(*listJson));
+            auto jListJson = env->NewStringUTF(TCHAR_TO_UTF8(*listJson));
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jListJson);
             env->DeleteLocalRef(jListJson);
         }
@@ -49,11 +49,11 @@ void XDGPaymentAndroid::PayWithProduct(FString orderId,
                                               "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jOrderId = env->NewStringUTF(TCHAR_TO_ANSI(*orderId));
-            auto jProductId = env->NewStringUTF(TCHAR_TO_ANSI(*productId));
-            auto jRoleId = env->NewStringUTF(TCHAR_TO_ANSI(*roleId));
-            auto jServerId = env->NewStringUTF(TCHAR_TO_ANSI(*serverId));
-            auto jExt = env->NewStringUTF(TCHAR_TO_ANSI(*ext));
+            auto jOrderId = env->NewStringUTF(TCHAR_TO_UTF8(*orderId));
+            auto jProductId = env->NewStringUTF(TCHAR_TO_UTF8(*productId));
+            auto jRoleId = env->NewStringUTF(TCHAR_TO_UTF8(*roleId));
+            auto jServerId = env->NewStringUTF(TCHAR_TO_UTF8(*serverId));
+            auto jExt = env->NewStringUTF(TCHAR_TO_UTF8(*ext));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jOrderId, jProductId, jRoleId, jServerId, jExt);
 
@@ -136,13 +136,13 @@ void XDGPaymentAndroid::PayWithWeb( FString orderId,
                                               "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;FLjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jOrderId = env->NewStringUTF(TCHAR_TO_ANSI(*orderId));
-            auto jProductId = env->NewStringUTF(TCHAR_TO_ANSI(*productId));
-            auto jProductName = env->NewStringUTF(TCHAR_TO_ANSI(*productName));
+            auto jOrderId = env->NewStringUTF(TCHAR_TO_UTF8(*orderId));
+            auto jProductId = env->NewStringUTF(TCHAR_TO_UTF8(*productId));
+            auto jProductName = env->NewStringUTF(TCHAR_TO_UTF8(*productName));
 
-            auto jRoleId = env->NewStringUTF(TCHAR_TO_ANSI(*roleId));
-            auto jServerId = env->NewStringUTF(TCHAR_TO_ANSI(*serverId));
-            auto jExtras = env->NewStringUTF(TCHAR_TO_ANSI(*extras));
+            auto jRoleId = env->NewStringUTF(TCHAR_TO_UTF8(*roleId));
+            auto jServerId = env->NewStringUTF(TCHAR_TO_UTF8(*serverId));
+            auto jExtras = env->NewStringUTF(TCHAR_TO_UTF8(*extras));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod,  jOrderId, jProductId, jProductName, payAmount, jRoleId, jServerId, jExtras);
 
@@ -174,12 +174,12 @@ void XDGPaymentAndroid::PurchaseToken(FString transactionIdentifier,
                                               "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
         if (jMethod)
         {
-            auto jPurchaseToken = env->NewStringUTF(TCHAR_TO_ANSI(*transactionIdentifier));
-            auto jProductId = env->NewStringUTF(TCHAR_TO_ANSI(*productIdentifier));
-            auto jOrderId = env->NewStringUTF(TCHAR_TO_ANSI(*orderId));
-            auto jRoleId = env->NewStringUTF(TCHAR_TO_ANSI(*roleId));
-            auto jServerId = env->NewStringUTF(TCHAR_TO_ANSI(*serverId));
-            auto jExt = env->NewStringUTF(TCHAR_TO_ANSI(*ext));
+            auto jPurchaseToken = env->NewStringUTF(TCHAR_TO_UTF8(*transactionIdentifier));
+            auto jProductId = env->NewStringUTF(TCHAR_TO_UTF8(*productIdentifier));
+            auto jOrderId = env->NewStringUTF(TCHAR_TO_UTF8(*orderId));
+            auto jRoleId = env->NewStringUTF(TCHAR_TO_UTF8(*roleId));
+            auto jServerId = env->NewStringUTF(TCHAR_TO_UTF8(*serverId));
+            auto jExt = env->NewStringUTF(TCHAR_TO_UTF8(*ext));
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jPurchaseToken, jProductId, jOrderId, jRoleId, jServerId, jExt);
 

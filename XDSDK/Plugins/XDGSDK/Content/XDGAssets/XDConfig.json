@@ -22,8 +22,10 @@
             "email"
         ]
     },
-    "login_entries":["TapTap", "Google"],
     "google":{
         "CLIENT_ID_FOR_PC":"888194877532-qtsvqehpob7kinfvo9j441emn3sh2tf3.apps.googleusercontent.com"
+    },
+    "apple": {
+        "service_id":"com.xd.sign.sdkdemo1"
     }
 }

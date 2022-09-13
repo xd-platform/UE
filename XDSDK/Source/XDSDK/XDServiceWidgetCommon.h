@@ -130,6 +130,9 @@ class XDSDK_API UXDServiceWidgetCommon : public UUserWidget
 
 	UFUNCTION()
 	void OnOpenMomentClicked();
+
+	UFUNCTION()
+	void OnOpenWebTopicClicked();
 	
 protected:
 	virtual void NativeOnInitialized() override;
@@ -236,4 +239,9 @@ protected:
 
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* OpenMoment;
+	
+	UPROPERTY(Meta = (BindWidget))
+	UEditableTextBox* ETB_Topic_AppID;
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* OpenWebTopic;
 };

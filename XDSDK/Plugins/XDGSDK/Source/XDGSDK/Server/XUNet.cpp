@@ -49,7 +49,9 @@ TSharedPtr<FJsonObject> XUNet::CommonParameters()
 	query->SetStringField("loc", ipInfoModel->country_code);
 	query->SetStringField("city", ipInfoModel->city);
 	query->SetStringField("timeZone", ipInfoModel->timeZone);
-	query->SetStringField("countryCode", ipInfoModel->country_code);
+	if (!XUConfigManager::SharedInstance().TargetRegion.IsEmpty()) {
+		query->SetStringField("countryCode", XUConfigManager::SharedInstance().TargetRegion);
+	}
 	
 	query->SetStringField("locationInfoType", "ip");
 	query->SetStringField("chn", "PC");

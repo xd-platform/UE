@@ -163,17 +163,17 @@ void UXDServiceWidgetPayment::NativeOnInitialized()
 	PurchaseToken->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetPayment::OnPurchaseTokenClicked);
 
 #if PLATFORM_IOS || PLATFORM_ANDROID
-	FXDGPaymentModule::OnXDGSDKPaymentSucceed.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKPaymentSucceed);
-	FXDGPaymentModule::OnXDGSDKPaymentFailed.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKPaymentFailed);
+	FXDGPaymentModule::OnXDGSDKPaymentSucceed.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKPaymentSucceed);
+	FXDGPaymentModule::OnXDGSDKPaymentFailed.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKPaymentFailed);
     
-	FXDGPaymentModule::OnXDGSDKQueryProductIdsSucceed.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKQueryProductIdsSucceed);
-	FXDGPaymentModule::OnXDGSDKQueryProductIdsFailed.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKQueryProductIdsFailed);
+	FXDGPaymentModule::OnXDGSDKQueryProductIdsSucceed.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKQueryProductIdsSucceed);
+	FXDGPaymentModule::OnXDGSDKQueryProductIdsFailed.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKQueryProductIdsFailed);
 
-	FXDGPaymentModule::OnXDGSDKQueryRestoredPurchasesSucceed.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKQueryRestoredPurchasesSucceed);
-	FXDGPaymentModule::OnXDGSDKQueryRestoredPurchasesFailed.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKQueryRestoredPurchasesFailed);
-	FXDGPaymentModule::OnXDGSDKPayWithWebCompleted.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKPayWithWebCompleted);
-	FXDGPaymentModule::OnXDGSDKCheckRefundStatusSucceed.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKCheckRefundStatusSucceed);
-	FXDGPaymentModule::OnXDGSDKCheckRefundStatusFailed.AddUObject(this, &UServiceWidgetPayment::OnXDGSDKCheckRefundStatusFailed);
+	FXDGPaymentModule::OnXDGSDKQueryRestoredPurchasesSucceed.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKQueryRestoredPurchasesSucceed);
+	FXDGPaymentModule::OnXDGSDKQueryRestoredPurchasesFailed.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKQueryRestoredPurchasesFailed);
+	FXDGPaymentModule::OnXDGSDKPayWithWebCompleted.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKPayWithWebCompleted);
+	FXDGPaymentModule::OnXDGSDKCheckRefundStatusSucceed.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKCheckRefundStatusSucceed);
+	FXDGPaymentModule::OnXDGSDKCheckRefundStatusFailed.AddUObject(this, &UXDServiceWidgetPayment::OnXDGSDKCheckRefundStatusFailed);
 #endif
 }
 

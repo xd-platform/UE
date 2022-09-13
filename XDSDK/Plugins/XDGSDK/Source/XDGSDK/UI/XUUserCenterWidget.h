@@ -92,18 +92,18 @@ private:
 	void ResetListBox();
 
 	void ShouldShowErrorButton(bool Should);
-	
-	TArray<XULoginTypeModel> GetSupportTypes();
 
-	TArray<TSharedPtr<FXUBindModel>> BindModels;
+	TArray<TSharedPtr<XUUserCenterItemModel>> GetSupportItemModels();
+
+	TArray<TSharedPtr<XUUserCenterItemModel>> BindModels;
 
 	void DeleteAccount(const FString& Tip);
 
 	int GetBindCount();
 
-	void Bind(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<FXUBindModel> Model);
+	void Bind(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model);
 
-	void UnBind(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<FXUBindModel> Model);
+	void UnBind(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model);
 
 	
 

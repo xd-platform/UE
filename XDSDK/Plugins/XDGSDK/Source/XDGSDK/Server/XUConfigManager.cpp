@@ -9,6 +9,7 @@
 #include "XUNet.h"
 #include "XUSettings.h"
 #include "XUStorage.h"
+#include "XUServerConfig.h"
 
 XUConfigManager * XUConfigManager::Instance = nullptr;
 

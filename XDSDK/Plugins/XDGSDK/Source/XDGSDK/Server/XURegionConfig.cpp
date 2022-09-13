@@ -14,6 +14,10 @@ public:
 	virtual FString LoginWebHost() {
 		return "https://login-xdsdk.xd.cn";
 	}
+	
+	virtual FString TrackHost() {
+		return "https://event-tracking-cn.cn-beijing.log.aliyuncs.com";
+	}
 };
 
 class XURegionConfigIO: public XURegionConfig
@@ -25,6 +29,10 @@ public:
 
 	virtual FString LoginWebHost() {
 		return "https://login-xdsdk.xd.com";
+	}
+		
+	virtual FString TrackHost() {
+		return "https://event-tracking-global.ap-southeast-1.log.aliyuncs.com";
 	}
 };
 
@@ -64,6 +72,10 @@ FString XURegionConfig::PaybackListUrl() {
 
 FString XURegionConfig::UploadAgreementUrl() {
 	return BaseHost() / "/api/account/v1/agreement/confirm";
+}
+
+FString XURegionConfig::TrackUrl() {
+	return TrackHost() / "logstores/sdk6-prod/track";
 }
 
 TSharedPtr<XURegionConfig>& XURegionConfig::Get() {

@@ -1,0 +1,12 @@
+stages:
+  - build
+
+build:
+  tags:
+    - ios-builder
+  stage: build
+  script:
+    - ./.ci/build.sh
+  only:
+    - merge_requests
+

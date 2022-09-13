@@ -5,8 +5,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "IOSAppDelegate.h"//UE4
-#include "CoreDelegates.h"//UE4
+#include "IOS/IOSAppDelegate.h"
+#include "Misc/CoreDelegates.h"
 #import <Foundation/Foundation.h>
 
 /**

@@ -11,7 +11,7 @@ public class XDSDK : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "UMG" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "XDGSDK", "TapCommon","TapBootstrap","TapLogin","TapDB", 
-			"TapMoment","XDGCommon","XDGAccount","XDGPayment", "Json", "JsonUtilities", "Slate", "SlateCore" });
+			"TapMoment","XDGCommon","XDGAccount","XDGPayment", "Json", "JsonUtilities", "Slate", "SlateCore"});
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

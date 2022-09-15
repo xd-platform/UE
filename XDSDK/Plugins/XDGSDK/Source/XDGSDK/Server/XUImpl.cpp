@@ -14,6 +14,7 @@
 #include "XDUE.h"
 #include "XUConfigManager.h"
 #include "XUThirdAuthHelper.h"
+#include "XUThirdPayHelper.h"
 #include "XDGSDK/UI/XUAccountCancellationWidget.h"
 #include "XDGSDK/UI/XUPayWebWidget.h"
 #include "XDGSDK/UI/XUPrivacyWidget.h"
@@ -248,13 +249,21 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	Query->SetStringField("lang", XULanguageManager::GetLanguageKey());
 	Query->SetStringField("platform", "pc");
 
+	int64 TimeStamp = FDateTime::Now().ToUnixTimestamp();
+	FString XDClientId = XUConfigManager::CurrentConfig()->ClientId;
+	FString SignStr = FString::Printf(TEXT("%s%s%s%lld%s"), *ProductId, *RoleId, *ServerId, TimeStamp, *XDClientId);
+	FString SignMD5 = FString::Printf(TEXT("%s,%lld"), *FMD5::HashAnsiString(*SignStr), TimeStamp); 
+	
 	FString QueryStr = TUHelper::CombinParameters(Query);
-	FString UrlStr = XUConfigManager::CurrentConfig()->WebPayUrl + "?" + QueryStr;
+	FString UrlStr = XUConfigManager::CurrentConfig()->WebPayUrl + "?" + QueryStr + "&sign=" + SignMD5;
+	
+	FString LogStr = FString::Printf(TEXT(" SignStr=： %s  ;  Sign=：%s   ;  UrlStr=: %s"), *SignStr, *SignMD5, *UrlStr); 
+	TUDebuger::WarningLog(*LogStr);
 
 	if (XUConfigManager::IsCN()) {
 		UXUPayWebWidget::Show(UrlStr, CallBack);
 	} else {
-		UTapCommonBPLibrary::LaunchURL(*UrlStr, nullptr, nullptr);
+		XUThirdPayHelper::StartWebPay(UrlStr, CallBack);
 	}
 }
 

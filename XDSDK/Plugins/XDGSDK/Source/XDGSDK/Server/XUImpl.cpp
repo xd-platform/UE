@@ -17,6 +17,7 @@
 #include "XDGSDK/UI/XUAccountCancellationWidget.h"
 #include "XDGSDK/UI/XUPayWebWidget.h"
 #include "XDGSDK/UI/XUPrivacyWidget.h"
+#include "Track/XUTracker.h"
 
 static int Success = 200;
 
@@ -381,6 +382,7 @@ void XUImpl::CheckAgreement(TSharedPtr<XUType::Config> Config, XUInitCallback Ca
 		return;
 	}
 	UXUPrivacyWidget::ShowPrivacy([=]() {
+		XUTracker::Get()->UserAgreeProtocol();
 		InitFinish(CallBack);
 	});
 }

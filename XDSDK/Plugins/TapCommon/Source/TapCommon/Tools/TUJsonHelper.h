@@ -1,6 +1,15 @@
 #pragma once
 #include "JsonObjectConverter.h"
 
+
+ inline TSharedPtr<FJsonObject>& operator+=(TSharedPtr<FJsonObject> & Object, const TSharedPtr<FJsonObject> & AddObject) {
+ 	if (Object.IsValid() && AddObject.IsValid())
+ 	{
+ 		Object->Values.Append(AddObject->Values);
+ 	}
+	return Object;
+}
+
 class TAPCOMMON_API TUJsonHelper
 {
 public:

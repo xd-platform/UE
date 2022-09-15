@@ -1,7 +1,7 @@
 #pragma once
 #include "XUTracker.h"
 
-class XUPaymentTracker : public XUTracker{
+class XUPaymentTracker{
 public:
 
 

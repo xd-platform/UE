@@ -14,6 +14,7 @@
 #include "XDUE.h"
 #include "XUConfigManager.h"
 #include "XUThirdAuthHelper.h"
+#include "XUThirdPayHelper.h"
 #include "XDGSDK/UI/XUAccountCancellationWidget.h"
 #include "XDGSDK/UI/XUPayWebWidget.h"
 #include "XDGSDK/UI/XUPrivacyWidget.h"
@@ -261,7 +262,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	if (XUConfigManager::IsCN()) {
 		UXUPayWebWidget::Show(UrlStr, CallBack);
 	} else {
-		UTapCommonBPLibrary::LaunchURL(*UrlStr, nullptr, nullptr);
+		XUThirdPayHelper::StartWebPay(UrlStr, CallBack);
 	}
 }
 

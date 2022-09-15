@@ -9,12 +9,15 @@ public:
 
 	static void StartWebPay(FString PayUrl, TFunction<void(XUType::PayResult Result)> Callback);
 
-	static void CancelAllPreAuths();
+	static void CancelAll();
 
 private:
 	static TArray<FString> CacheStates;
+	
+	static TMap<FString, TFunction<void(XUType::PayResult Result)>> CallbackMap;
 
-	static FString GenerateState();
+	static FString GenerateState(TFunction<void(XUType::PayResult Result)> Callback);
 
-	static bool JudgeContainStateAndClearAllAuths(FString State);
+	static bool IsContainState(FString State);
 };
+

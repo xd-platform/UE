@@ -1,6 +1,4 @@
 #include "XUImpl.h"
-
-#include "TapCommonBPLibrary.h"
 #include "TapUEBootstrap.h"
 #include "XUStorage.h"
 #include "TUDeviceInfo.h"
@@ -19,6 +17,7 @@
 #include "XDGSDK/UI/XUPayWebWidget.h"
 #include "XDGSDK/UI/XUPrivacyWidget.h"
 #include "Track/XUTracker.h"
+#include "Track/XUPaymentTracker.h"
 
 static int Success = 200;
 
@@ -219,6 +218,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 		TUDebuger::ErrorLog("ProductId is empty");
 		return;
 	}
+	XUPaymentTracker::PaymentStart(ProductId);
 	if (RoleId.IsEmpty()) {
 		TUDebuger::ErrorLog("RoleId is empty");
 		return;
@@ -260,11 +260,18 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	FString LogStr = FString::Printf(TEXT(" SignStr=： %s  ;  Sign=：%s   ;  UrlStr=: %s"), *SignStr, *SignMD5, *UrlStr); 
 	TUDebuger::WarningLog(*LogStr);
 
+	auto NewCallBack = [=](XUType::PayResult Result) {
+		XUPaymentTracker::PaymentDone();
+		if (CallBack) {
+			CallBack(Result);
+		}
+	};
 	if (XUConfigManager::IsCN()) {
-		UXUPayWebWidget::Show(UrlStr, CallBack);
+		UXUPayWebWidget::Show(UrlStr, NewCallBack);
 	} else {
-		XUThirdPayHelper::StartWebPay(UrlStr, CallBack);
+		XUThirdPayHelper::StartWebPay(UrlStr, NewCallBack);
 	}
+	XUPaymentTracker::CallPaymentPage();
 }
 
 

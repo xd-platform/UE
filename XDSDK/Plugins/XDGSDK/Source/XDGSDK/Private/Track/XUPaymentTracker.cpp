@@ -19,6 +19,10 @@ void XUPaymentTracker::PaymentDone() {
 	LogEvent("sdkcharge_done", GetCommonProperties());
 }
 
+FString XUPaymentTracker::GetCurrentEventSessionId() {
+	return EventSessionId;
+}
+
 void XUPaymentTracker::LogEvent(const FString& EventName, TSharedPtr<FJsonObject> Properties) {
 	Properties->SetStringField("logid", FString::Printf(TEXT("%s%s%lld"), *EventSessionId, *EventName, FDateTime::UtcNow().ToUnixTimestamp()));
 	Properties->SetStringField("name", EventName);

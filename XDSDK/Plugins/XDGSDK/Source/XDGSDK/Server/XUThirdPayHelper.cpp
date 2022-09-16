@@ -20,21 +20,17 @@ void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayRes
 	RedirectUri = TUHttpServer::RegisterNewRoute(
 		"web_pay", [=](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) {
 			FString WebState = Request.QueryParams.FindRef("state");
-			TFunction<void(XUType::PayResult Result)> ResultCallback = *CallbackMap.Find(WebState);
-
-			if (ResultCallback) {
+			TFunction<void(XUType::PayResult Result)> *ResultCallbackPtr = CallbackMap.Find(WebState);
+			if (ResultCallbackPtr == nullptr) {
+				return false;
+			}
 #if PLATFORM_MAC || PLATFORM_WINDOWS
-				TUHelper::ActivateItself();
+	TUHelper::ActivateItself();
 #endif
-				TSharedPtr<FJsonObject> PayParas = MakeShareable(new FJsonObject);
-				for (auto QueryParam : Request.QueryParams) {
-					PayParas->SetStringField(QueryParam.Key, QueryParam.Value);
-					TUDebuger::WarningLog(
-						FString::Printf(TEXT("收到 Url Key: %s, Value: %s"), *QueryParam.Key, *QueryParam.Value));
-				}
+			auto ResultCallback = *ResultCallbackPtr;
+			if (ResultCallback) {
 
 				FString pay_result = Request.QueryParams.FindRef("pay_result");
-				TUDebuger::WarningLog(FString::Printf(TEXT("pay_result 值: %s"), *pay_result));
 
 				if ("success" == pay_result) {
 					ResultCallback(XUType::PayResult::PaySuccess);
@@ -50,6 +46,7 @@ void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayRes
 			else {
 				TUDebuger::WarningLog(FString::Printf(TEXT("没找到对应Callback: %s"), *WebState));
 			}
+			CallbackMap.Remove(WebState);
 
 			TUniquePtr<FHttpServerResponse> ResponsePtr = MakeUnique<FHttpServerResponse>();
 			ResponsePtr->Code = EHttpServerResponseCodes::Ok;
@@ -65,7 +62,13 @@ void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayRes
 	}
 	else {
 		FString State = GenerateState(Callback); //唯一字符串
-		FString FinalUrl = PayUrl + "&redirect_uri=" + RedirectUri + "&state=" + State;
+
+		TSharedPtr<FJsonObject> Paras = MakeShareable(new FJsonObject);
+		Paras->SetStringField("redirect_uri", RedirectUri);
+		Paras->SetStringField("state", State);
+		FString ParaStr = TUHelper::CombinParameters(Paras);
+		FString FinalUrl = PayUrl + "&" + ParaStr;
+		
 		if (TUDebuger::IsTest) {
 			for (auto Replace : TUDebuger::ReplaceHosts) {
 				if (FinalUrl.Contains(Replace.Key)) {

@@ -1,5 +1,7 @@
 #include "XUPaymentTracker.h"
 
+#include "TUDeviceInfo.h"
+
 FString XUPaymentTracker::EventSessionId = "";
 FString XUPaymentTracker::PaymentProcessProductId = "";
 
@@ -27,8 +29,7 @@ TSharedPtr<FJsonObject> XUPaymentTracker::GetCommonProperties() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("tag", "sdkcharge");
 	Properties->SetStringField("event_session_id", EventSessionId);
-	Properties->SetStringField("pay_platform", "PC");
-	Properties->SetStringField("pay_channel", "PC");
+	Properties->SetStringField("pay_platform", TUDeviceInfo::GetPlatform());
 	Properties->SetStringField("product_id", PaymentProcessProductId);
 	return Properties;
 }

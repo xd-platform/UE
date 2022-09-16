@@ -57,7 +57,8 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	EventIndex += 1;
 	Properties->SetStringField("event_index", FString::Printf(TEXT("%lld"), EventIndex));
-	Properties->SetStringField("time", FString::Printf(TEXT("%lld"), FDateTime::UtcNow().ToUnixTimestamp()));
+	int64 Timestamp = (FDateTime::UtcNow() - FDateTime(1970, 1, 1)).GetTotalMilliseconds();
+	Properties->SetStringField("time", FString::Printf(TEXT("%lld"), Timestamp));
 	if (!ProtocolAgreed) {
 		return Properties;
 	}

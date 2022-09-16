@@ -12,7 +12,6 @@
 #include "TapCommonBPLibrary.h"
 
 
-TArray<FString> XUThirdPayHelper::CacheStates;
 TMap<FString, TFunction<void(XUType::PayResult Result)>> XUThirdPayHelper::CallbackMap;
 
 void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayResult Result)> Callback) {
@@ -21,16 +20,7 @@ void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayRes
 	RedirectUri = TUHttpServer::RegisterNewRoute(
 		"web_pay", [=](const FHttpServerRequest& Request, const FHttpResultCallback& OnComplete) {
 			FString WebState = Request.QueryParams.FindRef("state");
-			TFunction<void(XUType::PayResult Result)> ResultCallback;
-
-			if (IsContainState(WebState)) {
-				ResultCallback = *CallbackMap.Find(WebState);
-			}
-			else {
-				TUDebuger::WarningLog(FString::Printf(TEXT("没找到对应state: %s"), *WebState));
-				CancelAll();
-				return false;
-			}
+			TFunction<void(XUType::PayResult Result)> ResultCallback = *CallbackMap.Find(WebState);
 
 			if (ResultCallback) {
 #if PLATFORM_MAC || PLATFORM_WINDOWS
@@ -56,20 +46,18 @@ void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayRes
 					//fail
 					ResultCallback(XUType::PayResult::PayFail);
 				}
-
-				TUniquePtr<FHttpServerResponse> ResponsePtr = MakeUnique<FHttpServerResponse>();
-				ResponsePtr->Code = EHttpServerResponseCodes::Ok;
-				ResponsePtr->Headers.Add("Content-Type", {"text/plain"});
-				ResponsePtr->Headers.Add("Access-Control-Allow-Origin", {"*"});
-				ResponsePtr->Body.Append(TUCrypto::UTF8Encode(FString("OK")));
-				OnComplete(MoveTemp(ResponsePtr));
-				return true;
 			}
 			else {
 				TUDebuger::WarningLog(FString::Printf(TEXT("没找到对应Callback: %s"), *WebState));
-				CancelAll();
-				return false;
 			}
+
+			TUniquePtr<FHttpServerResponse> ResponsePtr = MakeUnique<FHttpServerResponse>();
+			ResponsePtr->Code = EHttpServerResponseCodes::Ok;
+			ResponsePtr->Headers.Add("Content-Type", {"text/plain"});
+			ResponsePtr->Headers.Add("Access-Control-Allow-Origin", {"*"});
+			ResponsePtr->Body.Append(TUCrypto::UTF8Encode(FString("OK")));
+			OnComplete(MoveTemp(ResponsePtr));
+			return true;
 		});
 
 	if (RedirectUri.IsEmpty()) {
@@ -92,21 +80,8 @@ void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayRes
 	}
 }
 
-void XUThirdPayHelper::CancelAll() {
-	CacheStates.Empty();
-	CacheStates.Empty();
-}
-
 FString XUThirdPayHelper::GenerateState(TFunction<void(XUType::PayResult Result)> Callback) {
 	FString State = FGuid::NewGuid().ToString();
-	CacheStates.Add(State);
 	CallbackMap.Add(State, Callback);
 	return State;
-}
-
-bool XUThirdPayHelper::IsContainState(FString State) {
-	if (CacheStates.Contains(State)) {
-		return true;
-	}
-	return false;
 }

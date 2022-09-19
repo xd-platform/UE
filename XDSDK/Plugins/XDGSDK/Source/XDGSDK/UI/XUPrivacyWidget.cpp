@@ -120,20 +120,18 @@ void UXUPrivacyWidget::OnLoadCompleted()
 
 	TUDebuger::DisplayLog(NavigationUrl);
 	TUDebuger::DisplayLog("Privacy Web Load Completed");
-	if (NavigationUrl == OriginURL)
+	
+	GetInnerWebBrowser()->SetVisibility(EVisibility::Visible);
+	ComfirmButton->SetVisibility(ESlateVisibility::Visible);
+	BTN_Retry->SetVisibility(ESlateVisibility::Collapsed);
+	DeclineButton->SetVisibility(ESlateVisibility::Visible);
+	if (IsInKrAndPushEnable() || IsInNorthAmerica())
 	{
-		GetInnerWebBrowser()->SetVisibility(EVisibility::Visible);
-		ComfirmButton->SetVisibility(ESlateVisibility::Visible);
-		BTN_Retry->SetVisibility(ESlateVisibility::Collapsed);
-		DeclineButton->SetVisibility(ESlateVisibility::Visible);
-		if (IsInKrAndPushEnable() || IsInNorthAmerica())
-		{
-			AdditionalCheckBox->SetVisibility(ESlateVisibility::Visible);
-		}
-		else
-		{
-			AdditionalCheckBox->SetVisibility(ESlateVisibility::Collapsed);
-		}
+		AdditionalCheckBox->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		AdditionalCheckBox->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 

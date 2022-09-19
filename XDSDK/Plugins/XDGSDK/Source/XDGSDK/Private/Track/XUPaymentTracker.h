@@ -9,6 +9,9 @@ public:
 	static void CallPaymentPage();
 	// 完成支付
 	static void PaymentDone();
+
+
+	static FString GetCurrentEventSessionId();
 	
 private:
 	static void LogEvent(const FString& EventName, TSharedPtr<FJsonObject> Properties);

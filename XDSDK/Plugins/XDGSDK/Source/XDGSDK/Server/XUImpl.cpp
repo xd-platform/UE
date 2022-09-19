@@ -248,6 +248,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	Query->SetStringField("appId", XUConfigManager::CurrentConfig()->AppID);
 	Query->SetStringField("lang", XULanguageManager::GetLanguageKey());
 	Query->SetStringField("platform", "pc");
+	Query->SetStringField("eventSessionId", XUPaymentTracker::GetCurrentEventSessionId());
 
 	int64 TimeStamp = FDateTime::Now().ToUnixTimestamp();
 	FString XDClientId = XUConfigManager::CurrentConfig()->ClientId;

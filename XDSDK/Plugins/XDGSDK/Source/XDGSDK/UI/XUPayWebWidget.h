@@ -1,67 +1,39 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TapWebBrowser.h"
 #include "XUType.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/Button.h"
-#include "TUWebBrowser.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
-#include "Components/VerticalBox.h"
 #include "XUPayWebWidget.generated.h"
 
 
 UCLASS()
-class XDGSDK_API UXUPayWebWidget : public UUserWidget
+class XDGSDK_API UXUPayWebWidget : public UTapWebBrowser
 {
 	GENERATED_BODY()
 
 public:
-	UXUPayWebWidget(const FObjectInitializer& ObjectInitializer);
-
 	static void Show(const FString& PayUrl, TFunction<void(XUType::PayResult Result)> CallBack);
 
 protected:
-	
+	virtual void NativeOnInitialized() override;
+
 	virtual void NativeConstruct() override;
 
-	UFUNCTION()
-	void OnCloseClick();
+	virtual void Close() override;
+
+	virtual void Reload() override;
+
+	virtual void OnURLChanged(const FText& NewURL) override;
+
+	virtual void OnTitleChanged(const FText& NewTitle) override;
+
+	virtual void OnLoadStarted() override;
 	
-	UFUNCTION()
-	void OnRetryBtnClick();
+	virtual void OnLoadCompleted() override;
 
-	UFUNCTION()
-	void OnUrlChanged(const FString& Text);
-
-	UFUNCTION()
-	void OnWebLoadError();
-
+	virtual void OnLoadError() override;
 	
-
 private:
-	
-	UPROPERTY(meta = (BindWidget))
-	UTUWebBrowser* PayWebBrowser;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* CloseButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* RetryBtn;
-
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* RetryBtnLabel;
-
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ErrorTipLabel;
-
-	UPROPERTY(meta = (BindWidget))
-	UImage* ErrorTipImage;
-	
-	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* ErrorBox;
-
 	TFunction<void(XUType::PayResult Result)> CallBack;
 
 	FString PayUrl;

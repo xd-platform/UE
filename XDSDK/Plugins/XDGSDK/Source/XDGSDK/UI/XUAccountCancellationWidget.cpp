@@ -1,111 +1,140 @@
 #include "XUAccountCancellationWidget.h"
 
+#include "SWebBrowser.h"
 #include "TUDebuger.h"
 #include "TUSettings.h"
-#include "URLParser.h"
 #include "XULanguageManager.h"
 #include "XDUE.h"
+#include "Components/Button.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
 
-UXUAccountCancellationWidget::UXUAccountCancellationWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+
+void UXUAccountCancellationWidget::Show(const FString& Url)
 {
-}
-
-void UXUAccountCancellationWidget::Show(const FString& Url) {
-	if (UClass* MyWidgetClass = LoadClass<UXUAccountCancellationWidget>(nullptr, TEXT("WidgetBlueprint'/XDGSDK/BPAccountCancellation.BPAccountCancellation_C'")))
+	if (UClass* MyWidgetClass = LoadClass<UXUAccountCancellationWidget>(
+		nullptr, TEXT("WidgetBlueprint'/XDGSDK/BPAccountCancellation.BPAccountCancellation_C'")))
 	{
-		if (TUSettings::GetGameInstance().IsValid()) {
-			auto Widget = CreateWidget<UXUAccountCancellationWidget>(TUSettings::GetGameInstance().Get(), MyWidgetClass);
+		if (TUSettings::GetGameInstance().IsValid())
+		{
+			auto Widget = CreateWidget<
+				UXUAccountCancellationWidget>(TUSettings::GetGameInstance().Get(), MyWidgetClass);
 			Widget->Url = Url;
 			Widget->AddToViewport(TUSettings::GetUILevel());
 		}
 	}
 }
 
+void UXUAccountCancellationWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	TUDebuger::DisplayLog(Url);
+	TB_Retry->SetText(FText::FromString(XULanguageManager::GetCurrentModel()->tds_retry));
+
+	if (FPlatformMisc::GetNetworkConnectionType() == ENetworkConnectionType::None)
+	{
+		ShowErrorTipView(true);
+		UpdateErrorTipView(true);
+	}
+	else
+	{
+		ShowErrorTipView(false);
+	}
+}
 
 void UXUAccountCancellationWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	LoadURL(Url);
+}
 
-	WebBrowser->LoadURL(Url);
-	TUDebuger::DisplayLog(Url);
-	CloseBtn->OnClicked.AddUniqueDynamic(this, &UXUAccountCancellationWidget::OnCloseClick);
-	BackBtn->OnClicked.AddUniqueDynamic(this, &UXUAccountCancellationWidget::OnBackClick);
-	RetryBtn->OnClicked.AddUniqueDynamic(this, &UXUAccountCancellationWidget::OnRetryBtnClick);
-	WebBrowser->OnUrlChanged.AddUniqueDynamic(this, &UXUAccountCancellationWidget::OnUrlChanged);
-	WebBrowser->OnLoadError.AddUniqueDynamic(this, &UXUAccountCancellationWidget::OnWebLoadError);
-	WebBrowser->OnTitleChanged.AddUniqueDynamic(this, &UXUAccountCancellationWidget::OnTitleChanged);
-	RetryBtnLabel->SetText(FText::FromString(XULanguageManager::GetCurrentModel()->tds_retry));
-
-	if (FPlatformMisc::GetNetworkConnectionType() == ENetworkConnectionType::None) {
-		ShowErrorTipView(true);
-		UpdateErrorTipView(true);
-	} else {
-		ShowErrorTipView(false);
+void UXUAccountCancellationWidget::GoBack()
+{
+	if (CanGoBack())
+	{
+		Super::GoBack();
+	}
+	else
+	{
+		Close();
 	}
 }
 
-void UXUAccountCancellationWidget::OnCloseClick() {
-	if (HasCancelAccount) {
+void UXUAccountCancellationWidget::Close()
+{
+	if (HasCancelAccount)
+	{
 		XDUE::OnLogout.Broadcast();
 	}
-	RemoveFromParent();
+	Super::Close();
 }
 
-void UXUAccountCancellationWidget::OnBackClick() {
-	if (WebBrowser->CanGoBack()) {
-		WebBrowser->GoBack();
-	} else {
-		OnCloseClick();
-	}
-}
-
-void UXUAccountCancellationWidget::OnRetryBtnClick() {
-	if (FPlatformMisc::GetNetworkConnectionType() == ENetworkConnectionType::None) {
+void UXUAccountCancellationWidget::Reload()
+{
+	if (FPlatformMisc::GetNetworkConnectionType() == ENetworkConnectionType::None)
+	{
 		ShowErrorTipView(true);
 		UpdateErrorTipView(true);
-	} else {
+	}
+	else
+	{
 		ShowErrorTipView(false);
-		WebBrowser->LoadURL(Url);
+		Super::Reload();
 	}
 }
 
-void UXUAccountCancellationWidget::OnUrlChanged(const FString& Text) {
-	TUDebuger::DisplayLog(Text);
-	if (Text.Contains("success")) {
+void UXUAccountCancellationWidget::OnURLChanged(const FText& NewURL)
+{
+	Super::OnURLChanged(NewURL);
+	TUDebuger::DisplayLog(NewURL.ToString());
+	if (NewURL.ToString().Contains("success"))
+	{
 		HasCancelAccount = true;
-		BackBtn->SetVisibility(ESlateVisibility::Hidden);
+		BTN_GoBack->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
-void UXUAccountCancellationWidget::OnTitleChanged(const FString& Text) {
-	TitleLabel->SetText(FText::FromString(Text));
+void UXUAccountCancellationWidget::OnTitleChanged(const FText& NewTitle)
+{
+	Super::OnTitleChanged(NewTitle);
+	TitleLabel->SetText(FText::FromString(NewTitle.ToString()));
 }
 
-void UXUAccountCancellationWidget::OnWebLoadError() {
+void UXUAccountCancellationWidget::OnLoadError()
+{
+	Super::OnLoadError();
 	ShowErrorTipView(true);
 	UpdateErrorTipView(false);
 }
 
-void UXUAccountCancellationWidget::UpdateErrorTipView(bool IsNerworkError) {
+void UXUAccountCancellationWidget::UpdateErrorTipView(bool IsNerworkError)
+{
 	auto langModel = XULanguageManager::GetCurrentModel();
-	if (IsNerworkError) {
-		ErrorTipImage->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/LoadErrorRetry.LoadErrorRetry'")));
-		ErrorTipLabel->SetText(FText::FromString(langModel->tds_net_error));
-	} else {
-		ErrorTipImage->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/LoadFailRetry.LoadFailRetry'")));
-		ErrorTipLabel->SetText(FText::FromString(langModel->tds_load_error));
+	if (IsNerworkError)
+	{
+		ErrorTipIcon->SetBrushFromTexture(
+			LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/LoadErrorRetry.LoadErrorRetry'")));
+		TB_ErrorTip->SetText(FText::FromString(langModel->tds_net_error));
+	}
+	else
+	{
+		ErrorTipIcon->SetBrushFromTexture(
+			LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/LoadFailRetry.LoadFailRetry'")));
+		TB_ErrorTip->SetText(FText::FromString(langModel->tds_load_error));
 	}
 }
 
-void UXUAccountCancellationWidget::ShowErrorTipView(bool IsShow) {
-	if (IsShow) {
-		ErrorBox->SetVisibility(ESlateVisibility::Visible);
-		WebBrowser->SetVisibility(ESlateVisibility::Hidden);
-	} else {
-		ErrorBox->SetVisibility(ESlateVisibility::Hidden);
-		WebBrowser->SetVisibility(ESlateVisibility::Visible);
+void UXUAccountCancellationWidget::ShowErrorTipView(bool IsShow)
+{
+	if (IsShow)
+	{
+		RetryPanel->SetVisibility(ESlateVisibility::Visible);
+		GetInnerWebBrowser()->SetVisibility(EVisibility::Hidden);
+	}
+	else
+	{
+		RetryPanel->SetVisibility(ESlateVisibility::Hidden);
+		GetInnerWebBrowser()->SetVisibility(EVisibility::Visible);
 	}
 }
-
-
-

@@ -21,7 +21,7 @@
         <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Configs/" dst="$S(BuildDir)/assets/" />
         <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/res/" dst="$S(BuildDir)/res/" />
         <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/libs/" dst="$S(BuildDir)/libs/" />
-        <copyDir src="$S(PluginDir)/../../Build/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
+        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
     </resourceCopies>
 
 

@@ -247,6 +247,12 @@ void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TShared
 			}
 			UnbindCallBack(Model->LoginType, TempError);
 		}
+		if (ResponseModel.IsValid()) {
+			// 解绑的类型和当前登录的类型一样，那么退出当前账号
+			if (userMd->GetLoginType() == Model->LoginType) {
+				XDUE::OnLogout.Broadcast();
+			}
+		}
 	});
 
 }

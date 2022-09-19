@@ -3,67 +3,49 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TUWebBrowser.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/Button.h"
-#include "Components/CheckBox.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
+#include "TapWebBrowser.h"
 #include "XUPrivacyWidget.generated.h"
 
+class UCheckBox;
+class UNativeWidgetHost;
 /**
  *  
  */
 UCLASS()
-class XDGSDK_API UXUPrivacyWidget : public UUserWidget
+class XDGSDK_API UXUPrivacyWidget : public UTapWebBrowser
 {
 	GENERATED_BODY()
-
 public:
-	 UXUPrivacyWidget(const FObjectInitializer& ObjectInitializer);
-
 	static void ShowPrivacy(TFunction<void()> Completed);
 
 protected:
-
-	virtual void NativeConstruct() override;
+	virtual void NativeOnInitialized() override;
 
 	UFUNCTION()
 	void OnCheckStateChanged(bool isChecked);
 
 	UFUNCTION()
-	void OnComfirmBtnClick();
-
-	UFUNCTION()
-	void OnLoadErrorBtnClick();
-
+	void OnConfirmBtnClick();
+	
 	UFUNCTION()
 	void OnDeclineBtnClick();
 
-	UFUNCTION()
-	void OnWebLoadCompleted();
+	virtual void Reload() override;
 
-	UFUNCTION()
-	void OnWebLoadError();
-	
-	bool OnWebBeforeNavigation(const FString& Url, const FWebNavigationRequest& Request);
+	virtual void OnLoadStarted() override;
+
+	virtual void OnLoadCompleted() override;
+
+	virtual void OnLoadError() override;
+
+	virtual bool OnBeforeNavigation(const FString& URL, const FWebNavigationRequest& Request) override;
 	
 private:
-
-	UPROPERTY(meta = (BindWidget))
-	UTUWebBrowser* PrivacyWebBrowser;
-
 	UPROPERTY(meta = (BindWidget))
 	UButton* ComfirmButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ComfirmButtonLabel;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* LoadErrorBtn;
-
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* LoadErrorLabel;
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* ComfirmButtonImage;
@@ -80,7 +62,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* AdditionalCheckLabel;
 	
-	TFunction<void()> Completed;
 
 	bool IsInKrAndPushEnable();
 
@@ -88,15 +69,9 @@ private:
 
 	void UpdateComfirmBtnState();
 
+	TFunction<void()> Completed;
+	
 	FString OriginURL;
-
-	enum LoadState {
-		Loading,
-		LoadError,
-		LoadSuccess,
-	};
-
-	void UpdateUI(LoadState State);
 
 	FString NavigationUrl;
 };

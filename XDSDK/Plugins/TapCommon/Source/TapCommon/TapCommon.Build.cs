@@ -48,7 +48,7 @@ public class TapCommon : ModuleRules
                 "Slate",
                 "SlateCore",
                 "Sockets",
-                "UMG",
+                "UMG", "WebBrowser",
 				// ... add private dependencies that you statically link with here ...	
 			}
             );

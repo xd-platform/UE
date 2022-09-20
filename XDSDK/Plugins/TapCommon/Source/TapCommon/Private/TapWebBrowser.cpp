@@ -7,6 +7,7 @@
 #include "TapCommon.h"
 #include "Components/Button.h"
 #include "Components/NativeWidgetHost.h"
+#include "Slate/STapThrobber.h"
 
 void UTapWebBrowser::LoadURL(const FString& InURL)
 {
@@ -115,20 +116,89 @@ void UTapWebBrowser::OnTitleChanged(const FText& NewTitle)
 
 void UTapWebBrowser::OnLoadStarted()
 {
-	FTapCommonModule::TapThrobberShowWait();
+	TapThrobberShowWait();
 }
 
 void UTapWebBrowser::OnLoadCompleted()
 {
-	FTapCommonModule::TapThrobberDismiss();
+	TapThrobberDismiss();
 }
 
 void UTapWebBrowser::OnLoadError()
 {
-	FTapCommonModule::TapThrobberDismiss();
+	TapThrobberDismiss();
 }
 
 bool UTapWebBrowser::OnBeforeNavigation(const FString& URL, const FWebNavigationRequest& Request)
 {
 	return false;
+}
+
+void UTapWebBrowser::TapThrobberShowWait()
+{
+	if (!TapThrobber)
+	{
+		SAssignNew(TapThrobber, STapThrobber);
+		if (TapThrobber && GEngine && GEngine->GameViewport)
+		{
+			TapThrobberWrapper->SetContent(TapThrobber.ToSharedRef());
+		}
+	}
+}
+
+void UTapWebBrowser::TapThrobberShowWaitAndToast(const FString& Toast)
+{
+	const FText NewContent = FText::FromString(Toast);
+	if (TapThrobber)
+	{
+		TapThrobber->UpdateContent(NewContent);
+	}
+	else
+	{
+		SAssignNew(TapThrobber, STapThrobber)
+		.Content(NewContent);
+		if (TapThrobber && GEngine && GEngine->GameViewport)
+		{
+			TapThrobberWrapper->SetContent(TapThrobber.ToSharedRef());
+		}
+	}
+}
+
+void UTapWebBrowser::TapThrobberDismiss()
+{
+	if (TapThrobber && GEngine && GEngine->GameViewport)
+	{
+		TapThrobberWrapper->SetContent(SNullWidget::NullWidget);
+		TapThrobber.Reset();
+	}
+}
+
+void UTapWebBrowser::TapThrobberShowToast(const FString& Toast, float TimeInterval)
+{
+	const FText NewContent = FText::FromString(Toast);
+	if (TimeInterval > 0.f)
+	{
+		GetWorld()->GetTimerManager().SetTimer(AutoRemoveTimer, this, &UTapWebBrowser::TimerRemoveTapThrobber, TimeInterval);
+	}
+	if (TapThrobber)
+	{
+		TapThrobber->ShowThrobber(false);
+		TapThrobber->UpdateContent(NewContent);
+	}
+	else
+	{
+		SAssignNew(TapThrobber, STapThrobber)
+		.HasThrobber(false)
+		.Content(NewContent);
+		if (TapThrobber && GEngine && GEngine->GameViewport)
+		{
+			TapThrobberWrapper->SetContent(TapThrobber.ToSharedRef());
+		}
+	}
+}
+
+void UTapWebBrowser::TimerRemoveTapThrobber()
+{
+	AutoRemoveTimer.Invalidate();
+	TapThrobberDismiss();
 }

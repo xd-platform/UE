@@ -25,8 +25,6 @@ protected:
 
 	virtual void OnURLChanged(const FText& NewURL) override;
 
-	virtual void OnTitleChanged(const FText& NewTitle) override;
-
 	virtual void OnLoadStarted() override;
 	
 	virtual void OnLoadCompleted() override;

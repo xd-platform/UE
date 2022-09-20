@@ -56,6 +56,23 @@ protected:
 	virtual void OnLoadError();
 
 	virtual bool OnBeforeNavigation(const FString& URL, const FWebNavigationRequest& Request);
+
+	void TapThrobberShowWait();
+ 
+	void TapThrobberShowWaitAndToast(const FString& Toast);
+	
+	void TapThrobberDismiss();
+ 
+	void TapThrobberShowToast(const FString& Toast, float TimeInterval = 3.f);
+
+	void TimerRemoveTapThrobber();
+
+	TSharedPtr<class STapThrobber> TapThrobber;
+
+	FTimerHandle AutoRemoveTimer;
+
+	UPROPERTY(Meta = (BindWidget))
+	UNativeWidgetHost* TapThrobberWrapper;
 	
 	UPROPERTY(Meta = (BindWidget))
 	UNativeWidgetHost* WebBrowser;
@@ -80,6 +97,7 @@ protected:
 
 	UPROPERTY(Meta = (BindWidgetOptional))
 	UPanelWidget* RetryPanel;
+
+	
 };
 
- 

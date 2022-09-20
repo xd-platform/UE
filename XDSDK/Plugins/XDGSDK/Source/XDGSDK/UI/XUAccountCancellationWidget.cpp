@@ -98,7 +98,15 @@ void UXUAccountCancellationWidget::OnURLChanged(const FText& NewURL)
 void UXUAccountCancellationWidget::OnTitleChanged(const FText& NewTitle)
 {
 	Super::OnTitleChanged(NewTitle);
-	TitleLabel->SetText(FText::FromString(NewTitle.ToString()));
+	const FString NewTitleStr = NewTitle.ToString();
+	if (NewTitleStr.Left(4) == TEXT("http"))
+	{
+		TitleLabel->SetText(FText::GetEmpty());
+	}
+	else
+	{
+		TitleLabel->SetText(FText::FromString(NewTitle.ToString()));
+	}
 }
 
 void UXUAccountCancellationWidget::OnLoadError()

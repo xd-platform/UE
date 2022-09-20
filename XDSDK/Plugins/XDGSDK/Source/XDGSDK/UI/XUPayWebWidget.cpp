@@ -98,11 +98,6 @@ void UXUPayWebWidget::OnURLChanged(const FText& NewURL)
 	}
 }
 
-void UXUPayWebWidget::OnTitleChanged(const FText& NewTitle)
-{
-	Super::OnTitleChanged(NewTitle);
-}
-
 void UXUPayWebWidget::OnLoadStarted()
 {
 	Super::OnLoadStarted();

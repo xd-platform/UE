@@ -66,7 +66,7 @@ struct FXUServerConfigConfigs
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FString webPayUrl;
+	FString webPayUrlForPC;
 
 	UPROPERTY()
 	FXUServerConfigAgreement agreement;

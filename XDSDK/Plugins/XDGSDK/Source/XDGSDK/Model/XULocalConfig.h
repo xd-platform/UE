@@ -169,7 +169,7 @@ struct FXULocalConfig
 	FString logout_url;
 
 	UPROPERTY()
-	FString webpay_url;
+	FString webpay_url_for_pc;
 
 	UPROPERTY()
 	FXULocalConfigTapSDK tapsdk;

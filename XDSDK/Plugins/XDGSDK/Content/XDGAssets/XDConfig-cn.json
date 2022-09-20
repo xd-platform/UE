@@ -6,7 +6,7 @@
     "game_name":"XD-CN Demo",
     "report_url":"https://www.xd.com/service",
     "logout_url":"https://logout-xdsdk.xd.cn/",
-    "webpay_url":"https://sdkpay-test.xd.cn/",
+    "webpay_url_for_pc":"https://login-xdsdk.xd.cn",
     "tapsdk":{
         "client_id":"0RiAlMny7jiz086FaU",
         "client_token":"8V8wemqkpkxmAN7qKhvlh6v0pXc8JJzEZe3JFUnU",

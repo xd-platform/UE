@@ -369,8 +369,8 @@ void XUConfigManager::UpdateConfig(TSharedPtr<FXUServerConfig> ServerConfig) {
 		config->LogoutUrl = ServerConfig->configs.logoutUrl;
 	}
 
-	if (!ServerConfig->configs.webPayUrl.IsEmpty()) {
-		config->WebPayUrl = ServerConfig->configs.webPayUrl;
+	if (!ServerConfig->configs.webPayUrlForPC.IsEmpty()) {
+		config->WebPayUrl = ServerConfig->configs.webPayUrlForPC;
 	}
 
 	if (!ServerConfig->configs.appId.IsEmpty()) {

@@ -162,6 +162,8 @@ bool UXUPrivacyWidget::OnBeforeNavigation(const FString& URL, const FWebNavigati
 	else
 	{
 		UTapCommonBPLibrary::LaunchURL(*URL, nullptr, nullptr);
+		ComfirmButton->SetVisibility(ESlateVisibility::Visible);
+		DeclineButton->SetVisibility(ESlateVisibility::Visible);
 		return true;
 	}
 }

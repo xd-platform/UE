@@ -9,7 +9,8 @@ public:
 	static void CallPaymentPage();
 	// 完成支付
 	static void PaymentDone();
-
+	// 支付失败
+	static void PaymentFailed(const FString& Reason);
 
 	static FString GetCurrentEventSessionId();
 	

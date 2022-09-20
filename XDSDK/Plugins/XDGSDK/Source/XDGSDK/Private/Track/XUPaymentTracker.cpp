@@ -19,6 +19,12 @@ void XUPaymentTracker::PaymentDone() {
 	LogEvent("sdkcharge_done", GetCommonProperties());
 }
 
+void XUPaymentTracker::PaymentFailed(const FString& Reason) {
+	auto Properties = GetCommonProperties();
+	Properties->SetStringField("reason", Reason);
+	LogEvent("sdkcharge_fail", Properties);
+}
+
 FString XUPaymentTracker::GetCurrentEventSessionId() {
 	return EventSessionId;
 }

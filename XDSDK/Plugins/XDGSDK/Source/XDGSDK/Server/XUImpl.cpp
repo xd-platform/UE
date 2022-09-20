@@ -262,7 +262,14 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	TUDebuger::WarningLog(*LogStr);
 
 	auto NewCallBack = [=](XUType::PayResult Result) {
-		XUPaymentTracker::PaymentDone();
+		if (Result == XUType::PaySuccess) {
+			XUPaymentTracker::PaymentDone();
+		} else if (Result == XUType::PayCancel) {
+			XUPaymentTracker::PaymentFailed("user_cancel");
+		} else {
+			XUPaymentTracker::PaymentFailed("fail");
+		}
+		
 		if (CallBack) {
 			CallBack(Result);
 		}

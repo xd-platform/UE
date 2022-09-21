@@ -10,7 +10,7 @@ namespace XUType {
 	};
 
 	enum PayResult {
-		PaySuccess,
+		PayOK,
 		PayFail,
 		PayCancel
 	};

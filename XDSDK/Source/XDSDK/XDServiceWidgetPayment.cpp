@@ -119,8 +119,8 @@ void UXDServiceWidgetPayment::OnPayWithWebClicked()
 	{
 		switch (Result)
 		{
-		case XUType::PaySuccess:
-			DEMO_LOG(TEXT("Pay Success"));
+		case XUType::PayOK:
+			DEMO_LOG(TEXT("Pay OK"));
 			break;
 		case XUType::PayFail:
 			DEMO_LOG(TEXT("Pay Fail"));

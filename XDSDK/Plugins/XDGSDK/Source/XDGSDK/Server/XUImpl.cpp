@@ -260,7 +260,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 
 
 	auto NewCallBack = [=](XUType::PayResult Result) {
-		if (Result == XUType::PaySuccess) {
+		if (Result == XUType::PayOK) {
 			XUPaymentTracker::PaymentDone();
 		} else if (Result == XUType::PayCancel) {
 			XUPaymentTracker::PaymentFailed("user_cancel");

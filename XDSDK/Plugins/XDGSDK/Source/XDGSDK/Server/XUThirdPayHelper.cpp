@@ -33,7 +33,7 @@ void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayRes
 				FString pay_result = Request.QueryParams.FindRef("pay_result");
 
 				if ("success" == pay_result) {
-					ResultCallback(XUType::PayResult::PaySuccess);
+					ResultCallback(XUType::PayResult::PayOK);
 				}
 				else if ("cancel" == pay_result) {
 					ResultCallback(XUType::PayResult::PayCancel);

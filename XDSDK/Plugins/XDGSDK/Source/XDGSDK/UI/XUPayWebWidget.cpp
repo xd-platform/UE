@@ -86,7 +86,7 @@ void UXUPayWebWidget::OnURLChanged(const FText& NewURL)
 	FString Result = Parse.GetFragment();
 	if (Result == "success")
 	{
-		CloseWithResult(XUType::PaySuccess);
+		CloseWithResult(XUType::PayOK);
 	}
 	else if (Result == "fail")
 	{

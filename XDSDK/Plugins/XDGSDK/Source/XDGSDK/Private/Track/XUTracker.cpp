@@ -3,6 +3,7 @@
 #include "XDGSDK.h"
 #include "XDUE.h"
 #include "XUConfigManager.h"
+#include "XULanguageManager.h"
 #include "XULoginTypeModel.h"
 #include "XUStorage.h"
 #include "XUTrackNet.h"
@@ -72,7 +73,7 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 	Properties->SetStringField("orientation", OrientationString);
 	Properties->SetStringField("width", FString::FromInt(TUDeviceInfo::GetScreenWidth()));
 	Properties->SetStringField("height", FString::FromInt(TUDeviceInfo::GetScreenHeight()));
-	Properties->SetStringField("lang", FInternationalization::Get().GetCurrentCulture().Get().GetName());
+	Properties->SetStringField("lang", XULanguageManager::GetLanguageKey());
 	auto User = XDUE::GetUserInfo();
 	if (User.IsValid()) {
 		Properties->SetStringField("account", User->userId);
@@ -86,7 +87,7 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 TSharedPtr<FJsonObject> XUTracker::GetStaticPresetProperties() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("source", "client");
-	Properties->SetStringField("os", TUDeviceInfo::GetPlatform());
+	Properties->SetStringField("os", TUDeviceInfo::GetOSVersion());
 	Properties->SetStringField("app_version", XUConfigManager::CurrentConfig()->GameVersion);
 	Properties->SetStringField("sdk_version", XDUESDK_VERSION);
 	Properties->SetStringField("session_uuid", FGuid::NewGuid().ToString());

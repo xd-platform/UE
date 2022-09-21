@@ -39,7 +39,7 @@ TSharedPtr<FJsonObject> XUPaymentTracker::GetCommonProperties() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("tag", "sdkcharge");
 	Properties->SetStringField("event_session_id", EventSessionId);
-	Properties->SetStringField("pay_platform", TUDeviceInfo::GetPlatform());
+	Properties->SetStringField("pay_platform", "Web");
 	Properties->SetStringField("product_id", PaymentProcessProductId);
 	return Properties;
 }

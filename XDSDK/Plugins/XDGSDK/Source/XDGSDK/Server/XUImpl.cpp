@@ -250,16 +250,14 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	Query->SetStringField("platform", TUDeviceInfo::GetPlatform());
 	Query->SetStringField("eventSessionId", XUPaymentTracker::GetCurrentEventSessionId());
 	
-	int64 TimeStamp = FDateTime::Now().ToUnixTimestamp();
+	int64 TimeStamp = FDateTime::UtcNow().ToUnixTimestamp();
 	FString XDClientId = XUConfigManager::CurrentConfig()->ClientId;
 	FString SignStr = FString::Printf(TEXT("%s%s%s%lld%s"), *ProductId, *RoleId, *ServerId, TimeStamp, *XDClientId);
 	FString SignMD5 = FString::Printf(TEXT("%s,%lld"), *FMD5::HashAnsiString(*SignStr), TimeStamp); 
 	
 	FString QueryStr = TUHelper::CombinParameters(Query);
 	FString UrlStr = XUConfigManager::CurrentConfig()->WebPayUrl + "?" + QueryStr + "&sign=" + SignMD5;
-	
-	FString LogStr = FString::Printf(TEXT(" SignStr=： %s  ;  Sign=：%s   ;  UrlStr=: %s"), *SignStr, *SignMD5, *UrlStr); 
-	TUDebuger::WarningLog(*LogStr);
+
 
 	auto NewCallBack = [=](XUType::PayResult Result) {
 		if (Result == XUType::PaySuccess) {

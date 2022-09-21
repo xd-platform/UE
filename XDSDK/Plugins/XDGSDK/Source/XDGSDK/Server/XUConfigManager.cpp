@@ -383,8 +383,7 @@ void XUConfigManager::UpdateConfig(TSharedPtr<FXUServerConfig> ServerConfig) {
 		config->Agreement.Region = ServerConfig->configs.agreement.agreementRegion;
 		config->Agreement.IsKRPushServiceSwitchEnable = ServerConfig->configs.agreement.isKRPushServiceSwitchEnable;
 	}
-
-	if (config->Region.IsEmpty()) {
+	if (!ServerConfig->configs.region.IsEmpty()) {
 		config->Region = ServerConfig->configs.region;
 	}
 	if (!SharedInstance().TargetRegion.IsEmpty()) {

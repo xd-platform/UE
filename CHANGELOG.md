@@ -1,3 +1,22 @@
+# 6.5.3
+## PC SDK
+### New Feature
+* 海外支付新增回调
+* 支付添加埋点
+
+### Optimization
+* 部分语言UI适配
+* 内嵌Web页加载loading优化
+
+### Breaking Changes
+* PC配置json文件中`webpay_url`改换为`webpay_url_for_pc`
+* 支付回调的枚举值`PaySuccess`改换为`PayOK`
+
+### Fixed bugs
+* 解绑当前登录的账号类型时，未被踢出登录状态的bug
+
+
+
 # 6.5.2
 ## PC SDK
 ### New Feature

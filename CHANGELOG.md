@@ -15,7 +15,17 @@
 ### Fixed bugs
 * 解绑当前登录的账号类型时，未被踢出登录状态的bug
 
+## Mobile SDK
+### New Feature
+* Android & iOS 的阿里云日志支持上传 AppsFlyer 的 UID
 
+### Optimization
+* 协议弹窗、个人中心弹窗按钮增加按压状态
+
+### Fixed bugs
+* iOS 修复调用 TrackEvent 时会崩溃的问题
+* iOS 初始化配置时如果服务端下发 region 会更新（之前本地缓存读出来之后就不更新了）
+* AppsFlyer 的 ATT 等待时长从 600s 缩短到 120s 以避免过长的等待时间会丢失过多的设备新装
 
 # 6.5.2
 ## PC SDK

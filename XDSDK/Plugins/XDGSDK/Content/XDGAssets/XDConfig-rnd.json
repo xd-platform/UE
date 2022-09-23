@@ -6,7 +6,7 @@
     "game_name":"XD-Intl Demo",
     "report_url":"https://tds.d1ds4p8wk7q4rf.amplifyapp.com?client_id={{client_id}}&access_token={{access_token}}&user_id={{user_id}}&role_id={{role_id}}&role_name={{role_name}}&region={{region}}_{{pt}}&server_id={{server_id}}&sdk_ver={{sdk_ver}}&sdk_lang={{sdk_lang}}&app_ver={{app_ver}}&app_ver_code={{app_ver_code}}&res={{res}}&cpu={{cpu}}&mem={{mem}}&pt={{pt}}&os={{os}}&brand={{brand}}&mod={{mod}}&game_name={{game_name}}",
     "logout_url":"https://logout-xdsdk.xd.com",
-    "webpay_url":"可选",
+    "webpay_url_for_pc":"https://sdkpay-test.xd-cf-2022.workers.dev",
     "tapsdk":{
         "client_id":"jfqhF3x9mat70ez52i",
         "client_token":"C91pZh9OJNt7oDPx3lku4H01HelnYjSBS1jaZJed",

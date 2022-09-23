@@ -34,7 +34,7 @@ FString TUDeviceInfo::GetCompatibleEngineVersion()
 //OS: 10.16 (21E258)
 FString TUDeviceInfo::GetOSVersion()
 {
-	return FPlatformMisc::GetOSVersion();
+	return GetPlatform() + " " + FPlatformMisc::GetOSVersion();
 }
 
 int TUDeviceInfo::GetScreenWidth() {

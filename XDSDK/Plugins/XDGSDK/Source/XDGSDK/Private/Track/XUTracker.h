@@ -3,9 +3,19 @@
 class XUTracker {
 
 public:
-	TSharedPtr<FJsonObject> GetDeviceInfos() const;
-	TSharedPtr<FJsonObject> GetCommonProperties() const;
+	static TSharedPtr<XUTracker> Get();
+	void UserAgreeProtocol();
+
+	void UploadLog(TSharedPtr<FJsonObject> Properties);
 private:
-	TSharedPtr<FJsonObject> DeviceInfos;
-	TSharedPtr<FJsonObject> CommonProperties;
+	XUTracker();
+	static TSharedPtr<XUTracker> SingtonInstance;
+	
+	TSharedPtr<FJsonObject> PresetProperties;
+	int64 EventIndex;
+
+	bool ProtocolAgreed;
+	TSharedPtr<FJsonObject> GetDeviceInfos();
+	TSharedPtr<FJsonObject> GetCommonProperties();
+	TSharedPtr<FJsonObject> GetStaticPresetProperties();
 };

@@ -19,13 +19,13 @@
    <resourceCopies>
         <copyDir src="$S(PluginDir)/../../Source/XDGPayment/Android/libs/" dst="$S(BuildDir)/libs/" />
         <copyDir src="$S(PluginDir)/../../Source/XDGPayment/Android/assets/" dst="$S(BuildDir)/assets/" />
-        <copyDir src="$S(PluginDir)/../../Build/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
+        <copyDir src="$S(PluginDir)/../../Source/XDGPayment/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
     </resourceCopies>
 
     <buildGradleAdditions>
         <insert>
             dependencies { 
-                implementation(name: 'XDGPayment_6.5.1',ext:'aar')
+                implementation(name: 'XDGPayment_6.5.3',ext:'aar')
             }
         </insert>
     </buildGradleAdditions>

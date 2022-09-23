@@ -1,76 +1,39 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "XUType.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/Button.h"
-#include "TUWebBrowser.h"
-#include "Components/Image.h"
-#include "Components/TextBlock.h"
+#include "TapWebBrowser.h"
 #include "Components/VerticalBox.h"
 #include "XUAccountCancellationWidget.generated.h"
 
 
 UCLASS()
-class XDGSDK_API UXUAccountCancellationWidget : public UUserWidget
+class XDGSDK_API UXUAccountCancellationWidget : public UTapWebBrowser
 {
 	GENERATED_BODY()
 
 public:
-	UXUAccountCancellationWidget(const FObjectInitializer& ObjectInitializer);
-
 	static void Show(const FString& Url);
 
 protected:
-	
+	virtual void NativeOnInitialized() override;
+
 	virtual void NativeConstruct() override;
 
-	UFUNCTION()
-	void OnCloseClick();
-
-	UFUNCTION()
-	void OnBackClick();
+	virtual void GoBack() override;
 	
-	UFUNCTION()
-	void OnRetryBtnClick();
+	virtual void Close() override;
 
-	UFUNCTION()
-	void OnUrlChanged(const FString& Text);
+	virtual void Reload() override;
 
-	UFUNCTION()
-	void OnTitleChanged(const FString& Text);
+	virtual void OnURLChanged(const FText& NewURL) override;
 
-	UFUNCTION()
-	void OnWebLoadError();
+	virtual void OnTitleChanged(const FText& NewTitle) override;
+
+	virtual void OnLoadError() override;
 
 private:
-	
-	UPROPERTY(meta = (BindWidget))
-	UTUWebBrowser* WebBrowser;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* CloseBtn;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* BackBtn;
-
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TitleLabel;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* RetryBtn;
-
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* RetryBtnLabel;
-
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ErrorTipLabel;
-
-	UPROPERTY(meta = (BindWidget))
-	UImage* ErrorTipImage;
-	
-	UPROPERTY(meta = (BindWidget))
-	UVerticalBox* ErrorBox;
 	
 	FString Url;
 

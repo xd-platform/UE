@@ -207,7 +207,7 @@ XDSDK支持14种语言，TapSDK仅支持7种，如果XDSDK设置的语言种类�
 ```
 
 ### 打开网页支付
-国内是扫码支付，国外是打开外部浏览器支付
+国内是扫码支付，国外是打开外部浏览器支付，回调结果仅供参考，发放道具以服务端为准
 ```cpp
 	/**
 	* 国外网页支付，国内扫码支付
@@ -219,7 +219,7 @@ XDSDK支持14种语言，TapSDK仅支持7种，如果XDSDK设置的语言种类�
 	* @param ProductName     商品名称。用于内嵌支付内部显示，可选
 	* @param PayAmount       商品价格，可选
 	* @param Ext			 附加信息。服务端支付回调会包含该字段，可选
-	* @param CallBack		 支付结果回调(仅支持国内支付)
+	* @param CallBack		 支付结果回调
 	*/
 	static void OpenWebPay(const FString& ServerId,
 	                       const FString& RoleId,
@@ -240,6 +240,28 @@ XDSDK支持14种语言，TapSDK仅支持7种，如果XDSDK设置的语言种类�
     } else {
         TUDebuger::DisplayShow("Push Service Disable");
     }
+```
+
+
+### TapDB埋点
+```cpp
+	//TapDB 统计用户
+	static void TrackUser(FString userId);
+
+	//TapDB 设置属性
+	static void TrackRole(FString serverId, FString roleId, FString roleName, int32 level);
+
+	//TapDB 事件埋点
+	static void TrackEvent(FString eventName);
+
+	//TapDB 成就埋点
+	static void TrackAchievement();
+
+	//TapDB 完成新手引导埋点
+	static void EventCompletedTutorial();
+
+	//TapDB 创建角色埋点
+	static void EventCreateRole();
 ```
 
 

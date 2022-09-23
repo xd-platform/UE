@@ -40,7 +40,7 @@ TSharedPtr<XUType::Config> FXULocalConfig::GenerateXUConfig() {
 	// tap sdk
 	ConfigPtr->LogoutUrl = logout_url;
 	ConfigPtr->ReportUrl = report_url;
-	ConfigPtr->WebPayUrl = webpay_url;
+	ConfigPtr->WebPayUrl = webpay_url_for_pc;
 	ConfigPtr->TapConfig.ClientID = tapsdk.client_id;
 	ConfigPtr->TapConfig.ClientToken = tapsdk.client_token;
 	ConfigPtr->TapConfig.ServerURL = tapsdk.server_url;

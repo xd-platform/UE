@@ -1,6 +1,4 @@
 #include "XUImpl.h"
-
-#include "TapCommonBPLibrary.h"
 #include "TapUEBootstrap.h"
 #include "XUStorage.h"
 #include "TUDeviceInfo.h"
@@ -14,9 +12,12 @@
 #include "XDUE.h"
 #include "XUConfigManager.h"
 #include "XUThirdAuthHelper.h"
+#include "XUThirdPayHelper.h"
 #include "XDGSDK/UI/XUAccountCancellationWidget.h"
 #include "XDGSDK/UI/XUPayWebWidget.h"
 #include "XDGSDK/UI/XUPrivacyWidget.h"
+#include "Track/XUTracker.h"
+#include "Track/XUPaymentTracker.h"
 
 static int Success = 200;
 
@@ -217,6 +218,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 		TUDebuger::ErrorLog("ProductId is empty");
 		return;
 	}
+	XUPaymentTracker::PaymentStart(ProductId);
 	if (RoleId.IsEmpty()) {
 		TUDebuger::ErrorLog("RoleId is empty");
 		return;
@@ -245,16 +247,37 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 	Query->SetStringField("region", XUConfigManager::CurrentConfig()->Region);
 	Query->SetStringField("appId", XUConfigManager::CurrentConfig()->AppID);
 	Query->SetStringField("lang", XULanguageManager::GetLanguageKey());
-	Query->SetStringField("platform", "pc");
-
+	Query->SetStringField("platform", TUDeviceInfo::GetPlatform());
+	Query->SetStringField("eventSessionId", XUPaymentTracker::GetCurrentEventSessionId());
+	
+	int64 TimeStamp = FDateTime::UtcNow().ToUnixTimestamp();
+	FString XDClientId = XUConfigManager::CurrentConfig()->ClientId;
+	FString SignStr = FString::Printf(TEXT("%s%s%s%lld%s"), *ProductId, *RoleId, *ServerId, TimeStamp, *XDClientId);
+	FString SignMD5 = FString::Printf(TEXT("%s,%lld"), *FMD5::HashAnsiString(*SignStr), TimeStamp); 
+	
 	FString QueryStr = TUHelper::CombinParameters(Query);
-	FString UrlStr = XUConfigManager::CurrentConfig()->WebPayUrl + "?" + QueryStr;
+	FString UrlStr = XUConfigManager::CurrentConfig()->WebPayUrl + "?" + QueryStr + "&sign=" + SignMD5;
 
+
+	auto NewCallBack = [=](XUType::PayResult Result) {
+		if (Result == XUType::PayOK) {
+			XUPaymentTracker::PaymentDone();
+		} else if (Result == XUType::PayCancel) {
+			XUPaymentTracker::PaymentFailed("user_cancel");
+		} else {
+			XUPaymentTracker::PaymentFailed("fail");
+		}
+		
+		if (CallBack) {
+			CallBack(Result);
+		}
+	};
 	if (XUConfigManager::IsCN()) {
-		UXUPayWebWidget::Show(UrlStr, CallBack);
+		UXUPayWebWidget::Show(UrlStr, NewCallBack);
 	} else {
-		UTapCommonBPLibrary::LaunchURL(*UrlStr, nullptr, nullptr);
+		XUThirdPayHelper::StartWebPay(UrlStr, NewCallBack);
 	}
+	XUPaymentTracker::CallPaymentPage();
 }
 
 
@@ -381,6 +404,7 @@ void XUImpl::CheckAgreement(TSharedPtr<XUType::Config> Config, XUInitCallback Ca
 		return;
 	}
 	UXUPrivacyWidget::ShowPrivacy([=]() {
+		XUTracker::Get()->UserAgreeProtocol();
 		InitFinish(CallBack);
 	});
 }

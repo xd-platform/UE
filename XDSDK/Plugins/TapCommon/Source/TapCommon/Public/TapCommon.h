@@ -7,6 +7,8 @@
 #define TapUECommon_VERSION_NUMBER "30900001"
 #define TapUECommon_VERSION "3.9.0"
 
+class FSlateStyleSet;
+
 class TAPCOMMON_API FTapCommonModule : public IModuleInterface
 {
 public:
@@ -72,4 +74,15 @@ public:
 	UPROPERTY(BlueprintAssignable,Category = "TapCommon")
 	static FOpenReviewInTapGlobal OnOpenReviewInTapGlobal;
 
+	static void TapThrobberShowWait();
+ 
+	static void TapThrobberShowWaitAndToast(const FString& Toast);
+	 
+	static void TapThrobberDismiss();
+ 
+	static void TapThrobberShowToast(const FString& Toast, float TimeInterval = 3.f);
+ 
+	static void OnTapThrobberRemoveSelf(const TSharedRef<class STapThrobber>& Throbber);
+
+	TSharedPtr<class STapThrobber> TapThrobber;
 };

@@ -25,7 +25,7 @@
     <buildGradleAdditions>
         <insert>
             dependencies { 
-                implementation(name: 'XDGPayment_6.5.1',ext:'aar')
+                implementation(name: 'XDGPayment_6.5.3',ext:'aar')
             }
         </insert>
     </buildGradleAdditions>

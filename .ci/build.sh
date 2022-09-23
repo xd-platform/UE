@@ -37,7 +37,7 @@ echo $resultContent
 THREAD=${resultContent#*threadTs=}
 echo $THREAD
 
- sh ./pkg_uploader.sh $PRODUCT_DIR/IOS/Distro_XDSDK.ipa com.tdssdk.demo $THREAD
+ sh ./pkg_uploader.sh $PRODUCT_DIR/IOS/Distro_XDSDK.ipa com.xd.sdkdemo1 $THREAD
  
- sh ./pkg_uploader.sh $PRODUCT_DIR/Android_ETC2/XDSDK-armv7.apk com.tds.demo $THREAD
+ sh ./pkg_uploader.sh $PRODUCT_DIR/Android_ETC2/XDSDK-armv7.apk com.tds.sdkdemopro $THREAD
 

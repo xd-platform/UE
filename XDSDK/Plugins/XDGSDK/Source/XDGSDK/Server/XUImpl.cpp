@@ -22,8 +22,6 @@
 static int Success = 200;
 
 void XUImpl::InitSDK(const FString& GameVersion, XUInitCallback CallBack) {
-	TUDebuger::ErrorLog(FString::Printf(TEXT("初始化状态：%x"), this));
-	TUDebuger::ErrorLog(FString::Printf(TEXT("初始化状态：%d"), InitState));
 	if (InitState == Initing) {
 		if (CallBack) {
 			CallBack(false, "XD SDK Initing");
@@ -32,12 +30,11 @@ void XUImpl::InitSDK(const FString& GameVersion, XUInitCallback CallBack) {
 	}
 	if (InitState == Inited) {
 		if (CallBack) {
-			CallBack(false, "XD SDK has Inited");
+			CallBack(true, "XD SDK has Inited");
 		}
 		return;
 	}
 	InitState = Initing;
-	TUDebuger::WarningLog(FString::Printf(TEXT("初始化Initing状态：%d"), InitState));
 	XUConfigManager::ReadLocalConfig([=](TSharedPtr<XUType::Config> Config, const FString& Msg) {
 		InitState = Uninit;
 		if (Config.IsValid()) {
@@ -61,7 +58,7 @@ void XUImpl::InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack)
 	}
 	if (InitState == Inited) {
 		if (CallBack) {
-			CallBack(false, "XD SDK has Inited");
+			CallBack(true, "XD SDK has Inited");
 		}
 		return;
 	}

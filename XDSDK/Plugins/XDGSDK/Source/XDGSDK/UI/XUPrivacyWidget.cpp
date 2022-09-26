@@ -168,6 +168,9 @@ bool UXUPrivacyWidget::OnBeforeNavigation(const FString& URL, const FWebNavigati
 	}
 }
 
+void UXUPrivacyWidget::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) {
+}
+
 bool UXUPrivacyWidget::IsInKrAndPushEnable()
 {
 	return XUConfigManager::IsGameInKoreaAndPushServiceEnable();

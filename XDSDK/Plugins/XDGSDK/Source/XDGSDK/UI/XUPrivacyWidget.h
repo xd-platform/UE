@@ -39,6 +39,8 @@ protected:
 	virtual void OnLoadError() override;
 
 	virtual bool OnBeforeNavigation(const FString& URL, const FWebNavigationRequest& Request) override;
+
+	virtual void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld) override;
 	
 private:
 	UPROPERTY(meta = (BindWidget))

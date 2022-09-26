@@ -9,6 +9,14 @@ typedef TFunction<void(bool Result, const FString& Message)> XUInitCallback;
 class XUImpl
 {
 public:
+
+	enum InitStateType {
+		Uninit,
+		Initing,
+		Inited
+	};
+
+	InitStateType InitState = Uninit;
 	
 	void InitSDK(const FString& GameVersion, XUInitCallback CallBack);
 	

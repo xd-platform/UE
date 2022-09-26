@@ -22,7 +22,24 @@
 static int Success = 200;
 
 void XUImpl::InitSDK(const FString& GameVersion, XUInitCallback CallBack) {
+	TUDebuger::ErrorLog(FString::Printf(TEXT("初始化状态：%x"), this));
+	TUDebuger::ErrorLog(FString::Printf(TEXT("初始化状态：%d"), InitState));
+	if (InitState == Initing) {
+		if (CallBack) {
+			CallBack(false, "XD SDK Initing");
+		}
+		return;
+	}
+	if (InitState == Inited) {
+		if (CallBack) {
+			CallBack(false, "XD SDK has Inited");
+		}
+		return;
+	}
+	InitState = Initing;
+	TUDebuger::WarningLog(FString::Printf(TEXT("初始化Initing状态：%d"), InitState));
 	XUConfigManager::ReadLocalConfig([=](TSharedPtr<XUType::Config> Config, const FString& Msg) {
+		InitState = Uninit;
 		if (Config.IsValid()) {
 			Config->GameVersion = GameVersion;
 			Config->TapConfig.DBConfig.GameVersion = GameVersion;
@@ -36,14 +53,35 @@ void XUImpl::InitSDK(const FString& GameVersion, XUInitCallback CallBack) {
 }
 
 void XUImpl::InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack) {
+	if (InitState == Initing) {
+		if (CallBack) {
+			CallBack(false, "XD SDK Initing");
+		}
+		return;
+	}
+	if (InitState == Inited) {
+		if (CallBack) {
+			CallBack(false, "XD SDK has Inited");
+		}
+		return;
+	}
+	InitState = Initing;
+	XUInitCallback NewCallBack = [=](bool Result, const FString& Message) {
+		if (Result) {
+			InitState = Inited;
+		} else {
+			InitState = Uninit;
+		}
+		if (CallBack) {
+			CallBack(Result, Message);
+		}
+	};
 	XUConfigManager::LoadRemoteOrCachedServiceTerms(Config, [=](TSharedPtr<XUType::Config> ConfigTerms, const FString& Msg) {
 		if (ConfigTerms.IsValid()) {
 			XUConfigManager::SetConfig(ConfigTerms);
-			CheckAgreement(ConfigTerms, CallBack);
+			CheckAgreement(ConfigTerms, NewCallBack);
 		} else {
-			if (CallBack) {
-				CallBack(false, Msg);
-			}
+			NewCallBack(false, Msg);
 		}
 	});
 }
@@ -411,7 +449,6 @@ void XUImpl::CheckAgreement(TSharedPtr<XUType::Config> Config, XUInitCallback Ca
 
 void XUImpl::InitFinish(XUInitCallback CallBack) {
 	XUConfigManager::InitTapSDK();
-	XUConfigManager::SetGameInited();
 	if (CallBack) {
 		CallBack(true, "");
 	}

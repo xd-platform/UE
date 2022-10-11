@@ -50,6 +50,10 @@
         <package android:name="com.twitter.android"/>
         <!-- LINE -->
         <package android:name="jp.naver.line.android"/>
+
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService"/>
+        </intent>
      </queries>
 
         <!--1. 为保证游客账号在卸载重装之后游客账号不丢失的问题，可以节点添加以下配置来关闭**分区存储**， 需要的话就放开下面一行代码-->

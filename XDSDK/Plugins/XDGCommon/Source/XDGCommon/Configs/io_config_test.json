@@ -4,9 +4,9 @@
   "game_name": "XD-Intl Demo",
   "app_id": "1111",
   "tapsdk": {
-    "client_id": "KFV9Pm9ojdmWkkRJeb",
-    "client_token": "7mpVJdXIOLQxvQdqjEEpiz7eLf82cMwYkdgoAZqF",
-    "server_url": "https://kfv9pm9o.cloud.ap-sg.tapapis.com",
+    "client_id": "jfqhF3x9mat70ez52i",
+    "client_token": "C91pZh9OJNt7oDPx3lku4H01HelnYjSBS1jaZJed",
+    "server_url": "https://jfqhf3x9.cloud.ap-sg.tapapis.com",
     "db_config": {
       "enable": true,
       "channel": "test_channel",
@@ -81,6 +81,6 @@
     "dev_key": "FLZT4V2Z3tSqCPtHbRwXNo"
   },
   "apple": {
-    "service_id": "com.xd.sign.sdkdemo1"
+    "service_id":"com.xd.sign.sdkdemo1"
   }
 }

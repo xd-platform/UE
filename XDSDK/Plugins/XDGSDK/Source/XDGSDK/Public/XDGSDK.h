@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-#define XDUESDK_VERSION_NUMBER "60503001"
-#define XDUESDK_VERSION "6.5.3"
+#define XDUESDK_VERSION_NUMBER "60600001"
+#define XDUESDK_VERSION "6.6.0"
 
 
 class XDGSDK_API FXDGSDKModule : public IModuleInterface

@@ -37,6 +37,8 @@ public:
 	virtual void TrackAchievement() = 0;
 	virtual void EventCompletedTutorial() = 0;
 	virtual void EventCreateRole() = 0;
+
+	virtual void ClearAllUserDefaultsData();
 	
 };
 

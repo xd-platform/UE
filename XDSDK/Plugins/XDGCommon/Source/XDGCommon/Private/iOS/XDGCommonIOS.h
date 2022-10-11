@@ -52,7 +52,7 @@ public:
 	void SetCountryRegion(FString region);
 
 	void DevelopInit(int32 num);
-
+	virtual void ClearAllUserDefaultsData() override;
 	void TrackAchievement();
 	void EventCompletedTutorial();
 	void EventCreateRole();

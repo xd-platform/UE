@@ -218,6 +218,18 @@ void XDGCommonIOS::DevelopInit(int32 num){
     InitSDK();
 }
 
+void XDGCommonIOS::ClearAllUserDefaultsData() {
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+
+    NSDictionary *dic =[userDefaults dictionaryRepresentation];
+
+    for (id key in dic) {
+        [userDefaults removeObjectForKey:key];
+    }
+
+    [userDefaults synchronize];
+}
+
 void XDGCommonIOS::TrackAchievement(){
     [XDGTrackerManager trackAchievement];
      NSLog(@"点击 TrackAchievement");

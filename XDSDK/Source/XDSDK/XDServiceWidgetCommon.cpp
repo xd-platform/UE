@@ -280,9 +280,13 @@ void UXDServiceWidgetCommon::OnEventCreateRoleClicked()
 
 void UXDServiceWidgetCommon::OnResetPrivacyClicked()
 {
-#if !UE_BUILD_SHIPPING && (PLATFORM_WINDOWS || PLATFORM_MAC)
+#if !UE_BUILD_SHIPPING
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	UXDGCommonBPLibrary::ClearAllUserDefaultsData();
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
 	XDUE::ResetPrivacy();
 	DEMO_LOG(TEXT("ResetPrivacy"));
+#endif
 #endif
 }
 

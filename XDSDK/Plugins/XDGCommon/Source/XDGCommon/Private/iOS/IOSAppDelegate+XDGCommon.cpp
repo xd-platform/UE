@@ -1,7 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#if PLATFORM_IOS
-
 #import "IOSAppDelegate+XDGCommon.h"
 #import <objc/runtime.h>
 #import <XDCommonSDK/XDGSDK.h>
@@ -61,5 +59,3 @@
 }
 
 @end
-
-#endif

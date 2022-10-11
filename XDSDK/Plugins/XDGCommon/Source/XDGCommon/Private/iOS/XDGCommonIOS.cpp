@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#if PLATFORM_IOS
 #include "XDGCommonIOS.h"
 #include "Engine.h"
 #include "XDGCommon.h"
@@ -192,7 +191,31 @@ void XDGCommonIOS::SetCountryRegion(FString region){
 }
 
 void XDGCommonIOS::DevelopInit(int32 num){
+    // 0: 海外 正式	1：海外 RND	2：国内 正式	3.国内 RND
+    if (num == 0) {
+        [XDGSDKSettings updateConfigFileName:@"io_config_pro"];
+    } else if (num == 1) {
+        [XDGSDKSettings updateConfigFileName:@"io_config_test"];
+    } else if (num == 2) {
+        [XDGSDKSettings updateConfigFileName:@"cn_config_pro"];
+    } else if (num == 3) {
+        [XDGSDKSettings updateConfigFileName:@"cn_config_test"];
+    }
 
+    if (num == 0 || num == 2) {
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://xdsdk-6.xd.cn" replacedHost:@"https://xdsdk-6.xd.cn"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://xdsdk-intnl-6.xd.com" replacedHost:@"https://xdsdk-intnl-6.xd.com"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://ecdn-xdsdk-intnl-6.xd.com" replacedHost:@"https://ecdn-xdsdk-intnl-6.xd.com"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair: @"https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track"];
+    } else if (num == 1 || num == 3) {
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://xdsdk-6.xd.cn" replacedHost:@"https://test-xdsdk-6.xd.cn"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://xdsdk-intnl-6.xd.com" replacedHost:@"https://test-xdsdk-intnl-6.xd.com"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://ecdn-xdsdk-intnl-6.xd.com" replacedHost:@"https://test-xdsdk-intnl-6.xd.com"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair: @"https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-test/track"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-test/track"];
+    }
+    InitSDK();
 }
 
 void XDGCommonIOS::TrackAchievement(){
@@ -226,5 +249,3 @@ void XDGCommonIOS::EventCreateRole(){
 }
 
 @end
-
-#endif

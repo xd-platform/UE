@@ -4,18 +4,6 @@
         <log text="XDSDK Android Build init"/>
     </init>
 
-    <proguardAdditions>
-        <insert>
-            -dontwarn com.xd.**
-            -keep class com.xd.XDGCommonUnreal4{
-                *;
-            }
-            -keep class com.xd.**{
-                *;
-            }
-        </insert>
-    </proguardAdditions>
-
    <resourceCopies>
         <copyDir src="$S(PluginDir)/Android/res/" dst="$S(BuildDir)/res/" />
     </resourceCopies>

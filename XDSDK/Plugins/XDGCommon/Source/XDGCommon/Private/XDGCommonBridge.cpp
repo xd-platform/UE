@@ -4,7 +4,7 @@
 #include "XDGCommonBridge.h"
 
 #if PLATFORM_ANDROID
-#include "XDGCommonAndroid.h"
+#include "Android/XDGCommonAndroid.h"
 
 XDGCommonAndroid * GetXDGCommonAndroidBridge(){
     static XDGCommonAndroid * bridge = nullptr;
@@ -19,7 +19,7 @@ XDGCommonBridge * GetXDGCommonBridge(){
 }
 
 #elif PLATFORM_IOS
-#include "XDGCommonIOS.h"
+#include "iOS/XDGCommonIOS.h"
 
 XDGCommonIOS * GetXDGCommonIOSBridge(){
     static XDGCommonIOS * bridge = nullptr;

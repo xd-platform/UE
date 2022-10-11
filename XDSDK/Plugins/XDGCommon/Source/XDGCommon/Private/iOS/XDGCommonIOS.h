@@ -1,6 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-#if PLATFORM_IOS
 #pragma once
 
 #include "Core.h"
@@ -64,5 +62,3 @@ public:
 @interface XDGUE4CommonTool : NSObject
 + (void)shareWithResult:(NSError *)error cancel:(BOOL)cancel;
 @end
-
-#endif

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+    <init>
+        <log text="XDSDK Android Build init"/>
+    </init>
+
+    <proguardAdditions>
+        <insert>
+            -dontwarn com.xd.**
+            -keep class com.xd.XDGCommonUnreal4{
+                *;
+            }
+            -keep class com.xd.**{
+                *;
+            }
+        </insert>
+    </proguardAdditions>
+
+   <resourceCopies>
+        <copyDir src="$S(PluginDir)/Android/res/" dst="$S(BuildDir)/res/" />
+    </resourceCopies>
+
+
+    <androidManifestUpdates>
+
+        <!--1. 为保证游客账号在卸载重装之后游客账号不丢失的问题，可以节点添加以下配置来关闭**分区存储**， 需要的话就放开下面一行代码-->
+         <addAttribute tag="application" name="android:requestLegacyExternalStorage" value="true"/> 
+
+        <!--2. 测试代码用的，为了UE4打包的安卓能抓包，发布的时候注销，或游戏自己注销调  //测试代码 就放开 -->
+         <addAttribute tag="application" name="android:networkSecurityConfig" value="@xml/network_security_config"/> 
+        
+    </androidManifestUpdates>
+
+</root>

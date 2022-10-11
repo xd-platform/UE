@@ -289,7 +289,23 @@ public class XDGCommonUnreal4 {
 
 
     public static void developInit(final Activity activity, int num) {
-  
+            // 0: 海外 正式	1：海外 RND	2：国内 正式	3.国内 RND
+            if (num == 0) {
+                EnvHelper.updateConfigFileName("io_config_pro.json");
+            } else if (num == 1) {
+                EnvHelper.updateConfigFileName("io_config_test.json");
+            } else if (num == 2) {
+                EnvHelper.updateConfigFileName("cn_config_pro.json");
+            } else if (num == 3) {
+                EnvHelper.updateConfigFileName("cn_config_test.json");
+            }
+        
+            if (num == 0 || num == 2) {
+                EnvHelper.setApiEnv(EnvHelper.EnvEnum.Dev);
+            } else if (num == 1 || num == 3) {
+                EnvHelper.setApiEnv(EnvHelper.EnvEnum.Product);
+            }
+            initSDK(activity);
     }
 
     public static void trackAchievement() {

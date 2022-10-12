@@ -59,3 +59,7 @@ void XUSettings::SetUILevel(int32 Level) {
 void XUSettings::SetGameInstance(TWeakObjectPtr<UGameInstance> GameInstance) {
 	TUSettings::SetGameInstance(GameInstance);
 }
+
+void XUSettings::SetBlockBeforeLaunchUrl(TFunction<void()> Block) {
+	TUSettings::SetBlockBeforeLaunchUrl(Block);
+}

@@ -7,7 +7,7 @@
 TUMobileBridge * TUMobileBridge::Instance = nullptr;
 
 FString TUMobileBridge::Perform(const FString& ServiceName, const FString& Method, const FString& Args) {
-	check(IsInGameThread());
+	// check(IsInGameThread());
 	FString JsonOutString;
 	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> Writer = TJsonWriterFactory<
 		TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonOutString);
@@ -90,7 +90,6 @@ void TUMobileBridge::DoCallBack(const FString& JsonStr) {
 
 void TUMobileBridge::Register(const FString& ServiceClz, const FString& ServiceImpl) {
 	GetBridge()->Register(ServiceClz,ServiceImpl);
-
 }
 
 TUMobileBridge::TUMobileBridge() {

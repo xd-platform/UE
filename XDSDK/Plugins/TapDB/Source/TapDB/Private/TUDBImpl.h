@@ -8,9 +8,9 @@ public:
 
 	static TSharedPtr<TUDBImpl>& Get();
 
-	TUDBType::Config Config;
+	FTUDBConfig Config;
 	
-	virtual void Init(TUDBType::Config InitConfig);
+	virtual void Init(FTUDBConfig InitConfig);
 	
 	virtual void SetUserWithLoginType(const FString& UserId, const FString& LoginType = "");
 
@@ -48,6 +48,9 @@ public:
 
 	// iOS 独有
 	virtual void AdvertiserIDCollectionEnabled(bool Enable);
+
+	// 移动端 独有
+	virtual void EnableLog(bool Enable);
 
 private:
 	static TSharedPtr<TUDBImpl> Instance;

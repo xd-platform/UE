@@ -10,7 +10,7 @@ class TAPLOGIN_API TapUELogin {
 public:
 
 	// 只能初始化一次
-	static void Init(TULoginType::Config Config);
+	static void Init(FTULoginConfig Config);
 
 	// 未登录的话为nullptr
 	static TSharedPtr<FTULoginProfileModel> GetProfile();
@@ -26,14 +26,11 @@ public:
 
 	static void Logout();
 
-	// 仅支持PC端
-	static void ChangeLanguage(TUType::LanguageType LanguageType);
-
 	// 获取测试资格
 	static void GetTestQualification(TFunction<void(bool IsQualified, const FTUError& Error)> CallBack);
 
 	// 仅支持移动端
-	static void QueryMutualList(FString Cursor, int Size, TFunction<void(TSharedPtr<FTULoginFriendResult> ModelPtr, const FTUError& Error)> CallBack);
+	// static void QueryMutualList(FString Cursor, int Size, TFunction<void(TSharedPtr<FTULoginFriendResult> ModelPtr, const FTUError& Error)> CallBack);
 
 
 };

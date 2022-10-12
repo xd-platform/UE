@@ -16,7 +16,7 @@ void TUMomentMobileImpl::Init(const TUMomentType::Config& InitConfig) {
 	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonOutString);
 	Writer->WriteObjectStart();
 	Writer->WriteValue(TEXT("clientId"), InitConfig.ClientID);
-	Writer->WriteValue(TEXT("regionType"), (int)InitConfig.RegionType == TUType::CN);
+	Writer->WriteValue(TEXT("regionType"), InitConfig.RegionType == ERegionType::CN);
 	Writer->WriteObjectEnd();
 	Writer->Close();
 	TUMobileBridge::AsyncPerform(TAP_MOMENT_SERVICE, "initWithRegion", JsonOutString);

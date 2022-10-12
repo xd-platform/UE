@@ -5,9 +5,9 @@
 
 #include "SWebBrowser.h"
 #include "TapCommon.h"
+#include "TUHelper.h"
 #include "Components/Button.h"
 #include "Components/NativeWidgetHost.h"
-#include "Slate/STapThrobber.h"
 
 void UTapWebBrowser::LoadURL(const FString& InURL)
 {
@@ -28,6 +28,10 @@ void UTapWebBrowser::UpdateRetryPanelVisibility(ESlateVisibility NewVisibility)
 TSharedPtr<SWebBrowser> UTapWebBrowser::GetInnerWebBrowser() const
 {
 	return StaticCastSharedPtr<SWebBrowser>(WebBrowser->GetContent());
+}
+
+void UTapWebBrowser::ExecuteJavascript(const FString& ScriptText) {
+	GetInnerWebBrowser()->ExecuteJavascript(ScriptText);
 }
 
 bool UTapWebBrowser::CanGoBack() const
@@ -74,11 +78,11 @@ void UTapWebBrowser::NativeOnInitialized()
 		.ShowControls(false)
 		.ShowErrorMessage(false)
 		.BrowserFrameRate(60.f)
-		.OnUrlChanged(FOnTextChanged::CreateUObject(this, &UTapWebBrowser::OnURLChanged))
-		.OnTitleChanged(FOnTextChanged::CreateUObject(this, &UTapWebBrowser::OnTitleChanged))
-		.OnLoadStarted(FSimpleDelegate::CreateUObject(this, &UTapWebBrowser::OnLoadStarted))
-		.OnLoadCompleted(FSimpleDelegate::CreateUObject(this, &UTapWebBrowser::OnLoadCompleted))
-		.OnLoadError(FSimpleDelegate::CreateUObject(this, &UTapWebBrowser::OnLoadError))
+		.OnUrlChanged(FOnTextChanged::CreateUObject(this, &UTapWebBrowser::HandleOnURLChanged))
+		.OnTitleChanged(FOnTextChanged::CreateUObject(this, &UTapWebBrowser::HandleOnTitleChanged))
+		.OnLoadStarted(FSimpleDelegate::CreateUObject(this, &UTapWebBrowser::HandleOnLoadStarted))
+		.OnLoadCompleted(FSimpleDelegate::CreateUObject(this, &UTapWebBrowser::HandleOnLoadCompleted))
+		.OnLoadError(FSimpleDelegate::CreateUObject(this, &UTapWebBrowser::HandleOnLoadError))
 		.OnBeforeNavigation(SWebBrowser::FOnBeforeBrowse::CreateUObject(this, &UTapWebBrowser::OnBeforeNavigation));
 	
 	WebBrowser->SetContent(Browser);
@@ -106,8 +110,7 @@ void UTapWebBrowser::NativeOnInitialized()
 
 void UTapWebBrowser::OnURLChanged(const FText& NewURL)
 {
-	const TCHAR* JSCode = TEXT("window.oncontextmenu = function(event){	event.preventDefault();	event.stopPropagation();	return false; };");
-	GetInnerWebBrowser()->ExecuteJavascript(JSCode);
+
 }
 
 void UTapWebBrowser::OnTitleChanged(const FText& NewTitle)
@@ -116,17 +119,17 @@ void UTapWebBrowser::OnTitleChanged(const FText& NewTitle)
 
 void UTapWebBrowser::OnLoadStarted()
 {
-	TapThrobberShowWait();
+	FTapCommonModule::TapThrobberShowWait();
 }
 
 void UTapWebBrowser::OnLoadCompleted()
 {
-	TapThrobberDismiss();
+	FTapCommonModule::TapThrobberDismiss();
 }
 
 void UTapWebBrowser::OnLoadError()
 {
-	TapThrobberDismiss();
+	FTapCommonModule::TapThrobberDismiss();
 }
 
 bool UTapWebBrowser::OnBeforeNavigation(const FString& URL, const FWebNavigationRequest& Request)
@@ -134,71 +137,51 @@ bool UTapWebBrowser::OnBeforeNavigation(const FString& URL, const FWebNavigation
 	return false;
 }
 
-void UTapWebBrowser::TapThrobberShowWait()
-{
-	if (!TapThrobber)
-	{
-		SAssignNew(TapThrobber, STapThrobber);
-		if (TapThrobber && GEngine && GEngine->GameViewport)
-		{
-			TapThrobberWrapper->SetContent(TapThrobber.ToSharedRef());
+void UTapWebBrowser::HandleOnURLChanged(const FText& NewURL) {
+	TWeakObjectPtr<UTapWebBrowser> WeakThis = this;
+	TUHelper::PerformOnGameThread([=]() {
+		if (!WeakThis.IsValid()) {
+			return;
 		}
-	}
+		const TCHAR* JSCode = TEXT(
+			"window.oncontextmenu = function(event){	event.preventDefault();	event.stopPropagation();	return false; };");
+		GetInnerWebBrowser()->ExecuteJavascript(JSCode);
+		WeakThis->OnURLChanged(NewURL);
+	});
 }
 
-void UTapWebBrowser::TapThrobberShowWaitAndToast(const FString& Toast)
-{
-	const FText NewContent = FText::FromString(Toast);
-	if (TapThrobber)
-	{
-		TapThrobber->UpdateContent(NewContent);
-	}
-	else
-	{
-		SAssignNew(TapThrobber, STapThrobber)
-		.Content(NewContent);
-		if (TapThrobber && GEngine && GEngine->GameViewport)
-		{
-			TapThrobberWrapper->SetContent(TapThrobber.ToSharedRef());
+void UTapWebBrowser::HandleOnTitleChanged(const FText& NewTitle) {
+	TWeakObjectPtr<UTapWebBrowser> WeakThis = this;
+	TUHelper::PerformOnGameThread([=]() {
+		if (WeakThis.IsValid()) {
+			WeakThis->OnTitleChanged(NewTitle);
 		}
-	}
+	});
 }
 
-void UTapWebBrowser::TapThrobberDismiss()
-{
-	if (TapThrobber && GEngine && GEngine->GameViewport)
-	{
-		TapThrobberWrapper->SetContent(SNullWidget::NullWidget);
-		TapThrobber.Reset();
-	}
-}
-
-void UTapWebBrowser::TapThrobberShowToast(const FString& Toast, float TimeInterval)
-{
-	const FText NewContent = FText::FromString(Toast);
-	if (TimeInterval > 0.f)
-	{
-		GetWorld()->GetTimerManager().SetTimer(AutoRemoveTimer, this, &UTapWebBrowser::TimerRemoveTapThrobber, TimeInterval);
-	}
-	if (TapThrobber)
-	{
-		TapThrobber->ShowThrobber(false);
-		TapThrobber->UpdateContent(NewContent);
-	}
-	else
-	{
-		SAssignNew(TapThrobber, STapThrobber)
-		.HasThrobber(false)
-		.Content(NewContent);
-		if (TapThrobber && GEngine && GEngine->GameViewport)
-		{
-			TapThrobberWrapper->SetContent(TapThrobber.ToSharedRef());
+void UTapWebBrowser::HandleOnLoadStarted() {
+	TWeakObjectPtr<UTapWebBrowser> WeakThis = this;
+	TUHelper::PerformOnGameThread([=]() {
+		if (WeakThis.IsValid()) {
+			WeakThis->OnLoadStarted();
 		}
-	}
+	});
 }
 
-void UTapWebBrowser::TimerRemoveTapThrobber()
-{
-	AutoRemoveTimer.Invalidate();
-	TapThrobberDismiss();
+void UTapWebBrowser::HandleOnLoadCompleted() {
+	TWeakObjectPtr<UTapWebBrowser> WeakThis = this;
+	TUHelper::PerformOnGameThread([=]() {
+		if (WeakThis.IsValid()) {
+			WeakThis->OnLoadCompleted();
+		}
+	});
+}
+
+void UTapWebBrowser::HandleOnLoadError() {
+	TWeakObjectPtr<UTapWebBrowser> WeakThis = this;
+	TUHelper::PerformOnGameThread([=]() {
+		if (WeakThis.IsValid()) {
+			WeakThis->OnLoadError();
+		}
+	});
 }

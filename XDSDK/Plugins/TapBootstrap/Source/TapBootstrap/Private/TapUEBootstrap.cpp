@@ -6,7 +6,7 @@
 
 // static bool IsInitialized = false;
 
-void TapUEBootstrap::Init(const TUType::Config& Config) {
+void TapUEBootstrap::Init(const FTUConfig& Config) {
 	// if (IsInitialized) {
 	// 	TUDebuger::WarningShow("Has Initialized");
 	// 	return;
@@ -15,7 +15,7 @@ void TapUEBootstrap::Init(const TUType::Config& Config) {
 	TUBootStrapImpl::Get()->Init(Config);
 }
 
-void TapUEBootstrap::Login(TArray<FString> Permissions, TFunction<void(const FTapUser& User)> SuccessBlock,
+void TapUEBootstrap::Login(TArray<FString> Permissions, TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
 	// if (!IsInitialized) {
 	// 	TUDebuger::WarningShow(FString::Printf(TEXT("Please Init First Before Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
@@ -24,7 +24,7 @@ void TapUEBootstrap::Login(TArray<FString> Permissions, TFunction<void(const FTa
 	TUBootStrapImpl::Get()->Login(Permissions, SuccessBlock, FailBlock);
 }
 
-void TapUEBootstrap::AnonymouslyLogin(TFunction<void(const FTapUser& User)> SuccessBlock,
+void TapUEBootstrap::AnonymouslyLogin(TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
 	// if (!IsInitialized) {
 	// 	TUDebuger::WarningShow(FString::Printf(TEXT("Please Init First Before Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
@@ -41,7 +41,7 @@ void TapUEBootstrap::Logout() {
 	TUBootStrapImpl::Get()->Logout();
 }
 
-TSharedPtr<FTapUser> TapUEBootstrap::GetUser() {
+TSharedPtr<FTDSUser> TapUEBootstrap::GetUser() {
 	// if (!IsInitialized) {
 	// 	TUDebuger::WarningShow(FString::Printf(TEXT("Please Init First Before Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
 	// 	return nullptr;
@@ -49,7 +49,7 @@ TSharedPtr<FTapUser> TapUEBootstrap::GetUser() {
 	return TUBootStrapImpl::Get()->GetUser();
 }
 
-void TapUEBootstrap::SetPreferLanguage(TUType::LanguageType LangType) {
+void TapUEBootstrap::SetPreferLanguage(ELanguageType LangType) {
 	// if (!IsInitialized) {
 	// 	TUDebuger::WarningShow(FString::Printf(TEXT("Please Init First Before Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
 	// 	return;

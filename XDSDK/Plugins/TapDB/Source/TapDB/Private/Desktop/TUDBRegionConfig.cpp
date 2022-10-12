@@ -27,7 +27,7 @@ FString TUDBRegionConfig::GetEventUrl() {
 
 TSharedPtr<TUDBRegionConfig>& TUDBRegionConfig::Get() {
 	if (!Instance.IsValid()) {
-		if (TUDBImpl::Get()->Config.RegionType == TUType::CN) {
+		if (TUDBImpl::Get()->Config.RegionType == ERegionType::CN) {
 			Instance = MakeShareable(new TUDBRegionConfigCN);
 		} else {
 			Instance = MakeShareable(new TUDBRegionConfigIO);

@@ -7,6 +7,8 @@
 #include "Mobile//TUDBMobileImpl.h"
 #endif
 
+#define UnsupportedPlatformsLog TUDebuger::ErrorLog(FString::Printf(TEXT("TUDBImpl Unsupported Platforms Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
+
 TSharedPtr<TUDBImpl> TUDBImpl::Instance = nullptr;
 
 TSharedPtr<TUDBImpl>& TUDBImpl::Get() {
@@ -22,79 +24,83 @@ TSharedPtr<TUDBImpl>& TUDBImpl::Get() {
 	return Instance;
 }
 
-void TUDBImpl::Init(TUDBType::Config InitConfig) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+void TUDBImpl::Init(FTUDBConfig InitConfig) {
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::SetUserWithLoginType(const FString& UserId, const FString& LoginType) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::ClearUser() {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::SetName(const FString& Name) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::SetLevel(int Level) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::SetServer(const FString& Server) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::OnCharge(const FString& OrderId, const FString& Product, int Amount, const FString& CurrencyType,
 	const FString& Payment, TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::TrackEvent(const FString& EventName, TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::RegisterStaticProperties(TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::UnregisterStaticProperty(const FString& Key) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::ClearStaticProperties() {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::RegisterDynamicProperties(TFunction<TSharedPtr<FJsonObject>()> PropertiesBlock) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::DeviceInitialize(TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::DeviceUpdate(TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::DeviceAdd(TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::UserInitialize(TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::UserUpdate(TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::UserAdd(TSharedPtr<FJsonObject> Properties) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUDBImpl::AdvertiserIDCollectionEnabled(bool Enable) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
+}
+
+void TUDBImpl::EnableLog(bool Enable) {
+	UnsupportedPlatformsLog
 }

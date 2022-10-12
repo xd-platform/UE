@@ -4,7 +4,7 @@
 
 // static bool IsInitialized = false;
 
-void TapUELogin::Init(TULoginType::Config Config) {
+void TapUELogin::Init(FTULoginConfig Config) {
 	// if (IsInitialized) {
 	// 	TUDebuger::WarningShow("Has Initialized");
 	// 	return;
@@ -61,11 +61,6 @@ void TapUELogin::Logout() {
 	// }
 	TULoginImpl::Get()->Logout();
 }
-
-	
-void TapUELogin::ChangeLanguage(TUType::LanguageType LanguageType) {
-	TULoginImpl::Get()->ChangeLanguage(LanguageType);
-}
 	
 void TapUELogin::GetTestQualification(TFunction<void(bool IsQualified, const FTUError& Error)> CallBack) {
 	// if (!IsInitialized) {
@@ -75,11 +70,11 @@ void TapUELogin::GetTestQualification(TFunction<void(bool IsQualified, const FTU
 	TULoginImpl::Get()->GetTestQualification(CallBack);
 }
 
-void TapUELogin::QueryMutualList(FString Cursor, int Size,
-	TFunction<void(TSharedPtr<FTULoginFriendResult> ModelPtr, const FTUError& Error)> CallBack) {
-	// if (!IsInitialized) {
-	// 	TUDebuger::WarningShow(FString::Printf(TEXT("Please Init First Before Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
-	// 	return;
-	// }
-	TULoginImpl::Get()->QueryMutualList(Cursor, Size, CallBack);
-}
+// void TapUELogin::QueryMutualList(FString Cursor, int Size,
+// 	TFunction<void(TSharedPtr<FTULoginFriendResult> ModelPtr, const FTUError& Error)> CallBack) {
+// 	// if (!IsInitialized) {
+// 	// 	TUDebuger::WarningShow(FString::Printf(TEXT("Please Init First Before Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
+// 	// 	return;
+// 	// }
+// 	TULoginImpl::Get()->QueryMutualList(Cursor, Size, CallBack);
+// }

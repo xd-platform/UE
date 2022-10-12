@@ -1,5 +1,5 @@
 #pragma once
-#include "TapUser.h"
+#include "TDSUser.h"
 #include "TUError.h"
 #include "TUType.h"
 
@@ -10,19 +10,19 @@ public:
 
 	static TSharedPtr<TUBootStrapImpl>& Get();
 	
-	virtual void Init(const TUType::Config& Config);
+	virtual void Init(const FTUConfig& Config);
 
-	virtual void Login(TArray<FString> Permissions, TFunction<void(const FTapUser& User)> SuccessBlock,
+	virtual void Login(TArray<FString> Permissions, TFunction<void(const FTDSUser& User)> SuccessBlock,
 		TFunction<void(const FTUError& Error)> FailBlock);
 
-	virtual void AnonymouslyLogin(TFunction<void(const FTapUser& User)> SuccessBlock,
+	virtual void AnonymouslyLogin(TFunction<void(const FTDSUser& User)> SuccessBlock,
 		TFunction<void(const FTUError& Error)> FailBlock);
 
 	virtual void Logout();
 
-	virtual TSharedPtr<FTapUser> GetUser();
+	virtual TSharedPtr<FTDSUser> GetUser();
 
-	virtual void SetPreferLanguage(TUType::LanguageType LangType);
+	virtual void SetPreferLanguage(ELanguageType LangType);
 
 private:
 	static TSharedPtr<TUBootStrapImpl> Instance;

@@ -1,46 +1,13 @@
 #include "TULoginPCImpl.h"
 
-#include "TAULoginLanguage.h"
+#include "TULoginLanguage.h"
 #include "Server/TULoginNet.h"
 #include "UI/TAULoginWidget.h"
 
-void TULoginPCImpl::Init(TULoginType::Config _Config) {
+void TULoginPCImpl::Init(FTULoginConfig _Config) {
+	FTUConfig::Get()->ClientID = _Config.ClientID;
+	FTUConfig::Get()->RegionType = _Config.RegionType;
 	this->Config = _Config;
-}
-
-void TULoginPCImpl::ChangeLanguage(TUType::LanguageType LanguageType) {
-	switch (LanguageType) {
-	case TUType::AUTO:
-		if (Config.RegionType == TUType::CN) {
-			TAULoginLanguage::SetLangType(TAULoginLanguage::CN);
-		}
-		else {
-			TAULoginLanguage::SetLangType(TAULoginLanguage::EN);
-		}
-		break;
-	case TUType::ZH:
-		TAULoginLanguage::SetLangType(TAULoginLanguage::CN);
-		break;
-	case TUType::EN:
-		TAULoginLanguage::SetLangType(TAULoginLanguage::EN);
-		break;
-	case TUType::ZHTW:
-		TAULoginLanguage::SetLangType(TAULoginLanguage::ZHTW);
-		break;
-	case TUType::JA:
-		TAULoginLanguage::SetLangType(TAULoginLanguage::JA);
-		break;
-	case TUType::KO:
-		TAULoginLanguage::SetLangType(TAULoginLanguage::KO);
-		break;
-	case TUType::TH:
-		TAULoginLanguage::SetLangType(TAULoginLanguage::TH);
-		break;
-	case TUType::ID:
-		TAULoginLanguage::SetLangType(TAULoginLanguage::ID);
-		break;
-	default: ;
-	}
 }
 
 TSharedPtr<FTULoginProfileModel> TULoginPCImpl::GetProfile() {

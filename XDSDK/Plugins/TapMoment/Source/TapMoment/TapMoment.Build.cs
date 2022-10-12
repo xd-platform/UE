@@ -75,8 +75,8 @@ public class TapMoment : ModuleRules
             PublicAdditionalFrameworks.Add(
                 new Framework(
                     "TapMomentSDK",
-                    "../TapMoment/ios/framework/TapMomentSDK.embeddedframework.zip",
-                    "Resource/TapMomentResource.bundle"
+                    "../TapMoment/ios/framework/TapMomentSDK.zip",
+                    "TapMomentResource.bundle"
                 )
             );
         }

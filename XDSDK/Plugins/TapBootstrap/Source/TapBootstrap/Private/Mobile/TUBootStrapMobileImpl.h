@@ -11,21 +11,21 @@
 class TUBootStrapMobileImpl: public TUBootStrapImpl{
 public:
 	TUBootStrapMobileImpl();
-	virtual void Init(const TUType::Config& Config) override;
-	virtual void Login(TArray<FString> Permissions, TFunction<void(const FTapUser& User)> SuccessBlock,
+	virtual void Init(const FTUConfig& Config) override;
+	virtual void Login(TArray<FString> Permissions, TFunction<void(const FTDSUser& User)> SuccessBlock,
 		TFunction<void(const FTUError& Error)> FailBlock) override;
-	virtual void AnonymouslyLogin(TFunction<void(const FTapUser& User)> SuccessBlock,
+	virtual void AnonymouslyLogin(TFunction<void(const FTDSUser& User)> SuccessBlock,
 		TFunction<void(const FTUError& Error)> FailBlock) override;
 	virtual void Logout() override;
-	virtual TSharedPtr<FTapUser> GetUser() override;
-	virtual void SetPreferLanguage(TUType::LanguageType LangType) override;
+	virtual TSharedPtr<FTDSUser> GetUser() override;
+	virtual void SetPreferLanguage(ELanguageType LangType) override;
 
 private:
-	void DealLoginCallBack(const FString& ResultStr, TFunction<void(const FTapUser& User)> SuccessBlock,
+	void DealLoginCallBack(const FString& ResultStr, TFunction<void(const FTDSUser& User)> SuccessBlock,
 	                              TFunction<void(const FTUError& Error)> FailBlock);
 
 #if PLATFORM_IOS
-	void DealLoginCallBack(TDSUser* user, NSError* error, TFunction<void(const FTapUser& User)> SuccessBlock,
+	void DealLoginCallBack(TDSUser* user, NSError* error, TFunction<void(const FTDSUser& User)> SuccessBlock,
 								  TFunction<void(const FTUError& Error)> FailBlock);
 #endif
 	

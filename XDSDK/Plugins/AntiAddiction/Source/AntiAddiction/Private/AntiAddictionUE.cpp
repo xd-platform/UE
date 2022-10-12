@@ -1,24 +1,45 @@
 #include "AntiAddictionUE.h"
 
 #include "TUDebuger.h"
+#include "Model/Vietnam/AAUVietnamConfigModel.h"
 #include "Server/AAUImpl.h"
-#include "Server/AAUStorage.h"
 #include "UI/AAUHealthTipWidget.h"
 
-AntiAddictionUE::SimpleDelegate AntiAddictionUE::OnExit;
+#if !UE_BUILD_SHIPPING
+#include "TUSettings.h"
+#include "UI/Vietnam/AAUVietnamRealNameWidget.h"
+#endif
 
-AntiAddictionUE::SimpleDelegate AntiAddictionUE::OnSwitchAccount;
+AntiAddictionUE::FCallBack AntiAddictionUE::OnCallBack;
 
-void AntiAddictionUE::Init(const AAUType::Config& Config) {
+
+void AntiAddictionUE::Init(const FAAUConfig& Config) {
 	AAUImpl::Get()->Init(Config);
 }
 
-void AntiAddictionUE::Login(const FString& UserID, TFunction<void(bool Result, const FString& Msg)> CallBack) {
+void AntiAddictionUE::Startup(const FString& UserID) {
 	if (UserID.IsEmpty()) {
 		TUDebuger::ErrorLog("AntiAddiction UserID is Empty");
 		return;
 	}
-	AAUImpl::Get()->Login(UserID, CallBack);
+	AAUImpl::Get()->Startup(UserID);
+}
+
+void AntiAddictionUE::Exit() {
+	AAUImpl::Get()->Exit();
+}
+
+EAAUAgeLimit AntiAddictionUE::GetAgeRange() {
+	return AAUImpl::Get()->GetAgeRange();
+}
+
+int AntiAddictionUE::GetRemainingTimeInMinutes() {
+	double Remaintime = GetRemainingTime();
+	return FMath::CeilToDouble(Remaintime / 60);
+}
+
+int AntiAddictionUE::GetRemainingTime() {
+	return AAUImpl::Get()->GetRemainingTime();
 }
 
 void AntiAddictionUE::EnterGame() {
@@ -27,18 +48,6 @@ void AntiAddictionUE::EnterGame() {
 
 void AntiAddictionUE::LeaveGame() {
 	AAUImpl::Get()->LeaveGame();
-}
-
-void AntiAddictionUE::Logout() {
-	AAUImpl::Get()->Logout();
-}
-
-int AntiAddictionUE::GetCurrentUserAgeLimit() {
-	return AAUImpl::Get()->GetCurrentUserAgeLimit();
-}
-
-int AntiAddictionUE::GetCurrentUserRemainTime() {
-	return AAUImpl::Get()->GetCurrentUserRemainTime();
 }
 
 void AntiAddictionUE::CheckPayLimit(int Amount,TFunction<void(bool Status)> CallBack,TFunction<void(const FString& Msg)> FailureHandler) {
@@ -50,9 +59,22 @@ void AntiAddictionUE::SubmitPayResult(int Amount, TFunction<void(bool Success)> 
 	AAUImpl::Get()->SubmitPayResult(Amount, CallBack, FailureHandler);
 }
 
-void AntiAddictionUE::Test() {
-	int Temp = TUDataStorage<FAAUStorage>::LoadNumber("MyTest");
-	TUDebuger::DisplayShow(FString::Printf(TEXT("num: %i"), Temp));
-	Temp += 1;
-	TUDataStorage<FAAUStorage>::SaveNumber("MyTest", Temp);
+FString AntiAddictionUE::CurrentToken() {
+	return AAUImpl::Get()->CurrentToken();
+}
+void AntiAddictionUE::Test()
+{
+#if !UE_BUILD_SHIPPING
+	if (GEngine && GEngine->GameViewport)
+	{
+		auto Info = FAAUVietnamConfigModel::GetLocalModel()->ui_config.input_realname_info;
+
+		TSharedRef<SAAURealNameVietnam> RealName = SNew(SAAURealNameVietnam)
+		.Title(FText::FromString(Info.title))
+		.Content(FText::FromString(Info.description))
+		.SubmitText(FText::FromString(Info.button));
+		
+		GEngine->GameViewport->AddViewportWidgetContent(RealName, TUSettings::GetUILevel());
+	}
+#endif
 }

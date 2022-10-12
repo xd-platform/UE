@@ -35,11 +35,11 @@ XDGCommonBridge * GetXDGCommonBridge(){
 
 #else
 
-void XDGCommonBridge::ClearAllUserDefaultsData() {
-}
-
 XDGCommonBridge * GetXDGCommonBridge(){
     return nullptr;
 }
 
 #endif
+
+void XDGCommonBridge::ClearAllUserDefaultsData() {
+}

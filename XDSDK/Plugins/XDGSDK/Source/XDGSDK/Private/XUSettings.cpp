@@ -1,5 +1,6 @@
 #include "XUSettings.h"
 
+#include "TapUECommon.h"
 #include "TapUELogin.h"
 #include "TUSettings.h"
 #include "XUConfigManager.h"
@@ -13,28 +14,28 @@ void XUSettings::SetLanguage(XUType::LangType Locale) {
 	XULanguageManager::SetLanguageType(Locale);
 	switch (Locale) {
 	case XUType::ZH_CN:
-		TapUELogin::ChangeLanguage(TUType::ZH);
+		TapUECommon::SetLanguage(ELanguageType::ZH);
 		break;
 	case XUType::ZH_TW:
-		TapUELogin::ChangeLanguage(TUType::ZHTW);
+		TapUECommon::SetLanguage(ELanguageType::ZHTW);
 		break;
 	case XUType::EN:
-		TapUELogin::ChangeLanguage(TUType::EN);
+		TapUECommon::SetLanguage(ELanguageType::EN);
 		break;
 	case XUType::TH:
-		TapUELogin::ChangeLanguage(TUType::TH);
+		TapUECommon::SetLanguage(ELanguageType::TH);
 		break;
 	case XUType::ID:
-		TapUELogin::ChangeLanguage(TUType::ID);
+		TapUECommon::SetLanguage(ELanguageType::ID);
 		break;
 	case XUType::KR:
-		TapUELogin::ChangeLanguage(TUType::KO);
+		TapUECommon::SetLanguage(ELanguageType::KO);
 		break;
 	case XUType::JP:
-		TapUELogin::ChangeLanguage(TUType::JA);
+		TapUECommon::SetLanguage(ELanguageType::JA);
 		break;
 	default:
-		TapUELogin::ChangeLanguage(TUType::EN);
+		TapUECommon::SetLanguage(ELanguageType::EN);
 		break;
 	}
 }

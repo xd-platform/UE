@@ -102,7 +102,7 @@ namespace XUType {
 		FString ClientId;
 
 		/// TapSDK 配置
-		TUType::Config TapConfig;
+		FTUConfig TapConfig;
 
 		/// 游戏对外名称 显示在 Facebook 登录和客服页面中
 		FString GameName;

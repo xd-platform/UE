@@ -44,7 +44,7 @@ TSharedPtr<XUType::Config> FXULocalConfig::GenerateXUConfig() {
 	ConfigPtr->TapConfig.ClientID = tapsdk.client_id;
 	ConfigPtr->TapConfig.ClientToken = tapsdk.client_token;
 	ConfigPtr->TapConfig.ServerURL = tapsdk.server_url;
-	ConfigPtr->TapConfig.RegionType = ConfigPtr->RegionType == XUType::CN ? TUType::CN : TUType::Global;
+	ConfigPtr->TapConfig.RegionType = ConfigPtr->RegionType == XUType::CN ? ERegionType::CN : ERegionType::Global;
 	ConfigPtr->TapLoginPermissions = tapsdk.permissions;
 	// tap db
 	ConfigPtr->TapConfig.DBConfig.Enable = tapsdk.db_config.enable;

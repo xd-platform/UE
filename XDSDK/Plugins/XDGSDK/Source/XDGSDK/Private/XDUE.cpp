@@ -3,6 +3,7 @@
 #include "TapUEDB.h"
 #include "TapUELogin.h"
 #include "TUDebuger.h"
+#include "TUHelper.h"
 #include "XUConfigManager.h"
 #include "XUImpl.h"
 #include "XUThirdAuthHelper.h"
@@ -145,7 +146,7 @@ void XDUE::OpenCustomerCenter(const FString& ServerId, const FString& RoleId, co
 	if (UrlStr.IsEmpty()) {
 		TUDebuger::ErrorLog("please login first");
 	} else {
-		UTapCommonBPLibrary::LaunchURL(*UrlStr, nullptr, nullptr);
+		TUHelper::LaunchURL(*UrlStr, nullptr, nullptr);
 	}
 }
 

@@ -182,8 +182,10 @@ void UXDServiceWidgetPayment::NativeConstruct() {
 
 #if PLATFORM_ANDROID
 	ETB_PayWithProduct_ProductID->SetText(FText::FromString("com.tds.sdkdemopro.fxqusd299"));
-	ETB_PayWithWeb_ProductID->SetText(FText::FromString("com.xd.sdkdemo1.stone60"));
-	ETB_PayWithWeb_ProductName->SetText(FText::FromString("com.xd.sdkdemo1.stone60"));
+	ETB_PayWithWeb_ProductID->SetText(FText::FromString("com.xd.sdkdemo1.stone30"));
+	ETB_PayWithWeb_ProductName->SetText(FText::FromString("com.xd.sdkdemo1.stone30"));
+	ETB_PayWithWeb_RoleID->SetText(FText::FromString("332903070579322881"));
+	ETB_PayWithWeb_ServerID->SetText(FText::FromString("demo_server_id"));
 #elif PLATFORM_IOS
 	ETB_PayWithProduct_ProductID->SetText(FText::FromString("com.xd.sdkdemo1.stone500"));
 #elif PLATFORM_WINDOWS || PLATFORM_MAC

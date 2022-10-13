@@ -33,5 +33,13 @@ public class XDSDK : ModuleRules
 				Path.Combine(ModuleDirectory, "Demo_Android_UPL.xml")
 			);
 		}
+
+		if (Target.Platform == UnrealTargetPlatform.IOS)
+		{
+			AdditionalPropertiesForReceipt.Add(
+				"IOSPlugin",
+				Path.Combine(ModuleDirectory, "Demo_iOS_UPL.xml")
+			);
+		}
 	}
 }

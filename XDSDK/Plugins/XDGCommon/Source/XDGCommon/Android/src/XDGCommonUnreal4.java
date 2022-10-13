@@ -301,9 +301,9 @@ public class XDGCommonUnreal4 {
             }
         
             if (num == 0 || num == 2) {
-                EnvHelper.setApiEnv(EnvHelper.EnvEnum.Dev);
-            } else if (num == 1 || num == 3) {
                 EnvHelper.setApiEnv(EnvHelper.EnvEnum.Product);
+            } else if (num == 1 || num == 3) {
+                EnvHelper.setApiEnv(EnvHelper.EnvEnum.Dev);
             }
             initSDK(activity);
     }

@@ -203,11 +203,7 @@ void XDGCommonIOS::DevelopInit(int32 num){
     }
 
     if (num == 0 || num == 2) {
-        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://xdsdk-6.xd.cn" replacedHost:@"https://xdsdk-6.xd.cn"];
-        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://xdsdk-intnl-6.xd.com" replacedHost:@"https://xdsdk-intnl-6.xd.com"];
-        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://ecdn-xdsdk-intnl-6.xd.com" replacedHost:@"https://ecdn-xdsdk-intnl-6.xd.com"];
-        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair: @"https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track"];
-        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track"];
+        [[TDSHostReplaceUtil shareInstance] clear];
     } else if (num == 1 || num == 3) {
         [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://xdsdk-6.xd.cn" replacedHost:@"https://test-xdsdk-6.xd.cn"];
         [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://xdsdk-intnl-6.xd.com" replacedHost:@"https://test-xdsdk-intnl-6.xd.com"];

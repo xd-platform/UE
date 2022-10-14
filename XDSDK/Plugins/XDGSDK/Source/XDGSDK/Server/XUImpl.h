@@ -45,6 +45,8 @@ public:
 	
 	static TSharedPtr<XUImpl>& Get();
 
+	void BindByType(XUType::LoginType BindType, TFunction<void(bool Success, const FXUError& Error)> CallBack);
+
 
 private:
 	static TSharedPtr<XUImpl> Instance;

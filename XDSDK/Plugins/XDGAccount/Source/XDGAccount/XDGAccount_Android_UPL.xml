@@ -17,9 +17,9 @@
 
     <!-- optional files or directories to copy to Intermediate/Android/APK -->
    <resourceCopies>
-        <copyDir src="$S(PluginDir)/../../Source/XDGAccount/Android/libs/" dst="$S(BuildDir)/libs/" />
-        <copyDir src="$S(PluginDir)/../../Source/XDGAccount/Android/assets/" dst="$S(BuildDir)/assets/" />
-        <copyDir src="$S(PluginDir)/../../Source/XDGAccount/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/libs/" dst="$S(BuildDir)/libs/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/assets/" dst="$S(BuildDir)/assets/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
     </resourceCopies>
 
     <buildGradleAdditions>

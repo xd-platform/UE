@@ -18,7 +18,7 @@ def zipDir(source_dir, output_filename):
         # mac install: brew install xz
         # mode 解压是 r , 压缩是 w 追加压缩是 a
         # compression 为  zipfile.ZIP_DEFLATED，zipfile.ZIP_STORED， zipfile.ZIP_LZMA
-        zipf = zipfile.ZipFile(file=output_filename, mode='w', compression=zipfile.ZIP_LZMA)
+        zipf = zipfile.ZipFile(file=output_filename, mode='w', compression=zipfile.ZIP_DEFLATED)
         # zipf = zipfile.ZipFile(file=output_filename, mode='w', compression=zipfile.ZIP_DEFLATED)
         pre_len = len(os.path.dirname(source_dir))
         for parent, dirnames, filenames in os.walk(source_dir):

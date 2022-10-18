@@ -85,7 +85,7 @@ public class XDGPayment : ModuleRules
             PublicAdditionalFrameworks.Add(
                     new Framework(
 						"XDPaymentSDK",
-						"../ThirdParty/XDPaymentSDK.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/XDPaymentSDK.zip"
                     )
                 );
         }		

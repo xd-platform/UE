@@ -4,8 +4,8 @@
   <init>
     <log text="XDSDK iOS Common Build init"/>
     <log text="common ios copy resource" />
-    <copyDir src="$S(PluginDir)/iOS/" dst="$S(BuildDir)/" />
-    <copyDir src="$S(PluginDir)/Configs/" dst="$S(BuildDir)/" />
+    <copyDir src="$S(PluginDir)/../ThirdParty/iOS/Assets/" dst="$S(BuildDir)/" />
+    <copyDir src="$S(PluginDir)/../ThirdParty/Configs/" dst="$S(BuildDir)/" />
   </init>
 
   <iosPListUpdates>

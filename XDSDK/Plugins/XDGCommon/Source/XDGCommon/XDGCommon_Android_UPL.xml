@@ -17,11 +17,11 @@
     </proguardAdditions>
 
    <resourceCopies>
-        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/googleJson/" dst="$S(BuildDir)/gradle/app/" />
-        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Configs/" dst="$S(BuildDir)/assets/" />
-        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/res/" dst="$S(BuildDir)/res/" />
-        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/libs/" dst="$S(BuildDir)/libs/" />
-        <copyDir src="$S(PluginDir)/../../Source/XDGCommon/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/googleJson/" dst="$S(BuildDir)/gradle/app/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Configs/" dst="$S(BuildDir)/assets/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/res/" dst="$S(BuildDir)/res/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/libs/" dst="$S(BuildDir)/libs/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
     </resourceCopies>
 
 

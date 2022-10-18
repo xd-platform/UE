@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+    <init>
+        <log text="XDSDK Android Build init"/>
+    </init>
+
+   <resourceCopies>
+        <copyDir src="$S(PluginDir)/Android/res/" dst="$S(BuildDir)/res/" />
+    </resourceCopies>
+
+
+    <androidManifestUpdates>
+
+        <!--1. 为保证游客账号在卸载重装之后游客账号不丢失的问题，可以节点添加以下配置来关闭**分区存储**， 需要的话就放开下面一行代码-->
+         <addAttribute tag="application" name="android:requestLegacyExternalStorage" value="true"/> 
+
+        <!--2. 测试代码用的，为了UE4打包的安卓能抓包，发布的时候注销，或游戏自己注销调  //测试代码 就放开 -->
+         <addAttribute tag="application" name="android:networkSecurityConfig" value="@xml/network_security_config"/>
+
+
+        <addElements tag="application">
+            <meta-data
+                    android:name="com.facebook.sdk.ApplicationId"
+                    android:value="\333676195299012" />
+
+            <meta-data
+                    android:name="firebase_performance_logcat_enabled"
+                    android:value="true" />
+
+            <activity
+                    android:name="com.facebook.FacebookActivity"
+                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                    android:label="@string/app_name" />
+
+            <activity
+                    android:name="com.facebook.CustomTabActivity"
+                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                    android:exported="true">
+                <intent-filter><action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="fb333676195299012" />
+                </intent-filter>
+            </activity>
+
+
+            <activity
+                    android:name="com.xd.intl.payment.ui.SchemeCCTActivity"
+                    android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                    android:exported="true">
+                <intent-filter>
+                    <action android:name="android.intent.action.VIEW"/>
+
+                    <category android:name="android.intent.category.DEFAULT"/>
+                    <category android:name="android.intent.category.BROWSABLE"/>
+
+                    <data android:scheme="xdhn5rcjei2jxcyls0"/>
+                </intent-filter>
+            </activity>
+
+            <provider
+                    android:name="com.facebook.FacebookContentProvider"
+                    android:authorities="com.facebook.app.FacebookContentProvider333676195299012"
+                    android:exported="true" />
+        </addElements>
+        
+    </androidManifestUpdates>
+
+</root>

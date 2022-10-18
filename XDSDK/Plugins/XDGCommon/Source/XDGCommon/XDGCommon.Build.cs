@@ -85,167 +85,174 @@ public class XDGCommon : ModuleRules
 
 		 if (Target.Platform == UnrealTargetPlatform.IOS) {
 
-			   PublicAdditionalFrameworks.Add(
+		 	// Adjust
+		 	PublicAdditionalFrameworks.Add(
                     new Framework(
 						"AdjustSdk",
-						"../ThirdParty/AdjustSdk.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/AdjustSdk.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
+			// AppsFlyer
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"AppsFlyerLib",
-						"../ThirdParty/AppsFlyerLib.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/AppsFlyerLib.zip"
                     )
                 );
-
-				PublicAdditionalFrameworks.Add(
+			// Facebook
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FBAEMKit",
-						"../ThirdParty/FBAEMKit.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FBAEMKit.zip"
                     )
                 );
 
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FBSDKCoreKit_Basics",
-						"../ThirdParty/FBSDKCoreKit_Basics.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FBSDKCoreKit_Basics.zip"
                     )
                 );
-
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FBSDKCoreKit",
-						"../ThirdParty/FBSDKCoreKit.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FBSDKCoreKit.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FBSDKLoginKit",
-						"../ThirdParty/FBSDKLoginKit.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FBSDKLoginKit.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FBSDKShareKit",
-						"../ThirdParty/FBSDKShareKit.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"LineSDK",
-						"../ThirdParty/LineSDK.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"TDSGTwitterLoginKit",
-						"../ThirdParty/TDSGTwitterLoginKit.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FBSDKShareKit.zip"
                     )
                 );
 
-				//17star
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"GoogleSignIn",
-						"../ThirdParty/GoogleSignIn.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"AppAuth",
-						"../ThirdParty/AppAuth.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"GTMAppAuth",
-						"../ThirdParty/GTMAppAuth.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"GTMSessionFetcher",
-						"../ThirdParty/GTMSessionFetcher.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
+
+			// Google
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FirebaseAnalytics",
-						"../ThirdParty/FirebaseAnalytics.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FirebaseAnalytics.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"FirebaseAuth",
-						"../ThirdParty/FirebaseAuth.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FirebaseCore",
-						"../ThirdParty/FirebaseCore.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FirebaseCore.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FirebaseCoreDiagnostics",
-						"../ThirdParty/FirebaseCoreDiagnostics.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FirebaseCoreDiagnostics.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"FirebaseCrashlytics",
-						"../ThirdParty/FirebaseCrashlytics.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"FirebaseInstallations",
-						"../ThirdParty/FirebaseInstallations.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/FirebaseInstallations.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"FirebaseInstanceID",
-						"../ThirdParty/FirebaseInstanceID.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
-                    new Framework(
-						"FirebaseMessaging",
-						"../ThirdParty/FirebaseMessaging.embeddedframework.zip"
-                    )
-                );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"GoogleAppMeasurement",
-						"../ThirdParty/GoogleAppMeasurement.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/GoogleAppMeasurement.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"GoogleDataTransport",
-						"../ThirdParty/GoogleDataTransport.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/GoogleDataTransport.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"GoogleUtilities",
-						"../ThirdParty/GoogleUtilities.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/GoogleUtilities.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"nanopb",
-						"../ThirdParty/nanopb.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/nanopb.zip"
                     )
                 );
-				PublicAdditionalFrameworks.Add(
+			PublicAdditionalFrameworks.Add(
                     new Framework(
 						"PromisesObjC",
-						"../ThirdParty/PromisesObjC.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/PromisesObjC.zip"
                     )
                 );
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"FirebaseAuth",
+						"../ThirdParty/iOS/Frameworks/FirebaseAuth.zip"
+                    )
+                );
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"FirebaseCrashlytics",
+						"../ThirdParty/iOS/Frameworks/FirebaseCrashlytics.zip"
+                    )
+                );
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"FirebaseInstanceID",
+						"../ThirdParty/iOS/Frameworks/FirebaseInstanceID.zip"
+                    )
+                );
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"FirebaseMessaging",
+						"../ThirdParty/iOS/Frameworks/FirebaseMessaging.zip"
+                    )
+                );
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"AppAuth",
+						"../ThirdParty/iOS/Frameworks/AppAuth.zip"
+                    )
+                );
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"GTMAppAuth",
+						"../ThirdParty/iOS/Frameworks/GTMAppAuth.zip"
+                    )
+                );
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"GTMSessionFetcher",
+						"../ThirdParty/iOS/Frameworks/GTMSessionFetcher.zip"
+                    )
+                );
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"GoogleSignIn",
+						"../ThirdParty/iOS/Frameworks/GoogleSignIn.zip"
+                    )
+                );
+
+			// Line
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"LineSDK",
+						"../ThirdParty/iOS/Frameworks/LineSDK.zip"
+                    )
+                );
+
+			// Twitter
+			PublicAdditionalFrameworks.Add(
+                    new Framework(
+						"TDSGTwitterLoginKit",
+						"../ThirdParty/iOS/Frameworks/TDSGTwitterLoginKit.zip"
+                    )
+                );
+
 
 				PublicFrameworks.AddRange(
 					new string[]{
@@ -262,36 +269,36 @@ public class XDGCommon : ModuleRules
 				);
 
 				PublicSystemLibraryPaths.Add("/usr/lib/swift");
-				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "../ThirdParty/libswiftCompatibility51.a"));
-                PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "../ThirdParty/libswiftCompatibility50.a"));
-                PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "../ThirdParty/libswiftCompatibilityDynamicReplacements.a")); 
+				PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "../ThirdParty/iOS/Libs/libswiftCompatibility51.a"));
+                PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "../ThirdParty/iOS/Libs/libswiftCompatibility50.a"));
+                PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "../ThirdParty/iOS/Libs/libswiftCompatibilityDynamicReplacements.a")); 
 
 				//bundle
-				AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./iOS/GoogleSignIn.bundle")));
-				AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./iOS/LineSDKResource.bundle")));
-				AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./iOS/XDResources.bundle")));
-				AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./iOS/GoogleService-Info.plist")));
-				AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./Configs/XDConfig.json")));
+				// AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./iOS/GoogleSignIn.bundle")));
+				// AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./iOS/LineSDKResource.bundle")));
+				// AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./iOS/XDResources.bundle")));
+				// AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./iOS/GoogleService-Info.plist")));
+				// AdditionalBundleResources.Add(new BundleResource(Path.Combine(ModuleDirectory, "./Configs/XDConfig.json")));
 
                 // Add framework
                 PublicAdditionalFrameworks.Add(
                     new Framework(
 						"XDCommonSDK",
-						"../ThirdParty/XDCommonSDK.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/XDCommonSDK.zip"
                     )
                 );
 
 				PublicAdditionalFrameworks.Add(
                     new Framework(
 						"XDThirdLoginSDK",
-						"../ThirdParty/XDThirdLoginSDK.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/XDThirdLoginSDK.zip"
                     )
                 );
 
 				PublicAdditionalFrameworks.Add(
                     new Framework(
 						"XDThirdTrackSDK",
-						"../ThirdParty/XDThirdTrackSDK.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/XDThirdTrackSDK.zip"
                     )
                 );
             

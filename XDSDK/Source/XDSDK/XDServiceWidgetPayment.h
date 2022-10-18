@@ -42,6 +42,8 @@ class XDSDK_API UXDServiceWidgetPayment : public UUserWidget
 protected:
 	virtual void NativeOnInitialized() override;
 
+	virtual void NativeConstruct() override;
+
 	void OnXDGSDKPaymentSucceed(const FString&, const FString&, const FString&, const FString&);
 
 	void OnXDGSDKPaymentFailed(const int32, const FString&);

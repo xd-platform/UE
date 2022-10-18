@@ -4,6 +4,7 @@
 #include "TUDataStorage.h"
 #include "TUDeviceInfo.h"
 #include "TUHelper.h"
+#include "XUImpl.h"
 #include "XULanguageManager.h"
 #include "XULocalConfig.h"
 #include "XUNet.h"
@@ -220,15 +221,8 @@ void XUConfigManager::GetRegionInfo(TFunction<void(TSharedPtr<FXUIpInfoModel> Mo
 	});
 }
 
-// void XUConfigManager::UpdateHttpConfig() {
-// }
-
-void XUConfigManager::SetGameInited() {
-	SharedInstance().IsInited = true;
-}
-
 bool XUConfigManager::IsGameInited() {
-	return SharedInstance().IsInited;
+	return XUImpl::Get()->InitState == XUImpl::Inited;
 }
 
 bool XUConfigManager::GoogleEnable() {

@@ -208,6 +208,7 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 	int32 Num = 0;
 	switch (Region)
 	{
+		// 0: 海外 正式	1：海外 RND	2：国内 正式	3.国内 RND
 	case ETempDemoRegionType::CN:
 		Num = 2 + (Evn == ETempDemoEnvironmentType::Default ? 0 : 1);
 		break;
@@ -279,9 +280,13 @@ void UXDServiceWidgetCommon::OnEventCreateRoleClicked()
 
 void UXDServiceWidgetCommon::OnResetPrivacyClicked()
 {
-#if !UE_BUILD_SHIPPING && (PLATFORM_WINDOWS || PLATFORM_MAC)
+#if !UE_BUILD_SHIPPING
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	UXDGCommonBPLibrary::ClearAllUserDefaultsData();
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
 	XDUE::ResetPrivacy();
 	DEMO_LOG(TEXT("ResetPrivacy"));
+#endif
 #endif
 }
 

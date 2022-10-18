@@ -17,16 +17,19 @@
 
     <!-- optional files or directories to copy to Intermediate/Android/APK -->
    <resourceCopies>
-        <copyDir src="$S(PluginDir)/../../Source/XDGPayment/Android/libs/" dst="$S(BuildDir)/libs/" />
-        <copyDir src="$S(PluginDir)/../../Source/XDGPayment/Android/assets/" dst="$S(BuildDir)/assets/" />
-        <copyDir src="$S(PluginDir)/../../Source/XDGPayment/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/libs/" dst="$S(BuildDir)/libs/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/assets/" dst="$S(BuildDir)/assets/" />
+        <copyDir src="$S(PluginDir)/../ThirdParty/Android/src/" dst="$S(BuildDir)/src/com/xd/" />
     </resourceCopies>
 
     <buildGradleAdditions>
         <insert>
             dependencies { 
-                implementation(name: 'XDGPayment_6.5.3',ext:'aar')
+                implementation(name: 'XDGPayment_6.6.0',ext:'aar')
+                implementation "androidx.browser:browser:1.4.0"
             }
+            
+            
         </insert>
     </buildGradleAdditions>
 

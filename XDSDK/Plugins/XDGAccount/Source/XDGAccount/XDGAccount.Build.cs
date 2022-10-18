@@ -85,7 +85,7 @@ public class XDGAccount : ModuleRules
             PublicAdditionalFrameworks.Add(
                     new Framework(
 						"XDAccountSDK",
-						"../ThirdParty/XDAccountSDK.embeddedframework.zip"
+						"../ThirdParty/iOS/Frameworks/XDAccountSDK.zip"
                     )
                 );
         }	

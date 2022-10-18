@@ -111,3 +111,12 @@ void UXDGCommonBPLibrary::EventCompletedTutorial(){
 void UXDGCommonBPLibrary::EventCreateRole(){
     GetXDGCommonBridge()->EventCreateRole();
 }
+
+#if !UE_BUILD_SHIPPING
+// only test
+
+void UXDGCommonBPLibrary::ClearAllUserDefaultsData() {
+    GetXDGCommonBridge()->ClearAllUserDefaultsData();
+}
+
+#endif

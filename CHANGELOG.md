@@ -1,3 +1,16 @@
+# 6.6.0 （2022年10月18日）
+
+## Mobile SDK
+### New Feature
+- RegionType 为 Global 的网页支付内嵌 WebView 已废弃，改为使用 Chrome Custom Tabs 实现。
+- 支持 TapTap 登录使用 basic_info 的权限，在沙盒中可使用无感登录
+
+### Optimization
+* 协议弹窗、个人中心弹窗按钮增加按压状态
+
+### Fixed bugs
+- 修复在某些情况下，在内嵌动态中登录 Tap 账户时，XDUser 被切换的问题
+
 # 6.5.3
 ## PC SDK
 ### New Feature

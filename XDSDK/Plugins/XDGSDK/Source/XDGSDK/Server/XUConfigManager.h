@@ -43,7 +43,6 @@ public:
 
 	static void GetRegionInfo(TFunction<void(TSharedPtr<FXUIpInfoModel> ModelPtr)> ResultBlock);
 
-	static void SetGameInited();
 	static bool IsGameInited();
 
 	static bool GoogleEnable();
@@ -68,7 +67,6 @@ public:
 private:
 	
 	static XUConfigManager * Instance;
-	bool IsInited = false;
 	TSharedPtr<XUType::Config> Config;
 	bool ConfigRequestSuccess = false;
 

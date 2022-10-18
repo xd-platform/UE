@@ -86,4 +86,10 @@ class XDGCOMMON_API UXDGCommonBPLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
 	static void EventCreateRole();
 
+#if !UE_BUILD_SHIPPING
+	// only test
+	static void ClearAllUserDefaultsData();
+#endif
+
+
 };

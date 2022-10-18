@@ -13,14 +13,14 @@
 
 XDUE::XUSimpleDelegate XDUE::OnLogout;
 
-void XDUE::InitSDK(const FString& GameVersion, TFunction<void(bool Result, const FString& Message)> CallBack) {
+void XDUE::InitSDK(TFunction<void(bool Result, const FString& Message)> CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig) {
 	if (IsInitialized()) {
 		if (CallBack) {
 			CallBack(true, TEXT("已经初始化"));
 		}
 		return;
 	}
-	XUImpl::Get()->InitSDK(GameVersion, CallBack);
+	XUImpl::Get()->InitSDK(CallBack, EditConfig);
 }
 
 void XDUE::InitSDK(const XUType::Config& Config, TFunction<void(bool Result, const FString& Message)> CallBack) {

@@ -48,7 +48,7 @@ void UXDServiceWidgetCommon::OnInitSDKClicked()
 	{
 		DEMO_LOG_STRING(Message);
 	};
-	XDUE::InitSDK(TEXT("1.2.3"), Callback);
+	XDUE::InitSDK(Callback);
 #endif
 }
 
@@ -253,7 +253,7 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 			TUDebuger::ErrorShow(TEXT("初始化失败：") + Message);
 		}
 	};
-	XDUE::InitSDK(TEXT("1.2.3"), Callback);
+	XDUE::InitSDK(Callback);
 #endif
 }
 

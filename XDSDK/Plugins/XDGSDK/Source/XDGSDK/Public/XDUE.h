@@ -9,8 +9,13 @@ public:
 
 	DECLARE_MULTICAST_DELEGATE(XUSimpleDelegate)
 
-	// 配置文件初始化
-	static void InitSDK(const FString& GameVersion, TFunction<void(bool Result, const FString& Message)> CallBack);
+	/**
+	* 从XDConfig.json文件中初始化
+	*
+	* @param CallBack        初始化结果回调
+	* @param EditConfig      读取完json文件后，可以动态更改config。（比如修改TapDB的Channel，游戏版本号等）
+	*/
+	static void InitSDK(TFunction<void(bool Result, const FString& Message)> CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig = nullptr);
 
 	// 手动初始化
 	static void InitSDK(const XUType::Config& Config, TFunction<void(bool Result, const FString& Message)> CallBack);

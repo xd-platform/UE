@@ -21,7 +21,7 @@
 
 static int Success = 200;
 
-void XUImpl::InitSDK(const FString& GameVersion, XUInitCallback CallBack) {
+void XUImpl::InitSDK(XUInitCallback CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig) {
 	if (InitState == Initing) {
 		if (CallBack) {
 			CallBack(false, "XD SDK Initing");
@@ -38,8 +38,9 @@ void XUImpl::InitSDK(const FString& GameVersion, XUInitCallback CallBack) {
 	XUConfigManager::ReadLocalConfig([=](TSharedPtr<XUType::Config> Config, const FString& Msg) {
 		InitState = Uninit;
 		if (Config.IsValid()) {
-			Config->GameVersion = GameVersion;
-			Config->TapConfig.DBConfig.GameVersion = GameVersion;
+			if (EditConfig) {
+				EditConfig(Config.ToSharedRef());
+			}
 			InitSDK(Config, CallBack);
 		} else {
 			if (CallBack) {

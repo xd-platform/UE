@@ -18,7 +18,7 @@ public:
 
 	InitStateType InitState = Uninit;
 	
-	void InitSDK(const FString& GameVersion, XUInitCallback CallBack);
+	void InitSDK(XUInitCallback CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig);
 	
 	void InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack);
 	

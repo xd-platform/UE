@@ -42,6 +42,10 @@ FString XURegionConfig::InitSDKUrl() {
 	return BaseHost() / "/api/init/v1/config";
 }
 
+FString XURegionConfig::AgreementUrl() {
+	return BaseHost() / "/api/init/v1/agreement";
+}
+
 FString XURegionConfig::UserProfileUrl() {
 	return BaseHost() / "/api/account/v1/info";
 }

@@ -17,7 +17,6 @@ struct FXUStorage
 	static FString ProtocolAgreedKey;
 
 	static FString XD_CACHE_CONFIG;
-	static FString XD_CACHE_AGREEMENT;
 	static FString AgreementKRPush;
 	
 };

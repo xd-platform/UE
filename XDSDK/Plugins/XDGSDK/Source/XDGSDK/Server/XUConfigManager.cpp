@@ -2,15 +2,14 @@
 
 #include "TapUEBootstrap.h"
 #include "TUDataStorage.h"
-#include "TUDeviceInfo.h"
 #include "TUHelper.h"
 #include "XUImpl.h"
 #include "XULanguageManager.h"
 #include "XULocalConfig.h"
 #include "XUNet.h"
-#include "XUSettings.h"
 #include "XUStorage.h"
 #include "XUServerConfig.h"
+#include "Agreement/XUAgreementManager.h"
 
 XUConfigManager * XUConfigManager::Instance = nullptr;
 
@@ -52,61 +51,19 @@ void XUConfigManager::ReadLocalConfig(XUConfigHandler Handler) {
 	}
 }
 
-void XUConfigManager::LoadRemoteOrCachedServiceTerms(TSharedPtr<XUType::Config> Config, XUConfigHandler Handler) {
-	// 统一先用cache刷新一下
+void XUConfigManager::UpdateConfigWithCache() {
 	UpdateConfig(FXUServerConfig::GetLocalModel());
-	if (Config->RegionType == XUType::CN) {
-		if (Handler) {
-			Handler(Config, "");
-		}
-	} else {
-		RequestServerConfig(true, [=](bool Success) {
-			if (Handler) {
-				Handler(Config, "");
-			}
-		});
-	}
 }
 
-void XUConfigManager::RequestServerConfig(bool FirstRequest) {
-	if (SharedInstance().ConfigRequestSuccess) {
-		return;
-	}
-	RequestServerConfig(FirstRequest, [](bool Success) {
-		
-	});
-}
-
-void XUConfigManager::RequestServerConfig(bool FirstRequest, TFunction<void(bool Success)> Handler) {
-	XUNet::RequestConfig(FirstRequest, [=](TSharedPtr<FXUServerConfig> Model, FXUError Error) {
+void XUConfigManager::RequestServerConfig() {
+	XUNet::RequestConfig([=](TSharedPtr<FXUServerConfig> Model, FXUError Error) {
 		if (Model.IsValid()) {
-			if (IsCN()) {
-				auto localAgreementDic = TUDataStorage<FXUStorage>::LoadJsonObject(GetRegionAgreementCacheName());
-				XUType::AgreementConfig agreementConfig;
-				if (localAgreementDic.IsValid() && localAgreementDic->Values.Num() > 0) {
-					agreementConfig = GenerateAgreementConfig(localAgreementDic);
-				} else {
-					agreementConfig = CurrentConfig()->Agreement;
-				}
-				if (!agreementConfig.Version.IsEmpty()) {
-					if (agreementConfig.Version == "latest") {
-						if (!Model->configs.agreement.agreementVersion.IsEmpty()) {
-							agreementConfig.Version = Model->configs.agreement.agreementVersion;
-							SaveAgreementConfig(agreementConfig, false);
-						}
-					}
-				}
-			}
 			Model->SaveToLocal();
+			// 海外此时单独用接口值刷新一下
 			UpdateConfig(Model);
-			SharedInstance().ConfigRequestSuccess = true;
-			if (Handler) {
-				Handler(true);
-			}
+
 		} else {
-			if (Handler) {
-				Handler(false);
-			}
+
 		}
 	});
 }
@@ -115,98 +72,8 @@ void XUConfigManager::InitTapSDK() {
 	if (!TapTapEnable()) {
 		return;
 	}
-
 	TapUEBootstrap::Init(CurrentConfig()->TapConfig);
 }
-
-bool XUConfigManager::NeedShowAgreement() {
-	if (SharedInstance().AgreementUIEnable == false) {
-		return false;
-	}
-	XUType::AgreementConfig& currentAgreement = CurrentConfig()->Agreement;
-	if (currentAgreement.Url.IsEmpty()) {
-		return false;
-	}
-	auto localAgreementDic = TUDataStorage<FXUStorage>::LoadJsonObject(GetRegionAgreementCacheName());
-	if (localAgreementDic.IsValid() && localAgreementDic->Values.Num() > 0) {
-		XUType::AgreementConfig localCacheAgreementConfig = GenerateAgreementConfig(localAgreementDic);
-		if (!localCacheAgreementConfig.Version.IsEmpty()) {
-			FString localCacheAgreementStr = localCacheAgreementConfig.Version + localCacheAgreementConfig.Region;
-			FString currentAgreementStr = currentAgreement.Version + currentAgreement.Region;
-			if (localCacheAgreementStr != currentAgreementStr) {
-				// 接口版本和缓存版本不一致时需要签署
-				return true;
-			}
-		}
-	} else {
-		// 判断老版本数据
-		if (FXUServerConfig::CanShowPrivacyAlert()) {
-			return true;
-		} else {
-			SaveAgreementConfig(currentAgreement, false);
-		}
-	}
-	return false;
-}
-
-FString XUConfigManager::GetAgreementUrl() {
-	FString BaseUrl = CurrentConfig()->Agreement.Url;
-	auto LocalAgreementDic = TUDataStorage<FXUStorage>::LoadJsonObject(GetRegionAgreementCacheName());
-
-	TSharedPtr<FJsonObject> Paras = MakeShareable(new FJsonObject);
-	Paras->SetStringField("client_id", CurrentConfig()->ClientId);
-	Paras->SetStringField("language", XULanguageManager::GetLanguageKey());
-	if (!SharedInstance().TargetRegion.IsEmpty()) {
-		Paras->SetStringField("region", SharedInstance().TargetRegion);
-	}
-	if (LocalAgreementDic.IsValid() && LocalAgreementDic->Values.Num() > 0) {
-		Paras->SetStringField("firstCheck", "false");
-	} else {
-		Paras->SetStringField("firstCheck", "true");
-	}
-	FString Url = BaseUrl + "?" + TUHelper::CombinParameters(Paras);
-	return Url;
-}
-
-void XUConfigManager::UploadUserAgreement() {
-	if (CurrentConfig()->Agreement.Version.IsEmpty()) {
-		TUDebuger::ErrorLog("Agreement Version Is Empty");
-		return;
-	}
-	bool Upload = false;
-	auto LocalAgreementDic = TUDataStorage<FXUStorage>::LoadJsonObject(GetRegionAgreementCacheName());
-	if (LocalAgreementDic.IsValid() && LocalAgreementDic->Values.Num() > 0) {
-		auto localCacheAgreementConfig = GenerateAgreementConfig(LocalAgreementDic);
-		if (!localCacheAgreementConfig.Version.IsEmpty()) {
-			FString LocalAgreementCacheStr = localCacheAgreementConfig.Version + localCacheAgreementConfig.Region;
-			auto currentAgreement = CurrentConfig()->Agreement;
-			FString currentAgreementStr = currentAgreement.Version + currentAgreement.Region;
-			if (LocalAgreementCacheStr == currentAgreementStr) {
-				bool oldUpload = LocalAgreementDic->GetBoolField("upload");
-				if (oldUpload) {
-					// 接口版本和缓存版本一致且已上报过时不再上报
-					Upload = true;
-				}
-			}
-		}
-	}
-
-	if (!Upload) {
-		TSharedPtr<FJsonObject> postData = MakeShareable(new FJsonObject);
-		postData->SetStringField("clientId", CurrentConfig()->ClientId);
-		postData->SetStringField("deviceCode", TUDeviceInfo::GetLoginId());
-		postData->SetStringField("agreementVersion", CurrentConfig()->Agreement.Version);
-		postData->SetStringField("agreementRegion", CurrentConfig()->Agreement.Region);
-		XUNet::UploadAgreement(postData, [](TSharedPtr<FXUUploadAgreementResultModel> Model, FXUError Error) {
-			if (Model.IsValid()) {
-				SaveAgreementConfig(CurrentConfig()->Agreement, Model->isSuccess);
-			} else {
-				SaveAgreementConfig(CurrentConfig()->Agreement, false);
-			}
-		});
-	}
-}
-
 
 void XUConfigManager::GetRegionInfo(TFunction<void(TSharedPtr<FXUIpInfoModel> ModelPtr)> ResultBlock) {
 	XUNet::RequestIpInfo([=](TSharedPtr<FXUIpInfoModel> model, FXUError error) {
@@ -289,8 +156,12 @@ bool XUConfigManager::NeedReportService() {
 }
 
 bool XUConfigManager::IsGameInKoreaAndPushServiceEnable() {
-	bool IsKR = CurrentConfig()->Agreement.Region == "kr";
-	bool CanPush = CurrentConfig()->Agreement.IsKRPushServiceSwitchEnable;
+	auto CurrentAgreement = XUAgreementManager::GetCurrentAgreement();
+	if (!CurrentAgreement.IsValid()) {
+		return false;
+	}
+	bool IsKR = CurrentAgreement->agreementRegion == "kr";
+	bool CanPush = CurrentAgreement->isKRPushServiceSwitchEnable;
 	if (IsKR && CanPush) {
 		return true;
 	}
@@ -298,7 +169,11 @@ bool XUConfigManager::IsGameInKoreaAndPushServiceEnable() {
 }
 
 bool XUConfigManager::IsGameInNA() {
-	return CurrentConfig()->Agreement.Region == "us";
+	auto CurrentAgreement = XUAgreementManager::GetCurrentAgreement();
+	if (!CurrentAgreement.IsValid()) {
+		return false;
+	}
+	return CurrentAgreement->agreementRegion == "us";
 }
 
 void XUConfigManager::RecordKRPushSetting(bool PushOn) {
@@ -310,35 +185,6 @@ bool XUConfigManager::GetKRPushSetting() {
 		return true;
 	}
 	return false;
-}
-
-FString XUConfigManager::GetRegionAgreementCacheName() {
-	return FXUStorage::XD_CACHE_AGREEMENT + CurrentConfig()->Agreement.Region;
-}
-
-XUType::AgreementConfig XUConfigManager::GenerateAgreementConfig(const TSharedPtr<FJsonObject>& JsonObject) {
-	
-	XUType::AgreementConfig AgreementConfig;
-	if (!JsonObject.IsValid()) {
-		return AgreementConfig;
-	}
-	AgreementConfig.Url = JsonObject->GetStringField("agreementUrl");
-	AgreementConfig.Version = JsonObject->GetStringField("agreementVersion");
-	AgreementConfig.Region = JsonObject->GetStringField("agreementRegion");
-	AgreementConfig.IsKRPushServiceSwitchEnable = JsonObject->GetBoolField("isKRPushServiceSwitchEnable");
-	return AgreementConfig;
-}
-
-void XUConfigManager::SaveAgreementConfig(XUType::AgreementConfig& AgreementConfig, bool Upload) {
-	TSharedPtr<FJsonObject> PostData = MakeShareable(new FJsonObject);
-	PostData->SetStringField("clientId", CurrentConfig()->ClientId);
-	PostData->SetStringField("deviceCode", TUDeviceInfo::GetLoginId());
-	PostData->SetStringField("agreementVersion", AgreementConfig.Version);
-	PostData->SetStringField("agreementRegion", AgreementConfig.Region);
-	PostData->SetStringField("agreementUrl", AgreementConfig.Url);
-	PostData->SetBoolField("isKRPushServiceSwitchEnable", AgreementConfig.IsKRPushServiceSwitchEnable);
-	PostData->SetBoolField("upload", Upload);
-	TUDataStorage<FXUStorage>::SaveJsonObject(GetRegionAgreementCacheName(), PostData);
 }
 
 void XUConfigManager::UpdateConfig(TSharedPtr<FXUServerConfig> ServerConfig) {
@@ -370,13 +216,7 @@ void XUConfigManager::UpdateConfig(TSharedPtr<FXUServerConfig> ServerConfig) {
 	if (!ServerConfig->configs.appId.IsEmpty()) {
 		config->AppID = ServerConfig->configs.appId;
 	}
-
-	if (!ServerConfig->configs.agreement.agreementVersion.IsEmpty()) {
-		config->Agreement.Version = ServerConfig->configs.agreement.agreementVersion;
-		config->Agreement.Url = ServerConfig->configs.agreement.agreementUrl;
-		config->Agreement.Region = ServerConfig->configs.agreement.agreementRegion;
-		config->Agreement.IsKRPushServiceSwitchEnable = ServerConfig->configs.agreement.isKRPushServiceSwitchEnable;
-	}
+	
 	if (!ServerConfig->configs.region.IsEmpty()) {
 		config->Region = ServerConfig->configs.region;
 	}

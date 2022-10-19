@@ -9,6 +9,10 @@ typedef TFunction<void(bool Result, const FString& Message)> XUInitCallback;
 class XUImpl
 {
 public:
+	DECLARE_MULTICAST_DELEGATE(FSimpleDelegate)
+
+	static FSimpleDelegate OnLoginSuccess;
+	static FSimpleDelegate OnLogoutSuccess;
 
 	enum InitStateType {
 		Uninit,
@@ -42,6 +46,8 @@ public:
 	void ResetPrivacy();
 
 	void AccountCancellation();
+
+	void Logout();
 	
 	static TSharedPtr<XUImpl>& Get();
 
@@ -57,10 +63,10 @@ private:
 
 	void AsyncLocalTdsUser(const FString& userId, const FString& sessionToken);
 	
-	void CheckAgreement(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack);
-
 	void InitFinish(XUInitCallback CallBack);
 
 	void RequestServerConfig();
+
+	void LoginSuccess(TSharedPtr<FXUUser> User, TFunction<void(TSharedPtr<FXUUser>)> SuccessBlock);
 
 };

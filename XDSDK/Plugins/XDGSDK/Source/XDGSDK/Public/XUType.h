@@ -80,12 +80,12 @@ namespace XUType {
 		FString ServerID;
 	};
 
-	struct AgreementConfig {
-		FString Url;
-		FString Version;
-		FString Region;
-		bool IsKRPushServiceSwitchEnable = false;
-	};
+	// struct AgreementConfig {
+	// 	FString Url;
+	// 	FString Version;
+	// 	FString Region;
+	// 	bool IsKRPushServiceSwitchEnable = false;
+	// };
 
 	struct BindEntriesConfig {
 		bool CanBind;
@@ -142,6 +142,6 @@ namespace XUType {
 		FString WebPayUrl;
 
 		/// 协议内容
-		AgreementConfig Agreement;
+		// AgreementConfig Agreement;
 	};
 }

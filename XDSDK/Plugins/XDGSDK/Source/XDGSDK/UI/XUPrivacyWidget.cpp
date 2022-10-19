@@ -10,6 +10,7 @@
 #include "XUConfigManager.h"
 #include "XUPrivacyDisagreeWidget.h"
 #include "Components/CheckBox.h"
+#include "Agreement/XUAgreementManager.h"
 
 
 void UXUPrivacyWidget::ShowPrivacy(TFunction<void()> Completed)
@@ -36,7 +37,7 @@ void UXUPrivacyWidget::NativeOnInitialized()
 	ComfirmButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnConfirmBtnClick);
 	DeclineButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnDeclineBtnClick);
 
-	OriginURL = XUConfigManager::GetAgreementUrl();
+	OriginURL = XUAgreementManager::GetAgreementUrl();
 	// OriginURL = "https://protocol.xd.com/sdk/merger-test.html?language=ru_RU";
 	if (OriginURL.Contains("?"))
 	{

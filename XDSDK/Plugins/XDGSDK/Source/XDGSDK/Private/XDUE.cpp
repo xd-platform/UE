@@ -95,9 +95,7 @@ void XDUE::SetLanguage(XUType::LangType Type) {
 }
 
 void XDUE::Logout() {
-	// await TDSUser.Logout();
-	TapUELogin::Logout();
-	FXUUser::ClearUserData();
+	XUImpl::Get()->Logout();
 }
 
 void XDUE::AccountCancellation() {

@@ -1,5 +1,4 @@
 #include "XUImpl.h"
-#include "TapUEBootstrap.h"
 #include "XUStorage.h"
 #include "TUDeviceInfo.h"
 #include "TUJsonHelper.h"
@@ -18,8 +17,12 @@
 #include "XDGSDK/UI/XUPrivacyWidget.h"
 #include "Track/XUTracker.h"
 #include "Track/XUPaymentTracker.h"
+#include "Agreement/XUAgreementManager.h"
 
 static int Success = 200;
+
+XUImpl::FSimpleDelegate XUImpl::OnLoginSuccess;
+XUImpl::FSimpleDelegate XUImpl::OnLogoutSuccess;
 
 void XUImpl::InitSDK(XUInitCallback CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig) {
 	if (InitState == Initing) {
@@ -74,13 +77,16 @@ void XUImpl::InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack)
 			CallBack(Result, Message);
 		}
 	};
-	XUConfigManager::LoadRemoteOrCachedServiceTerms(Config, [=](TSharedPtr<XUType::Config> ConfigTerms, const FString& Msg) {
-		if (ConfigTerms.IsValid()) {
-			XUConfigManager::SetConfig(ConfigTerms);
-			CheckAgreement(ConfigTerms, NewCallBack);
-		} else {
-			NewCallBack(false, Msg);
-		}
+	// 用本地缓存更新当前 config
+	XUConfigManager::UpdateConfigWithCache();
+
+	// 海外请求最新协议内容，国内直接返回
+	XUAgreementManager::RequestServerAgreementsExceptCN([=](bool Success) {
+		// 检查协议
+		XUAgreementManager::CheckAgreementWithHandler([=]() {
+			// 协议完成
+			InitFinish(NewCallBack);
+		});
 	});
 }
 
@@ -93,7 +99,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 		if (localUser.IsValid()) {
 			RequestUserInfo(true, [](TSharedPtr<FXUUser> user) {}, [](FXUError Error) {});
 			AsyncLocalTdsUser(localUser->userId, FXUSyncTokenModel::GetLocalModel()->sessionToken);
-			resultBlock(localUser);
+			LoginSuccess(localUser, resultBlock);
 		}
 		else {
 			ErrorBlock(FXUError(lmd->tds_login_failed));
@@ -124,7 +130,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 					AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
 						UTUHUD::Dismiss();
 						user->SaveToLocal();
-						resultBlock(user);
+						LoginSuccess(user, resultBlock);
 					}, ErrorCallBack);
 				}, ErrorCallBack);
 			}, ErrorCallBack);
@@ -319,7 +325,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 
 void XUImpl::ResetPrivacy() {
 	TUDataStorage<FXUStorage>::Remove(FXUStorage::PrivacyKey);
-	TUDataStorage<FXUStorage>::Remove(XUConfigManager::GetRegionAgreementCacheName());
+	XUAgreementManager::ResetAgreement();
 }
 
 void XUImpl::AccountCancellation() {
@@ -343,6 +349,13 @@ void XUImpl::AccountCancellation() {
 	FString UrlStr = XUConfigManager::CurrentConfig()->LogoutUrl + "?" + QueryStr;
 
 	UXUAccountCancellationWidget::Show(UrlStr);
+}
+
+void XUImpl::Logout() {
+	// await TDSUser.Logout();
+	TapUELogin::Logout();
+	FXUUser::ClearUserData();
+	OnLogoutSuccess.Broadcast();
 }
 
 TSharedPtr<XUImpl> XUImpl::Instance = nullptr;
@@ -434,29 +447,26 @@ void XUImpl::AsyncLocalTdsUser(const FString& userId, const FString& sessionToke
 	// await lcUser.SaveToLocal();
 }
 
-void XUImpl::CheckAgreement(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack) {
-	if (!XUConfigManager::NeedShowAgreement()) {
-		InitFinish(CallBack);
-		return;
-	}
-	UXUPrivacyWidget::ShowPrivacy([=]() {
-		XUTracker::Get()->UserAgreeProtocol();
-		InitFinish(CallBack);
-	});
-}
 
 void XUImpl::InitFinish(XUInitCallback CallBack) {
 	XUConfigManager::InitTapSDK();
 	if (CallBack) {
 		CallBack(true, "");
 	}
+	// 请求服务端 config
 	RequestServerConfig();
-	XUConfigManager::UploadUserAgreement();
 }
 
 void XUImpl::RequestServerConfig() {
-	XUConfigManager::RequestServerConfig(false);
+	XUConfigManager::RequestServerConfig();
 	XUConfigManager::GetRegionInfo([](TSharedPtr<FXUIpInfoModel> ModelPtr) {
 		
 	});
+}
+
+void XUImpl::LoginSuccess(TSharedPtr<FXUUser> User, TFunction<void(TSharedPtr<FXUUser>)> SuccessBlock) {
+	OnLoginSuccess.Broadcast();
+	if (SuccessBlock) {
+		SuccessBlock(User);
+	}
 }

@@ -254,7 +254,7 @@ void XUNet::RequestConfig(TFunction<void(TSharedPtr<FXUServerConfig> model, FXUE
 void XUNet::RequestAgreement(bool IsFirst,
 	TFunction<void(TSharedPtr<FXUAgreementConfig> Model, FXUError Error)> Callback) {
 	const TSharedPtr<TUHttpRequest> request = MakeShareable(new XUNet());
-	request->URL = XURegionConfig::Get()->InitSDKUrl();
+	request->URL = XURegionConfig::Get()->AgreementUrl();
 	if (IsFirst) {
 		request->TimeoutSecs = 5;
 	}

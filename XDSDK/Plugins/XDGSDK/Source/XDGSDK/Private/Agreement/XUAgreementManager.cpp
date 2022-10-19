@@ -131,6 +131,7 @@ FString XUAgreementManager::GetAgreementUrl() {
 
 void XUAgreementManager::ResetAgreement() {
 	TUDataStorage<FXUStorage>::Remove(GetRegionAgreementCacheName());
+	SharedInstance().HasSignedAgreement = false;
 }
 
 void XUAgreementManager::UploadUserAgreement() {
@@ -184,7 +185,8 @@ void XUAgreementManager::ShowAgreementWhenLogout() {
 }
 
 FString XUAgreementManager::GetRegionAgreementCacheName() {
-	return XD_CACHE_AGREEMENT + GetCurrentAgreement()->agreementRegion;
+	auto CurrentAgreement = GetCurrentAgreement();
+	return XD_CACHE_AGREEMENT + (CurrentAgreement.IsValid() ? CurrentAgreement->agreementRegion : "");
 }
 
 void XUAgreementManager::SaveAgreementConfig(TSharedPtr<FXUAgreementConfig> AgreementConfig, bool Upload) {

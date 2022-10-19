@@ -379,13 +379,7 @@ void XUImpl::RequestKidToken(TSharedPtr<FJsonObject> paras,
 			resultBlock(kidToken);
 		}
 		else {
-			auto localToken = FXUTokenModel::GetLocalModel();
-			if (localToken == nullptr) {
-				ErrorBlock(error);
-			}
-			else {
-				resultBlock(kidToken);
-			}
+			ErrorBlock(error);
 		}
 	});
 }
@@ -402,13 +396,7 @@ void XUImpl::RequestUserInfo(bool saveToLocal,
 				callback(user);
 			}
 			else {
-				auto localUser = FXUUser::GetLocalModel();
-				if (localUser == nullptr) {
-					ErrorBlock(error);
-				}
-				else {
-					callback(localUser);
-				}
+				ErrorBlock(error);
 			}
 		}, [=]() {
 			if (saveToLocal) {
@@ -429,13 +417,7 @@ void XUImpl::AsyncNetworkTdsUser(const FString& userId,
 				callback(model->sessionToken);
 			}
 			else {
-				auto localModel = FXUSyncTokenModel::GetLocalModel();
-				if (localModel.IsValid()) {
-					AsyncLocalTdsUser(userId, localModel->sessionToken);
-					callback(localModel->sessionToken);
-				} else {
-					ErrorBlock(error);
-				}
+				ErrorBlock(error);
 			}
 		}
 	);

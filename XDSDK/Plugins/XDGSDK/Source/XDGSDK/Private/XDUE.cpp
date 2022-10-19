@@ -69,7 +69,7 @@ TSharedPtr<FXUUser> XDUE::GetUserInfo() {
 		return UserPtr;
 	}
 	else {
-		Logout();
+		FXUUser::ClearUserData();
 		return nullptr;
 	}
 }

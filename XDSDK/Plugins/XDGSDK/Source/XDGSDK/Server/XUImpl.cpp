@@ -441,6 +441,10 @@ void XUImpl::InitFinish(XUInitCallback CallBack) {
 
 void XUImpl::RequestServerConfig() {
 	XUConfigManager::RequestServerConfig();
+	XUAgreementManager::RequestServerAgreements(false, nullptr);
+	if (XUConfigManager::IsCN()) {
+		return;
+	}
 	XUConfigManager::GetRegionInfo([](TSharedPtr<FXUIpInfoModel> ModelPtr) {
 		
 	});

@@ -71,14 +71,12 @@ void XUAgreementManager::RequestServerAgreements(bool InitTime, TFunction<void(b
 				TSharedPtr<FXUAgreementConfig> AgreementConfig = nullptr;
 				if (LocalAgreementDic.IsValid() && LocalAgreementDic->Values.Num() > 0) {
 					AgreementConfig = TUJsonHelper::GetUStruct<FXUAgreementConfig>(LocalAgreementDic);
-				} else {
-					AgreementConfig = GetCurrentAgreement();
-				}
-				if (AgreementConfig.IsValid() && !AgreementConfig->agreementVersion.IsEmpty()) {
-					if (AgreementConfig->agreementVersion == "latest") {
-						if (!Model->agreementVersion.IsEmpty()) {
-							AgreementConfig->agreementVersion = Model->agreementVersion;
-							SaveAgreementConfig(AgreementConfig, false);
+					if (AgreementConfig.IsValid() && !AgreementConfig->agreementVersion.IsEmpty()) {
+						if (AgreementConfig->agreementVersion == "latest") {
+							if (!Model->agreementVersion.IsEmpty()) {
+								AgreementConfig->agreementVersion = Model->agreementVersion;
+								SaveAgreementConfig(AgreementConfig, false);
+							}
 						}
 					}
 				}

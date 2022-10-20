@@ -163,6 +163,13 @@ bool XDUE::IsPushServiceEnable() {
 	return FXUUser::IsPushServiceEnable();
 }
 
+void XDUE::TrackUser()
+{
+	auto UserPtr = GetUserInfo();
+	if (UserPtr.IsValid()) {
+		TrackUser(UserPtr->userId);
+	}
+}
 
 //TapDB 统计用户
 void XDUE::TrackUser(FString userId)

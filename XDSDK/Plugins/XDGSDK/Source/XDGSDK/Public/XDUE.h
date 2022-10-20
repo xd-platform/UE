@@ -83,6 +83,9 @@ public:
 	static bool IsPushServiceEnable();
 
 	//TapDB 统计用户
+	static void TrackUser();
+	
+	//TapDB 统计用户
 	static void TrackUser(FString userId);
 
 	//TapDB 设置属性

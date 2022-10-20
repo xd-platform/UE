@@ -13,6 +13,7 @@
 #include "Components/EditableTextBox.h"
 #include "XDSDK/XDSDK.h"
 #include "XDGSDK.h"
+#include "XUAgreement.h"
 #include "XUSettings.h"
 #if PLATFORM_IOS || PLATFORM_ANDROID
 #include "TapUEMoment.h"
@@ -61,6 +62,16 @@ void UXDServiceWidgetCommon::OnIsInitializedClicked()
 	const bool bIsInitialized = XDUE::IsInitialized();
 	DEMO_LOG(TEXT("IsInitialized:%s"), bIsInitialized ? TEXT("True") : TEXT("False"));
 #endif
+}
+
+void UXDServiceWidgetCommon::OnGetAgreementBeansClicked() {
+	auto temp = TUJsonHelper::GetJsonString(XUAgreement::GetAgreementList());
+	TUDebuger::DisplayShow("AgreementBeans :\n\t" + temp);
+}
+
+void UXDServiceWidgetCommon::OnOpenAgreementBeanClicked() {
+	const FString TypeStr = ETB_AgreementBean_Type->GetText().ToString();
+	XUAgreement::ShowDetailAgreement(TypeStr);
 }
 
 void UXDServiceWidgetCommon::OnReportClicked()
@@ -362,6 +373,9 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	OpenMoment->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenMomentClicked);
 
 	OpenWebTopic->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenWebTopicClicked);
+
+	GetAgreementBeans->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnGetAgreementBeansClicked);
+	OpenAgreementBean->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenAgreementBeanClicked);
 
 	CB_Init_EnvironmentBox->OnSelectionChanged.AddDynamic(this, &UXDServiceWidgetCommon::OnEnvironmentSelectChanged);
 

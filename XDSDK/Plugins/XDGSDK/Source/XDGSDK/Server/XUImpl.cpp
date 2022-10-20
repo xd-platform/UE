@@ -121,6 +121,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			UTUHUD::ShowWait();
 			TFunction<void(FXUError error)> ErrorCallBack = [=](FXUError error) {
 				UTUHUD::Dismiss();
+				FXUUser::ClearUserData();
 				if (ErrorBlock) {
 					ErrorBlock(error);
 				}

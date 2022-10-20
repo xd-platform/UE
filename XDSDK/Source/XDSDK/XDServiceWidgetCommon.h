@@ -79,6 +79,12 @@ class XDSDK_API UXDServiceWidgetCommon : public UUserWidget
 
 	UFUNCTION()
 	void OnIsInitializedClicked();
+
+	UFUNCTION()
+	void OnGetAgreementBeansClicked();
+
+	UFUNCTION()
+	void OnOpenAgreementBeanClicked();
 	
 	UFUNCTION()
 	void OnReportClicked();
@@ -162,6 +168,14 @@ protected:
 
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* IsInitialized;
+
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* GetAgreementBeans;
+
+	UPROPERTY(Meta = (BindWidget))
+	UEditableTextBox* ETB_AgreementBean_Type;
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* OpenAgreementBean;
 
 	UPROPERTY(Meta = (BindWidget))
 	UEditableTextBox* ETB_Report_ServerID;

@@ -11,7 +11,7 @@
 #include "XDGSDK/UI/XUUserCenterWidget.h"
 #include "XDGSDK/UI/XUPayHintAlert.h"
 
-XDUE::XUSimpleDelegate XDUE::OnLogout;
+XDUE::FUserStateChangeDelegate XDUE::OnUserStatusChange;
 
 void XDUE::InitSDK(TFunction<void(bool Result, const FString& Message)> CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig) {
 	if (IsInitialized()) {
@@ -106,14 +106,13 @@ void XDUE::AccountCancellation() {
 	XUImpl::Get()->AccountCancellation();
 }
 
-void XDUE::OpenUserCenter(TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> BindCallBack,
-                          TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> UnbindCallBack) {
+void XDUE::OpenUserCenter() {
 	if (!FXUUser::GetLocalModel().IsValid()) {
 		TUDebuger::WarningLog("Please Login First");
 		return;
 	}
 
-	UXUUserCenterWidget::ShowWidget(BindCallBack, UnbindCallBack);
+	UXUUserCenterWidget::ShowWidget();
 }
 
 void XDUE::CheckPay(TFunction<void(XUType::CheckPayType CheckType)> SuccessBlock,
@@ -207,6 +206,10 @@ void XDUE::EventCompletedTutorial()
 //TapDB 创建角色埋点
 void XDUE::EventCreateRole() {
 	//没有tap db 只有第三方
+}
+
+void XDUE::BindByType(XUType::LoginType BindType, TFunction<void(bool Success, const FXUError& Error)> CallBack) {
+	XUImpl::Get()->BindByType(BindType, CallBack);
 }
 
 #if !UE_BUILD_SHIPPING

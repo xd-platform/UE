@@ -103,9 +103,9 @@ protected:
 	UEditableTextBox* ETB_Token_LoginType;
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* IsTokenActiveWithType;
-
+	
 	UPROPERTY(Meta = (BindWidget))
-	UEditableTextBox* ETB_Bind_LoginType;
+	UComboBoxString* CB_Bind_LoginType;
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* BindByType;
 };

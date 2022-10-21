@@ -15,6 +15,12 @@ namespace XUType {
 		PayCancel
 	};
 
+	enum UserChangeState {
+		UserLogout          = 0x9001,   // user logout
+		UserBindSuccess     = 0x1001,   // user bind success,msg = entry type in string,eg: @"TAPTAP"
+		UserUnBindSuccess   = 0x1002,   // user unbind success,msg = entry type in string
+	};
+
 	enum LangType {
 		ZH_CN = 0,
 		// 中文

@@ -391,9 +391,6 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	TUDebuger::AddReplacedHostPair("https://login-xdsdk.xd.cn", "https://login-xdsdk.xd.cn");
 	TUDebuger::AddReplacedHostPair("https://login-xdsdk.xd.com", "https://login-xdsdk-test.xd-cf-2022.workers.dev");
 
-	XDUE::OnLogout.AddLambda([]() {
-		TUDebuger::DisplayShow(TEXT("游戏账号应登出"));
-	});
 
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	FXDGCommonModule::OnXDGSDKInitCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKInitCompleted);

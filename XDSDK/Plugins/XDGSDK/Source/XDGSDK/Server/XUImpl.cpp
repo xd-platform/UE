@@ -364,11 +364,49 @@ TSharedPtr<XUImpl> XUImpl::Instance = nullptr;
 TSharedPtr<XUImpl>& XUImpl::Get() {
 	if (!Instance.IsValid()) {
 		Instance = MakeShareable(new XUImpl);
-		XDUE::OnLogout.AddLambda([]() {
-			XDUE::Logout();
+		XDUE::OnUserStatusChange.AddLambda([](XUType::UserChangeState UserState, const FString& Msg) {
+			if (UserState == XUType::UserLogout) {
+				XDUE::Logout();
+			}
 		});
 	}
 	return Instance;
+}
+
+void XUImpl::BindByType(XUType::LoginType BindType, TFunction<void(bool Success, const FXUError& Error)> CallBack) {
+	auto LangModel = XULanguageManager::GetCurrentModel();
+	TFunction<void(TSharedPtr<FJsonObject> Paras)> BindBlock = [=](TSharedPtr<FJsonObject> Paras) {
+		XUNet::Bind(Paras, [=](TSharedPtr<FXUResponseModel> ResponseModel, FXUError Error) {
+			if (!CallBack) {
+				return;
+			}
+			if (ResponseModel.IsValid()) {
+				CallBack(true, Error);
+			}
+			else {
+				if (Error.code > 200) {
+					CallBack(false, Error);
+				}
+				else {
+					CallBack(false, FXUError(LangModel->tds_bind_error));
+				}
+			}
+		});
+	};
+
+	GetAuthParam(BindType, [=](TSharedPtr<FJsonObject> Paras) {
+		             BindBlock(Paras);
+	             }, [=](FXUError Error) {
+		             if (!CallBack) {
+			             return;
+		             }
+		             if (Error.code == 80081) {
+			             CallBack(false, FXUError(LangModel->tds_login_cancel));
+		             }
+		             else {
+			             CallBack(false, Error);
+		             }
+	             });
 }
 
 void XUImpl::RequestKidToken(TSharedPtr<FJsonObject> paras,

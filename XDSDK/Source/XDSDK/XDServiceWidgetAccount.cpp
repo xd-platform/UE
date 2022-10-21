@@ -94,30 +94,7 @@ void UXDServiceWidgetAccount::OnOpenUserCenterClicked()
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	UXDGAccountBPLibrary::OpenUserCenter();
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
-	auto Success = [](XUType::LoginType Type, TSharedPtr<FXUError> Error)
-	{
-		if (Error.IsValid())
-		{
-			DEMO_LOG(TEXT("绑定失败, Error: %s"), *Error->msg);
-		}
-		else
-		{
-			DEMO_LOG(TEXT("绑定成功, Type: %d"), Type);
-		}
-	};
-
-	auto Failed = [](XUType::LoginType Type, TSharedPtr<FXUError> Error)
-	{
-		if (Error.IsValid())
-		{
-			DEMO_LOG(TEXT("解绑失败, Error: %s"), *Error->msg);
-		}
-		else
-		{
-			DEMO_LOG(TEXT("解绑成功, Type: %d"), Type);
-		}
-	};
-	XDUE::OpenUserCenter(Success, Failed);
+	XDUE::OpenUserCenter();
 #endif
 }
 
@@ -151,8 +128,20 @@ void UXDServiceWidgetAccount::OnIsTokenActiveWithTypeClicked()
 void UXDServiceWidgetAccount::OnBindByTypeClicked()
 {
 #if PLATFORM_IOS || PLATFORM_ANDROID
-	const FString LoginType = ETB_Bind_LoginType->GetText().ToString();
+	const FString LoginType = CB_Bind_LoginType->GetSelectedOption();
 	UXDGAccountBPLibrary::BindByType(LoginType);
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+
+	const int32 Index = CB_Bind_LoginType->GetSelectedIndex();
+	ETempDemoLoginType TempType = static_cast<ETempDemoLoginType>(StaticEnum<ETempDemoLoginType>()->GetValueByIndex(Index));
+	auto LoginType = TempType == ETempDemoLoginType::Default ? XUType::LoginType::Default : static_cast<XUType::LoginType>(TempType);
+	XDUE::BindByType(LoginType, [](bool Success, const FXUError& Error) {
+		if (Success) {
+			TUDebuger::DisplayShow("绑定成功");
+		} else {
+			TUDebuger::WarningShow("绑定失败：" + Error.msg);
+		}
+	});
 #endif
 }
 
@@ -165,8 +154,11 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 	{
 		const FString OptionStr = EnumClass->GetNameStringByIndex(i);
 		CB_LoginByType_LoginType->AddOption(OptionStr);
+		CB_Bind_LoginType->AddOption(OptionStr);
 	}
 	CB_LoginByType_LoginType->SetSelectedIndex(0);
+	CB_Bind_LoginType->SetSelectedIndex(0);
+
 	
 	Login->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnLoginClicked);
 	LoginByType->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnLoginByTypeClicked);
@@ -177,6 +169,17 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 	OpenAccountCancellation->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnOpenAccountCancellationClicked);
 	IsTokenActiveWithType->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnIsTokenActiveWithTypeClicked);
 	BindByType->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnBindByTypeClicked);
+
+	XDUE::OnUserStatusChange.AddLambda([](XUType::UserChangeState UserState, const FString& Msg) {
+		if (UserState == XUType::UserLogout) {
+			TUDebuger::DisplayShow(TEXT("游戏账号应登出"));
+		} else if (UserState == XUType::UserBindSuccess) {
+			TUDebuger::DisplayShow(Msg + TEXT("账号被绑定"));
+		} else if (UserState == XUType::UserUnBindSuccess) {
+			TUDebuger::DisplayShow(Msg + TEXT("账号被解绑"));
+		}
+	});
+
 
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	FXDGAccountModule::OnXDGSDKLoginSucceed.AddUObject(this, &UXDServiceWidgetAccount::OnXDGSDKLoginSucceed);

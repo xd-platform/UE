@@ -12,4 +12,7 @@ struct FXUAgreementBean
 
 	UPROPERTY()
 	FString url;
+
+    FXUAgreementBean() = default;
+	FXUAgreementBean(const FString& Type, const FString& Url);
 };

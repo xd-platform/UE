@@ -264,7 +264,9 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 			TUDebuger::ErrorShow(TEXT("初始化失败：") + Message);
 		}
 	};
-	XDUE::InitSDK(Callback);
+	XDUE::InitSDK(Callback, [](TSharedRef<XUType::Config> Config) {
+		// Config->TapConfig.ClientID = "1111";
+	});
 #endif
 }
 

@@ -74,8 +74,7 @@ protected:
 
 	void OnXDGSDKBindByTypeCompleted(const bool, const int32, const FString&);
 
-	UPROPERTY(Meta = (BindWidget))
-	UEditableTextContainerWidget* ET_Login_LoginTypes;
+
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* Login;
 

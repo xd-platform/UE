@@ -12,10 +12,6 @@ TArray<FXUAgreementBean> XUAgreement::GetAgreementList() {
 	return Beans;
 }
 
-void XUAgreement::ShowDetailAgreement(const FString Type) {
-	for (auto Bean : GetAgreementList()) {
-		if (Bean.type == Type) {
-			TUHelper::LaunchURL(*Bean.url, NULL, NULL);
-		}
-	}
+void XUAgreement::ShowDetailAgreement(const FString& Url) {
+	TUHelper::LaunchURL(*Url, NULL, NULL);
 }

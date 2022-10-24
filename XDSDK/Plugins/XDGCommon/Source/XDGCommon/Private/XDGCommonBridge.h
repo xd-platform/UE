@@ -27,6 +27,9 @@ public:
 	virtual void SetCurrentUserPushServiceEnable(bool enable) = 0;
 	virtual bool IsCurrentUserPushServiceEnable() = 0;
 
+	virtual void ShowDetailAgreement(FString Url) = 0;
+	virtual FString GetAgreementList() = 0;
+
 	virtual void GetRegionInfo() = 0;
 	virtual void GetXDGInfoJson() = 0; //游戏需要使用
 	virtual void DisableAgreementUI() = 0;

@@ -173,7 +173,7 @@ protected:
 	UServiceItemWidget* GetAgreementBeans;
 
 	UPROPERTY(Meta = (BindWidget))
-	UEditableTextBox* ETB_AgreementBean_Type;
+	UEditableTextBox* ETB_AgreementBean_Url;
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* OpenAgreementBean;
 

@@ -29,6 +29,14 @@ bool UXDGCommonBPLibrary::IsInitialized(){
     return GetXDGCommonBridge()->IsInitialized();
 }
 
+void UXDGCommonBPLibrary::ShowDetailAgreement(FString Url) {
+    GetXDGCommonBridge()->ShowDetailAgreement(Url);
+}
+
+FString UXDGCommonBPLibrary::GetAgreementList() {
+    return GetXDGCommonBridge()->GetAgreementList();
+}
+
 void UXDGCommonBPLibrary::Report(FString serverId, FString roleId, FString roleName){
     GetXDGCommonBridge()->Report(serverId, roleId, roleName);
 }

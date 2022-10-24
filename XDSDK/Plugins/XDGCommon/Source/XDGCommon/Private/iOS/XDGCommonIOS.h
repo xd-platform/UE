@@ -52,6 +52,10 @@ public:
 	void SetCountryRegion(FString region);
 
 	void DevelopInit(int32 num);
+	
+	virtual void ShowDetailAgreement(FString Url) override;
+	virtual FString GetAgreementList() override;
+	
 	virtual void ClearAllUserDefaultsData() override;
 	void TrackAchievement();
 	void EventCompletedTutorial();

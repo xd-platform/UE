@@ -27,6 +27,12 @@ class XDGCOMMON_API UXDGCommonBPLibrary : public UBlueprintFunctionLibrary
 	static bool IsInitialized();
 
 	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
+	static void ShowDetailAgreement(FString Url);
+
+	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
+	static FString GetAgreementList();
+
+	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
 	static void Report(FString serverId, FString roleId, FString roleName);
 
 	UFUNCTION(BlueprintCallable, Category = "XDGCommon")

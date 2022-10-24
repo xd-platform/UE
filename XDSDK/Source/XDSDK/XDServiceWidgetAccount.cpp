@@ -17,7 +17,16 @@
 void UXDServiceWidgetAccount::OnLoginClicked()
 {
 #if PLATFORM_IOS || PLATFORM_ANDROID
-	const TArray<FString> Arr =ET_Login_LoginTypes->MakeStringArray();
+    
+	TArray<FString> Arr;
+	Arr.Add("TAPTAP");
+	Arr.Add("APPLE");
+	Arr.Add("GOOGLE");
+	Arr.Add("FACEBOOK");
+	Arr.Add("LINE");
+	Arr.Add("TWITTER");
+	Arr.Add("GUEST");
+
 	UXDGAccountBPLibrary::Login(Arr);
 #endif
 }

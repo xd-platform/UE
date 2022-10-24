@@ -2,6 +2,8 @@
 
 #include "XDGCommonIOS.h"
 #include "Engine.h"
+#include "IOSHelper.h"
+#include "TUDebuger.h"
 #include "XDGCommon.h"
 
 
@@ -212,6 +214,23 @@ void XDGCommonIOS::DevelopInit(int32 num){
         [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-test/track"];
     }
     InitSDK();
+}
+
+void XDGCommonIOS::ShowDetailAgreement(FString Url) {
+    [XDGSDK showDetailAgreement:Url.GetNSString()];
+}
+
+FString XDGCommonIOS::GetAgreementList() {
+    NSArray *agreementList = [XDGSDK getAgreementList];
+    if ([agreementList isKindOfClass:[NSArray class]]) {
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic options:NSJSONWritingPrettyPrinted error:nil];
+        if (jsonData) {
+            NSString *dataStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            return IOSHelper::convertString(dataStr);
+        }
+    }
+    TUDebuger::WarningLog("GetAgreementList parse");
+    return "";
 }
 
 void XDGCommonIOS::ClearAllUserDefaultsData() {

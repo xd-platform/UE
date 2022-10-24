@@ -70,8 +70,8 @@ void UXDServiceWidgetCommon::OnGetAgreementBeansClicked() {
 }
 
 void UXDServiceWidgetCommon::OnOpenAgreementBeanClicked() {
-	const FString TypeStr = ETB_AgreementBean_Type->GetText().ToString();
-	XUAgreement::ShowDetailAgreement(TypeStr);
+	FString Url = ETB_AgreementBean_Url->GetText().ToString();
+	XUAgreement::ShowDetailAgreement(Url);
 }
 
 void UXDServiceWidgetCommon::OnReportClicked()

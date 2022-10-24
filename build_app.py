@@ -16,7 +16,7 @@ client_config = "Development"
 # 需要设置的值
 project_dir = os.path.join(os.path.dirname(__file__), "XDSDK")
 project_name = "XDSDK"
-archive_dir = os.path.join(project_dir, "Product")
+archive_dir = os.path.join(os.path.dirname(__file__), "Product")
 
 if isMacPackager:
     engine_root = r"/Users/Shared/Epic\ Games/UE_4.26"

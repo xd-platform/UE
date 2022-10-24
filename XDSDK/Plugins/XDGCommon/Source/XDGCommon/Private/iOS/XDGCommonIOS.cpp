@@ -223,13 +223,17 @@ void XDGCommonIOS::ShowDetailAgreement(FString Url) {
 FString XDGCommonIOS::GetAgreementList() {
     NSArray *agreementList = [XDGSDK getAgreementList];
     if ([agreementList isKindOfClass:[NSArray class]]) {
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dic options:NSJSONWritingPrettyPrinted error:nil];
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:agreementList options:NSJSONWritingPrettyPrinted error:nil];
         if (jsonData) {
             NSString *dataStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
             return IOSHelper::convertString(dataStr);
+        } else {
+            TUDebuger::WarningLog("GetAgreementList parse error");
         }
+    } else {
+        TUDebuger::WarningLog("GetAgreementList is nil or unknown type");
     }
-    TUDebuger::WarningLog("GetAgreementList parse");
+    
     return "";
 }
 

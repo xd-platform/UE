@@ -6,6 +6,7 @@
 #include "TapUEMoment.h"
 #include "TUDebuger.h"
 #include "XDGCommon.h"
+#include "XDGCommonBPLibrary.h"
 #include "XDSDK/SubWidgets/ServiceItemWidget.h"
 #include "XDUE.h"
 #include "Components/CheckBox.h"
@@ -65,13 +66,23 @@ void UXDServiceWidgetCommon::OnIsInitializedClicked()
 }
 
 void UXDServiceWidgetCommon::OnGetAgreementBeansClicked() {
-	auto temp = TUJsonHelper::GetJsonString(XUAgreement::GetAgreementList());
-	TUDebuger::DisplayShow("AgreementBeans :\n\t" + temp);
+	FString ResutlStr;
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	ResutlStr = UXDGCommonBPLibrary::GetAgreementList();
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	ResutlStr = TUJsonHelper::GetJsonString(XUAgreement::GetAgreementList());
+#endif
+	TUDebuger::DisplayShow("AgreementBeans :\n\t" + ResutlStr);
 }
 
 void UXDServiceWidgetCommon::OnOpenAgreementBeanClicked() {
 	FString Url = ETB_AgreementBean_Url->GetText().ToString();
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	UXDGCommonBPLibrary::ShowDetailAgreement(Url);
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
 	XUAgreement::ShowDetailAgreement(Url);
+#endif
+
 }
 
 void UXDServiceWidgetCommon::OnReportClicked()

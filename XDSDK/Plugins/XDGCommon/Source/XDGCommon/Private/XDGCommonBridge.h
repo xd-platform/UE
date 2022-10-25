@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "XDGAgreement.h"
 
 /**
  * 
@@ -28,7 +29,7 @@ public:
 	virtual bool IsCurrentUserPushServiceEnable() = 0;
 
 	virtual void ShowDetailAgreement(FString Url) = 0;
-	virtual FString GetAgreementList() = 0;
+	virtual TArray<FXDGAgreement> GetAgreementList() = 0;
 
 	virtual void GetRegionInfo() = 0;
 	virtual void GetXDGInfoJson() = 0; //游戏需要使用

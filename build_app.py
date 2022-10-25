@@ -20,6 +20,8 @@ archive_dir = os.path.join(os.path.dirname(__file__), "Product")
 
 if isMacPackager:
     engine_root = r"/Users/Shared/Epic\ Games/UE_4.26"
+    # engine_root = r"~/SourceCode/UnrealEngine"
+
     engine_uat = engine_root + r"/Engine/Build/BatchFiles/RunUAT.sh"
     engine_exe = engine_root + r"/Engine/Binaries/Mac/UE4Editor.app/Contents/MacOS/UE4Editor"
 else:
@@ -86,4 +88,5 @@ def product_app(target_platform: str):
 
 
 # product_app(mac)
-product_app(iOS)
+# product_app(iOS)
+product_app(android)

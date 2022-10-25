@@ -68,7 +68,7 @@ void UXDServiceWidgetCommon::OnIsInitializedClicked()
 void UXDServiceWidgetCommon::OnGetAgreementBeansClicked() {
 	FString ResutlStr;
 #if PLATFORM_IOS || PLATFORM_ANDROID
-	ResutlStr = UXDGCommonBPLibrary::GetAgreementList();
+	ResutlStr = TUJsonHelper::GetJsonString(UXDGCommonBPLibrary::GetAgreementList());
 #elif PLATFORM_WINDOWS || PLATFORM_MAC
 	ResutlStr = TUJsonHelper::GetJsonString(XUAgreement::GetAgreementList());
 #endif

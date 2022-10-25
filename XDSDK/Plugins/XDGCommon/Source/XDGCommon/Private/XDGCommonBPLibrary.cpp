@@ -33,7 +33,7 @@ void UXDGCommonBPLibrary::ShowDetailAgreement(FString Url) {
     GetXDGCommonBridge()->ShowDetailAgreement(Url);
 }
 
-FString UXDGCommonBPLibrary::GetAgreementList() {
+TArray<FXDGAgreement> UXDGCommonBPLibrary::GetAgreementList() {
     return GetXDGCommonBridge()->GetAgreementList();
 }
 

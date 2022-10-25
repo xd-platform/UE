@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "XDGAgreement.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "XDGCommonBPLibrary.generated.h"
 
@@ -29,8 +30,7 @@ class XDGCOMMON_API UXDGCommonBPLibrary : public UBlueprintFunctionLibrary
 	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
 	static void ShowDetailAgreement(FString Url);
 
-	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
-	static FString GetAgreementList();
+	static TArray<FXDGAgreement> GetAgreementList();
 
 	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
 	static void Report(FString serverId, FString roleId, FString roleName);

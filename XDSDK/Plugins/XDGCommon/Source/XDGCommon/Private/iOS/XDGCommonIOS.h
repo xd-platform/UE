@@ -54,7 +54,7 @@ public:
 	void DevelopInit(int32 num);
 	
 	virtual void ShowDetailAgreement(FString Url) override;
-	virtual FString GetAgreementList() override;
+	virtual TArray<FXDGAgreement> GetAgreementList() override;
 	
 	virtual void ClearAllUserDefaultsData() override;
 	void TrackAchievement();

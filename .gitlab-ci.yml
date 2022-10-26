@@ -11,8 +11,9 @@
 #    - merge_requests
 
 stages:
-  - test1
   - arch
+  - test1
+
   
 variables:
   AndroidPackageOnWindow: 1
@@ -50,5 +51,5 @@ arch_plugins:
   artifacts:
     name: XDSDK_UE_$CI_COMMIT_SHORT_SHA
     paths:
-      - XDSDK/Plugins.zip
+      - "*/XDSDK/Plugins.zip"
     expire_in: 1 week

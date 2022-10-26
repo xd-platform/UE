@@ -1,12 +1,29 @@
-stages:
-  - build
+#stages:
+#  - build
+#
+#build:
+#  tags:
+#    - ios-builder
+#  stage: build
+#  script:
+#    - ./.ci/build.sh
+#  only:
+#    - merge_requests
 
-build:
+stages:
+  - test1
+  - test2
+
+test1:
   tags:
     - ios-builder
-  stage: build
+  stage: test1
   script:
-    - ./.ci/build.sh
-  only:
-    - merge_requests
+    - echo "test1"
 
+test1:
+  tags:
+    - ios-builder
+  stage: test2
+  script:
+    - echo "test2"

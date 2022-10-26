@@ -12,7 +12,7 @@
 
 stages:
   - test1
-  - test2
+  - arch
   
 variables:
   AndroidPackageOnWindow: 1
@@ -28,6 +28,8 @@ test1:
     - python3 xdsdk_build.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_COMMIT_TITLE =~ /-ios/
+    - if: $CI_COMMIT_TITLE =~ /-android/
+    - if: $CI_COMMIT_TITLE =~ /-win/
     - if: $CI_COMMIT_TITLE =~ /-mac/
     - if: $CI_COMMIT_TITLE =~ /-mobile/
     - if: $CI_COMMIT_TITLE =~ /-pc/
@@ -35,17 +37,18 @@ test1:
 
 
 
-test2:
+arch_plugins:
   tags:
     - ios-builder
-  stage: test2
+  stage: arch
   script:
-    - echo "test2"
-    - echo $TDSCICD
+    - echo "arch"
     - echo $CI_COMMIT_TITLE
+    - python3 archive_plugins.py
   rules:
-    - if: $CI_COMMIT_TITLE =~ /-android/
-    - if: $CI_COMMIT_TITLE =~ /-win/
-    - if: $CI_COMMIT_TITLE =~ /-mobile/
-    - if: $CI_COMMIT_TITLE =~ /-pc/
-    - if: $CI_COMMIT_TITLE =~ /-all/
+    - if: $CI_COMMIT_TITLE =~ /-arch/
+  artifacts:
+    name: XDSDK_UE_$CI_COMMIT_SHORT_SHA
+    paths:
+      - XDSDK/Plugins.zip
+    expire_in: 1 week

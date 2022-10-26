@@ -125,7 +125,7 @@ def product_app(target_platform: str):
             final_product = os.path.join(porduct_dir, zip_file_name)
         elif target_platform == iOS:
             final_product = os.path.join(porduct_dir, iOS_product_name)
-        elif target_platform == iOS:
+        elif target_platform == android:
             final_product = os.path.join(porduct_dir, android_product_name)
 
         if len(final_product) > 0:

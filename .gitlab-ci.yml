@@ -13,6 +13,9 @@
 stages:
   - test1
   - test2
+  
+variables:
+  TDSCICD: tds_ci_cd
 
 test1:
   tags:
@@ -20,10 +23,14 @@ test1:
   stage: test1
   script:
     - echo "test1"
+    - echo $TDSCICD
     - echo $CI_COMMIT_TITLE
   rules:
     - if: $CI_COMMIT_TITLE =~ /-ios/
     - if: $CI_COMMIT_TITLE =~ /-mac/
+    - if: $CI_COMMIT_TITLE =~ /-mobile/
+    - if: $CI_COMMIT_TITLE =~ /-pc/
+    - if: $CI_COMMIT_TITLE =~ /-all/
 
 
 
@@ -33,7 +40,11 @@ test2:
   stage: test2
   script:
     - echo "test2"
+    - echo $TDSCICD
     - echo $CI_COMMIT_TITLE
   rules:
     - if: $CI_COMMIT_TITLE =~ /-android/
     - if: $CI_COMMIT_TITLE =~ /-win/
+    - if: $CI_COMMIT_TITLE =~ /-mobile/
+    - if: $CI_COMMIT_TITLE =~ /-pc/
+    - if: $CI_COMMIT_TITLE =~ /-all/

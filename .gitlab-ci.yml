@@ -19,7 +19,8 @@ test1:
     - ios-builder
   stage: test1
   script:
-    - echo "test1"
+    - echo $CI_COMMIT_TITLE
+
 
 test2:
   tags:

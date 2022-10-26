@@ -51,5 +51,5 @@ arch_plugins:
   artifacts:
     name: XDSDK_UE_$CI_COMMIT_SHORT_SHA
     paths:
-      - "*/XDSDK/Plugins.zip"
+      - Product/Plugins.zip
     expire_in: 1 week

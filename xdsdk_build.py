@@ -1,5 +1,7 @@
 import os
 import platform
+import sys
+
 import tds_zip
 import shutil
 
@@ -17,6 +19,8 @@ client_config = "Development"
 project_dir = os.path.join(os.path.dirname(__file__), "XDSDK")
 project_name = "XDSDK"
 archive_dir = os.path.join(os.path.dirname(__file__), "Product")
+iOS_product_name = "Distro_XDSDK.ipa"
+android_product_name = "XDSDK-armv7.apk"
 
 if isMacPackager:
     engine_root = r"/Users/Shared/Epic\ Games/UE_4.26"
@@ -30,12 +34,38 @@ else:
     engine_exe = engine_root + r"\Engine\Binaries\Win64\UE4Editor-Cmd.exe"
 
 
+def parse_need_products(argvs_str: str):
+    parse_str = argvs_str.lower()
+    results = set()
+    if "-all" in parse_str :
+        results.add(iOS)
+        results.add(android)
+        results.add(mac)
+        results.add(win)
+    if "-mobile" in parse_str:
+        results.add(iOS)
+        results.add(android)
+    if "-pc" in parse_str:
+        results.add(mac)
+        results.add(win)
+    if "-ios" in parse_str:
+        results.add(iOS)
+    if "-android" in parse_str:
+        results.add(android)
+    if "-win" in parse_str:
+        results.add(win)
+    if "-mac" in parse_str:
+        results.add(mac)
+    return tuple(results)
+
+
 def product_app(target_platform: str):
+    # mobile 平台会自己生成 该平台的文件夹，pc的不会.target_dir只用于打包
     if target_platform == mac or target_platform == win:
         target_dir = os.path.join(archive_dir, target_platform)
     else:
         target_dir = archive_dir
-
+    # porduct_dir是产物的路径
     porduct_dir = os.path.join(archive_dir, target_platform)
     if os.path.exists(porduct_dir):
         shutil.rmtree(porduct_dir)
@@ -73,20 +103,35 @@ def product_app(target_platform: str):
 
     if ret_value == 0:
         print(f"打包成功")
+        final_product = ""
         if target_platform == mac:
             zip_file_name = f"{project_name}_Mac.zip"
             print(f"{zip_file_name}压缩中.......")
-            tds_zip.zipDir(os.path.join(target_dir, "MacNoEditor"), os.path.join(target_dir, zip_file_name))
+            tds_zip.zipDir(os.path.join(porduct_dir, "MacNoEditor"), os.path.join(porduct_dir, zip_file_name))
             print(f"{zip_file_name}压缩成功")
-        if target_platform == win:
+            final_product = os.path.join(porduct_dir, zip_file_name)
+        elif target_platform == win:
             zip_file_name = f"{project_name}_Windows.zip"
             print(f"{zip_file_name}压缩中.......")
-            tds_zip.zipDir(os.path.join(target_dir, "WindowsNoEditor"), os.path.join(target_dir, zip_file_name))
+            tds_zip.zipDir(os.path.join(porduct_dir, "WindowsNoEditor"), os.path.join(porduct_dir, zip_file_name))
             print(f"{zip_file_name}压缩成功")
+            final_product = os.path.join(porduct_dir, zip_file_name)
+        elif target_platform == iOS:
+            final_product = os.path.join(porduct_dir, iOS_product_name)
+        elif target_platform == iOS:
+            final_product = os.path.join(porduct_dir, android_product_name)
+
+        if len(final_product) > 0:
+            return final_product
     else:
         print(f"打包失败: {ret_value}")
 
 
-# product_app(mac)
-# product_app(iOS)
-product_app(android)
+if __name__ == '__main__':
+    products = parse_need_products(" ".join(sys.argv[1:]))
+    print(f"package {products}")
+    for platform_str in products:
+        print(product_app(platform_str))
+    # print(product_app(mac))
+    # product_app(iOS)
+    # product_app(android)

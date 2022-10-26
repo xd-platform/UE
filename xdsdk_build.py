@@ -78,7 +78,6 @@ def product_app(target_platform: str):
         shutil.rmtree(porduct_dir)
     cmd_argv = [engine_uat,
                 "BuildCookRun",
-                "-nocompileeditor",
                 "-installed",
                 "-nop4",
                 f"-project={os.path.join(project_dir, f'{project_name}.uproject')}",

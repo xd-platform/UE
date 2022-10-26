@@ -56,6 +56,13 @@ def parse_need_products(argvs_str: str):
         results.add(win)
     if "-mac" in parse_str:
         results.add(mac)
+    if isMacPackager:
+        results = results.difference({win})
+        if "AndroidPackageOnWindow" in os.environ:
+            results = results.difference({android})
+    else:
+        results = results.difference({mac, iOS})
+    print(f"package: {products}")
     return tuple(results)
 
 
@@ -129,7 +136,6 @@ def product_app(target_platform: str):
 
 if __name__ == '__main__':
     products = parse_need_products(" ".join(sys.argv[1:]))
-    print(f"package {products}")
     for platform_str in products:
         print(product_app(platform_str))
     # print(product_app(mac))

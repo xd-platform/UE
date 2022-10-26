@@ -15,7 +15,7 @@ stages:
   - test2
   
 variables:
-  TDSCICD: tds_ci_cd
+  AndroidPackageOnWindow: 1
 
 test1:
   tags:
@@ -25,6 +25,7 @@ test1:
     - echo "test1"
     - echo $TDSCICD
     - echo $CI_COMMIT_TITLE
+    - python3 xdsdk_build.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_COMMIT_TITLE =~ /-ios/
     - if: $CI_COMMIT_TITLE =~ /-mac/

@@ -62,7 +62,7 @@ def parse_need_products(argvs_str: str):
             results = results.difference({android})
     else:
         results = results.difference({mac, iOS})
-    print(f"package: {products}")
+    print(f"package: {results}")
     return tuple(results)
 
 

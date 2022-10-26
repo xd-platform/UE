@@ -11,20 +11,20 @@
 #    - merge_requests
 
 stages:
-  - arch
-  - test1
+  - arch_plugins
+  - product_app
 
   
 variables:
   AndroidPackageOnWindow: 1
 
-test1:
+product_app:
   tags:
     - ios-builder
-  stage: test1
+    - tds-packager-win
+  stage: product_app
   script:
-    - echo "test1"
-    - echo $TDSCICD
+    - echo "product_app"
     - echo $CI_COMMIT_TITLE
     - python3 xdsdk_build.py $CI_COMMIT_TITLE
   rules:
@@ -41,7 +41,7 @@ test1:
 arch_plugins:
   tags:
     - ios-builder
-  stage: arch
+  stage: arch_plugins
   script:
     - echo "arch"
     - echo $CI_COMMIT_TITLE

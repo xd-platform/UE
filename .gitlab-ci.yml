@@ -19,7 +19,12 @@ test1:
     - ios-builder
   stage: test1
   script:
+    - echo "test1"
     - echo $CI_COMMIT_TITLE
+  rules:
+    - if: $CI_COMMIT_TITLE =~ /-ios/
+    - if: $CI_COMMIT_TITLE =~ /-mac/
+
 
 
 test2:
@@ -28,3 +33,7 @@ test2:
   stage: test2
   script:
     - echo "test2"
+    - echo $CI_COMMIT_TITLE
+  rules:
+    - if: $CI_COMMIT_TITLE =~ /-android/
+    - if: $CI_COMMIT_TITLE =~ /-win/

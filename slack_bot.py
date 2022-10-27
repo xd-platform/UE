@@ -10,10 +10,10 @@ logging.basicConfig(level=logging.DEBUG)
 # WebClient instantiates a client that can call API methods
 # When using Bolt, you can use either `app.client` or the `client` passed to listeners.
 
-# slack_token = os.environ["SLACK_TOKEN"]
-# slack_channel_id = os.environ['SLACK_CHANNEL_ID']
-slack_token = "xoxb-2372848536-1692789902503-5PvnXP9iIrWB507HscUFJV1b"
-slack_channel_id = "C01J8PLD17B"
+slack_token = os.environ["SLACK_TOKEN"]
+slack_channel_id = os.environ['SLACK_CHANNEL_ID']
+# slack_token = "xoxb-2372848536-1692789902503-5PvnXP9iIrWB507HscUFJV1b"
+# slack_channel_id = "C01J8PLD17B"
 
 client = WebClient(token=slack_token, timeout=300)
 

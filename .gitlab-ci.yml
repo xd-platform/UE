@@ -20,7 +20,7 @@ variables:
 
 product_app:
   tags:
-    - ios-builder
+#    - ios-builder
     - tds-packager-win
   stage: product_app
   script:

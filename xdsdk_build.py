@@ -30,7 +30,8 @@ if isMacPackager:
     engine_exe = engine_root + r"/Engine/Binaries/Mac/UE4Editor.app/Contents/MacOS/UE4Editor"
 else:
     engine_root = r"C:\Program Files\Epic Games\UE_4.26"
-    engine_uat = engine_root + r"\Engine\Build\BatchFiles\RunUAT.bat"
+    # engine_uat = engine_root + r"\Engine\Build\BatchFiles\RunUAT.bat"
+    engine_uat = engine_root + r"\Engine\Build\BatchFiles\RunUAT.sh"
     engine_exe = engine_root + r"\Engine\Binaries\Win64\UE4Editor-Cmd.exe"
 
 
@@ -99,13 +100,17 @@ def product_app(target_platform: str):
                 f"-clientconfig={client_config}",
                 "-utf8output"]
 
-    if isMacPackager:
-        ret_value = os.system(f"""
-        export LANG=C.UTF-8
-        sh {" ".join(cmd_argv)}
-        """)
-    else:
-        ret_value = os.system('call ' + " ".join(cmd_argv))
+    ret_value = os.system(f"""
+            export LANG=C.UTF-8
+            sh {" ".join(cmd_argv)}
+            """)
+    # if isMacPackager:
+    #     ret_value = os.system(f"""
+    #     export LANG=C.UTF-8
+    #     sh {" ".join(cmd_argv)}
+    #     """)
+    # else:
+    #     ret_value = os.system('call ' + " ".join(cmd_argv))
 
     if ret_value == 0:
         print(f"打包成功")

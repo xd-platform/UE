@@ -33,15 +33,15 @@ class Uploader(object):
         print(f"上报结果：{response.text}")
         try:
             json_object = json.loads(response.text)
-            if 'id' in json_object:
+            if 'id' in json_object and json_object['id'] > 0:
                 print(f"{self.file_path} 上传成功")
-                return json_object['id']
+                return f"https://npkg.xindong.com/install/{json_object['id']}"
             else:
                 print(f"{self.file_path} 上传失败：{json_object['message']}")
-        except:
-            print(f"请求结果格式化错误")
+        except Exception as e:
+            print(f"请求结果格式化错误:{e}")
 # print(os.path.basename("/Users/huangyifeng/Work/XDSDK/xdsdk-6.0-ue/Product/IOS/Distro_XDSDK.ipa"))
 # print(Uploader("/Users/huangyifeng/Work/XDSDK/xdsdk-6.0-ue/Product/IOS/Distro_XDSDK.ipa").upload())
-print(Uploader("/Users/huangyifeng/Work/XDSDK/xdsdk-6.0-ue/Product/Mac/XDSDK_Mac.zip").upload())
+# print(Uploader("/Users/huangyifeng/Work/XDSDK/xdsdk-6.0-ue/Product/Mac/XDSDK_Mac.zip").upload())
 
 

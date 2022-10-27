@@ -81,7 +81,7 @@ void XUImpl::InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack)
 	XUConfigManager::UpdateConfigWithCache();
 
 	// 海外请求最新协议内容，国内直接返回
-	XUAgreementManager::RequestServerAgreementsExceptCN([=](bool Success) {
+	XUAgreementManager::RequestServerAgreementsExceptCN([=](bool ResultSuccess) {
 		// 检查协议
 		XUAgreementManager::CheckAgreementWithHandler([=]() {
 			// 协议完成

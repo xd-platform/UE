@@ -101,7 +101,7 @@ def product_app(target_platform: str):
 
     if isMacPackager:
         ret_value = os.system(f"""
-        export LANG="C"
+        export LANG=C.UTF-8
         sh {" ".join(cmd_argv)}
         """)
     else:

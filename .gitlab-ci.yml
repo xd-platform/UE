@@ -18,10 +18,9 @@ stages:
 variables:
   AndroidPackageOnWindow: 1
 
-product_app:
+product_app_mac:
   tags:
     - ios-builder
-    - tds-packager-win
   stage: product_app
   script:
     - echo "product_app"
@@ -29,9 +28,22 @@ product_app:
     - python3 package_upload.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_COMMIT_TITLE =~ /-ios/
+    - if: $CI_COMMIT_TITLE =~ /-mac/
+    - if: $CI_COMMIT_TITLE =~ /-mobile/
+    - if: $CI_COMMIT_TITLE =~ /-pc/
+    - if: $CI_COMMIT_TITLE =~ /-all/
+
+product_app_win:
+  tags:
+    - tds-packager-win
+  stage: product_app
+  script:
+    - echo "product_app"
+    - echo $CI_COMMIT_TITLE
+    - python3 package_upload.py $CI_COMMIT_TITLE
+  rules:
     - if: $CI_COMMIT_TITLE =~ /-android/
     - if: $CI_COMMIT_TITLE =~ /-win/
-    - if: $CI_COMMIT_TITLE =~ /-mac/
     - if: $CI_COMMIT_TITLE =~ /-mobile/
     - if: $CI_COMMIT_TITLE =~ /-pc/
     - if: $CI_COMMIT_TITLE =~ /-all/

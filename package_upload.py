@@ -5,10 +5,12 @@ import sys
 import upload_npkg
 import slack_bot
 
+
 if __name__ == '__main__':
     # 解析需要的平台
     products = xdsdk_build.parse_need_products(" ".join(sys.argv[1:]))
-    products = (xdsdk_build.iOS, xdsdk_build.mac)
+    if len(products) == 0:
+        exit(0)
     thread_id = slack_bot.sendMessage("XDSDK-UE Build")
     for platform_str in products:
         # 打包

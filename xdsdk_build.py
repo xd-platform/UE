@@ -32,7 +32,6 @@ else:
     engine_root = r"C:\Program Files\Epic Games\UE_4.26"
     engine_uat = engine_root + r"\Engine\Build\BatchFiles\RunUAT.bat"
     engine_uat = f'"{engine_uat}"'
-    # engine_uat = engine_root + r"\Engine\Build\BatchFiles\RunUAT.sh"
     engine_exe = engine_root + r"\Engine\Binaries\Win64\UE4Editor-Cmd.exe"
     engine_exe = f'"{engine_exe}"'
 

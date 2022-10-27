@@ -15,7 +15,7 @@ if __name__ == '__main__':
     for platform_str in products:
         # 打包
         product = xdsdk_build.product_app(platform_str)
-        if len(product) < 0:
+        if product is None:
             message = f"{platform_str}打包失败"
             print(message)
             slack_bot.sendMessage(message, thread_id)

@@ -38,9 +38,9 @@ product_app_win:
     - tds-packager-win
   stage: product_app
   script:
-    - Get-Command python | Select-Object -ExpandProperty Definition
     - echo $CI_COMMIT_TITLE
-    - python3 package_upload.py $CI_COMMIT_TITLE
+#    - Get-Command python | Select-Object -ExpandProperty Definition
+    - python package_upload.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_COMMIT_TITLE =~ /-android/
     - if: $CI_COMMIT_TITLE =~ /-win/
@@ -57,7 +57,7 @@ arch_plugins:
   script:
     - echo "arch"
     - echo $CI_COMMIT_TITLE
-    - python archive_plugins.py
+    - python3 archive_plugins.py
   rules:
     - if: $CI_COMMIT_TITLE =~ /-arch/
   artifacts:

@@ -30,6 +30,9 @@ void XDGCommonIOS::SetLanguage(int32 langType){
 }
 
 void XDGCommonIOS::InitSDK(){
+    [XDGSDKSettings setExitHandler:^{
+        FPlatformMisc::RequestExit( true );
+    }];
     [XDGSDK initSDK:^(BOOL success, NSString *msg) {
         if (success) {
             NSLog(@"初始化 成功： %@", msg);

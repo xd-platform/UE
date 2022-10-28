@@ -38,7 +38,7 @@ product_app_win:
     - tds-packager-win
   stage: product_app
   script:
-    - echo "product_app"
+    - echo Get-Command python | Select-Object -ExpandProperty Definition
     - echo $CI_COMMIT_TITLE
     - python3 package_upload.py $CI_COMMIT_TITLE
   rules:

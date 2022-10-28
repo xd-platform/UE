@@ -57,7 +57,7 @@ arch_plugins:
   script:
     - echo "arch"
     - echo $CI_COMMIT_TITLE
-    - python3 archive_plugins.py
+    - python archive_plugins.py
   rules:
     - if: $CI_COMMIT_TITLE =~ /-arch/
   artifacts:

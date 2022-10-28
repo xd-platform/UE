@@ -4,6 +4,7 @@
 #include "XDServiceWidgetAccount.h"
 
 #include "TUDebuger.h"
+#include "TUDeviceInfo.h"
 #include "XDGAccount.h"
 #include "XDGAccountBPLibrary.h"
 #include "XDUE.h"
@@ -29,6 +30,49 @@ void UXDServiceWidgetAccount::OnLoginClicked()
 
 	UXDGAccountBPLibrary::Login(Arr);
 #endif
+}
+
+void UXDServiceWidgetAccount::OnAutoLoginClicked() {
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	const FString LoginTypeStr = "Default";
+	UXDGAccountBPLibrary::LoginByType(LoginTypeStr);
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	auto Success = [](FXUUser User)
+	{
+		TUDebuger::DisplayShow(FString::Printf(TEXT("LoginSuccess：%s\r\n"), *TUJsonHelper::GetJsonString(User)));
+	};
+
+	auto Failed = [](FXUError Error)
+	{
+		DEMO_LOG(TEXT("登录失败：\r\n%s \r\n%s"), *TUJsonHelper::GetJsonString(Error), *TUJsonHelper::GetJsonString(Error.ExtraData));
+		if (Error.code == 40021 && Error.ExtraData.IsValid())
+		{
+			FString Platform = Error.ExtraData->GetStringField("loginType");
+			FString Email = Error.ExtraData->GetStringField("email");
+			DEMO_LOG(TEXT("当前 %s 账号所关联的邮箱 %s 未被验证，请前往 %s 验证邮箱后重新登录游戏"), *Platform, *Email, *Platform);
+		}
+		else if (Error.code == 40902 && Error.ExtraData.IsValid())
+		{
+			FString Platform = Error.ExtraData->GetStringField("loginType");
+			FString Email = Error.ExtraData->GetStringField("email");
+			auto Conflicts = Error.ExtraData->GetArrayField("conflicts");
+			FString Content = FString::Printf(TEXT("当前 %s 账号所关联的邮箱 %s 对应的游戏账号已绑定"), *Platform, *Email);
+			TArray<FString> Accounts;
+			for (auto JsonValue : Conflicts)
+			{
+				Accounts.Add(JsonValue->AsObject()->GetStringField("loginType"));
+			}
+			Content += FString::Join(Accounts, TEXT("、"));
+			Content += TEXT("，请使用该邮箱所关联的其他平台游戏账号登录后进入「账号安全中心」手动进行账号绑定、解绑操作。");
+			DEMO_LOG(TEXT("%s"), *Content);
+		}
+	};
+	XDUE::LoginByType(XUType::LoginType::Default, Success, Failed);
+#endif
+}
+
+void UXDServiceWidgetAccount::OnDeviceIDClicked() {
+	TUDebuger::DisplayShow(TUDeviceInfo::GetLoginId());
 }
 
 void UXDServiceWidgetAccount::OnLoginByTypeClicked()
@@ -178,6 +222,9 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 	OpenAccountCancellation->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnOpenAccountCancellationClicked);
 	IsTokenActiveWithType->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnIsTokenActiveWithTypeClicked);
 	BindByType->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnBindByTypeClicked);
+	DeviceID->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnDeviceIDClicked);
+	AutoLogin->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnAutoLoginClicked);
+	
 
 	XDUE::OnUserStatusChange.AddLambda([](XUType::UserChangeState UserState, const FString& Msg) {
 		if (UserState == XUType::UserLogout) {

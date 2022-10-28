@@ -34,6 +34,12 @@ class XDSDK_API UXDServiceWidgetAccount : public UUserWidget
 
 	UFUNCTION()
 	void OnLoginClicked();
+
+	UFUNCTION()
+	void OnAutoLoginClicked();
+
+	UFUNCTION()
+	void OnDeviceIDClicked();
 	
 	UFUNCTION()
 	void OnLoginByTypeClicked();
@@ -77,6 +83,12 @@ protected:
 
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* Login;
+
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* AutoLogin;
+
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* DeviceID;
 
 	UPROPERTY(Meta = (BindWidget))
 	UComboBoxString* CB_LoginByType_LoginType;

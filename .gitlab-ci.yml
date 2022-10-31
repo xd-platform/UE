@@ -27,8 +27,8 @@ product_app_mac:
     - echo $CI_PIPELINE_SOURCE
     - python3 package_upload.py $CI_COMMIT_TITLE
   rules:
-    - if: CI_PIPELINE_SOURCE == merge_request_event
-      when: never
+#    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#      when: never
     - if: $CI_COMMIT_TITLE =~ /-ios/
     - if: $CI_COMMIT_TITLE =~ /-mac/
     - if: $CI_COMMIT_TITLE =~ /-mobile/
@@ -45,8 +45,8 @@ product_app_win:
 #    - Get-Command python | Select-Object -ExpandProperty Definition
     - python package_upload.py $CI_COMMIT_TITLE
   rules:
-    - if: CI_PIPELINE_SOURCE == merge_request_event
-      when: never
+#    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#      when: never
     - if: $CI_COMMIT_TITLE =~ /-android/
     - if: $CI_COMMIT_TITLE =~ /-win/
     - if: $CI_COMMIT_TITLE =~ /-mobile/

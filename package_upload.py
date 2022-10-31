@@ -15,7 +15,7 @@ if __name__ == '__main__':
     if "CI_RUNNER_TAGS" in os.environ:
         message = message + f" ({os.environ['CI_RUNNER_TAGS']})"
     if "CI_JOB_URL" in os.environ:
-        message = message + f"\n<'{os.environ['CI_JOB_URL']}'|PackageStart>"
+        message = message + f"\n<{os.environ['CI_JOB_URL']}|PackageStart>"
 
     thread_id = slack_bot.sendMessage(message)
     for platform_str in products:

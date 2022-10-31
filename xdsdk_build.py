@@ -39,17 +39,6 @@ else:
 def parse_need_products(argvs_str: str):
     parse_str = argvs_str.lower()
     results = set()
-    if "-all" in parse_str:
-        results.add(iOS)
-        results.add(android)
-        results.add(mac)
-        results.add(win)
-    if "-mobile" in parse_str:
-        results.add(iOS)
-        results.add(android)
-    if "-pc" in parse_str:
-        results.add(mac)
-        results.add(win)
     if "-ios" in parse_str:
         results.add(iOS)
     if "-android" in parse_str:
@@ -58,12 +47,26 @@ def parse_need_products(argvs_str: str):
         results.add(win)
     if "-mac" in parse_str:
         results.add(mac)
+    if "-mobile" in parse_str:
+        results.add(iOS)
+        results.add(android)
+    if "-pc" in parse_str:
+        results.add(mac)
+        results.add(win)
+    if "-all" in parse_str:
+        results.add(iOS)
+        results.add(android)
+        results.add(mac)
+        results.add(win)
+
     if isMacPackager:
         results = results.difference({win})
         if "AndroidPackageOnWindow" in os.environ:
             results = results.difference({android})
     else:
         results = results.difference({mac, iOS})
+        if "AndroidPackageOnWindow" not in os.environ:
+            results = results.difference({android})
     print(f"package: {results}")
     return tuple(results)
 

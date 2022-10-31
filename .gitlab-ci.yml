@@ -37,7 +37,7 @@ product_app_mac:
 
 product_app_win:
   variables:
-    USERPROFILE: "C:\Users\qiank"
+    USERPROFIL: "C:\Users\qiank"
   tags:
     - tds-packager-win
   stage: product_app

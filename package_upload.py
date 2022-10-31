@@ -26,22 +26,32 @@ if __name__ == '__main__':
             print(message)
             slack_bot.sendMessage(message, thread_id)
             continue
-        # 移动模块上传NPKG
-        if platform_str == xdsdk_build.iOS or platform_str == xdsdk_build.android:
-            url = upload_npkg.Uploader(product).upload()
-            if len(url) < 0:
-                message = f"{product}上传失败"
-                print(message)
-                slack_bot.sendMessage(message, thread_id)
-                continue
-            message = f"{platform_str}下载地址：{url}"
+        # 上传NPKG
+        url = upload_npkg.Uploader(product).upload()
+        if len(url) < 0:
+            message = f"{product}上传失败"
             print(message)
             slack_bot.sendMessage(message, thread_id)
-        else:
-            upload_success = slack_bot.uploadFile(product, thread_id)
-            if upload_success is not True:
-                message = f"{product}上传失败"
-                print(message)
-                slack_bot.sendMessage(message, thread_id)
+            continue
+        message = f"{platform_str}下载地址：{url}"
+        print(message)
+        slack_bot.sendMessage(message, thread_id)
+        # 移动模块上传NPKG
+        # if platform_str == xdsdk_build.iOS or platform_str == xdsdk_build.android:
+        #     url = upload_npkg.Uploader(product).upload()
+        #     if len(url) < 0:
+        #         message = f"{product}上传失败"
+        #         print(message)
+        #         slack_bot.sendMessage(message, thread_id)
+        #         continue
+        #     message = f"{platform_str}下载地址：{url}"
+        #     print(message)
+        #     slack_bot.sendMessage(message, thread_id)
+        # else:
+        #     upload_success = slack_bot.uploadFile(product, thread_id)
+        #     if upload_success is not True:
+        #         message = f"{product}上传失败"
+        #         print(message)
+        #         slack_bot.sendMessage(message, thread_id)
 
 

@@ -52,8 +52,6 @@ product_app_win:
     - if: $CI_COMMIT_TITLE =~ /-pc/
     - if: $CI_COMMIT_TITLE =~ /-all/
 
-
-
 arch_plugins:
   tags:
     - ios-builder

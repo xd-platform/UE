@@ -15,8 +15,8 @@ stages:
   - product_app
 
   
-variables:
-  AndroidPackageOnWindow: 1
+#variables:
+#  AndroidPackageOnWindow: 1
 
 product_app_mac:
   tags:
@@ -37,24 +37,24 @@ product_app_mac:
 
 
 product_app_win:
-  variables:
-    ANDROID_HOME:                   "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk"
-    APPDATA:                        "C:\\Users\\qiank\\AppData\\Roaming"
-    CLIENTNAME:                     "HuangYiFengTapT"
-    HOMEDRIVE:                      "C:"
-    HOMEPATH:                       "\\Users\\qiank"
-    JAVA_HOME:                      "C:\\Program Files\\Android\\Android Studio\\jre"
-    LOCALAPPDATA:                   "C:\\Users\\qiank\\AppData\\Local"
-    LOGONSERVER:                    "\\\\TDSPC"
-    NDK_ROOT:                       "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk\\ndk\\21.4.7075529"
-    NDKROOT:                        "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk\\ndk\\21.4.7075529"
-    SESSIONNAME:                    "RDP-Tcp#0"
-    TEMP:                           "C:\\Users\\qiank\\AppData\\Local\\Temp"
-    TMP:                            "C:\\Users\\qiank\\AppData\\Local\\Temp"
-    USERDOMAIN:                     "TDSPC"
-    USERDOMAIN_ROAMINGPROFILE:      "TDSPC"
-    USERNAME:                       "tdswin"
-    USERPROFILE:                    "C:\\Users\\qiank"
+#  variables:
+#    ANDROID_HOME:                   "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk"
+#    APPDATA:                        "C:\\Users\\qiank\\AppData\\Roaming"
+#    CLIENTNAME:                     "HuangYiFengTapT"
+#    HOMEDRIVE:                      "C:"
+#    HOMEPATH:                       "\\Users\\qiank"
+#    JAVA_HOME:                      "C:\\Program Files\\Android\\Android Studio\\jre"
+#    LOCALAPPDATA:                   "C:\\Users\\qiank\\AppData\\Local"
+#    LOGONSERVER:                    "\\\\TDSPC"
+#    NDK_ROOT:                       "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk\\ndk\\21.4.7075529"
+#    NDKROOT:                        "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk\\ndk\\21.4.7075529"
+#    SESSIONNAME:                    "RDP-Tcp#0"
+#    TEMP:                           "C:\\Users\\qiank\\AppData\\Local\\Temp"
+#    TMP:                            "C:\\Users\\qiank\\AppData\\Local\\Temp"
+#    USERDOMAIN:                     "TDSPC"
+#    USERDOMAIN_ROAMINGPROFILE:      "TDSPC"
+#    USERNAME:                       "tdswin"
+#    USERPROFILE:                    "C:\\Users\\qiank"
   tags:
     - tds-packager-win
   stage: product_app

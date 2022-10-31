@@ -38,6 +38,8 @@ product_app_mac:
 product_app_win:
   tags:
     - tds-packager-win
+  variables:
+    USERPROFILE: "C:\Users\qiank"
   stage: product_app
   script:
     - echo $CI_COMMIT_TITLE

@@ -24,7 +24,7 @@ product_app_mac:
   stage: product_app
   script:
     - echo $CI_COMMIT_TITLE
-    - echo $CI_PIPELINE_SOURCE
+    - export
     - python3 package_upload.py $CI_COMMIT_TITLE
   rules:
 #    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
@@ -41,8 +41,7 @@ product_app_win:
   stage: product_app
   script:
     - echo $CI_COMMIT_TITLE
-    - echo $CI_PIPELINE_SOURCE
-#    - Get-Command python | Select-Object -ExpandProperty Definition
+    - 'dir env:'
     - python package_upload.py $CI_COMMIT_TITLE
   rules:
 #    - if: $CI_PIPELINE_SOURCE == "merge_request_event"

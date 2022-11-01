@@ -1,5 +1,6 @@
 import zipfile
 import os
+import platform
 
 
 def zipDir(source_dir, output_filename):
@@ -10,21 +11,36 @@ def zipDir(source_dir, output_filename):
     :return: 无
     """
     if os.path.exists(source_dir):
-        # compression压缩比例，默认是不压缩，ZIP_LZMA=14级别的压缩，影响的是时间，但是包能更小
-        # vue使用级别=9的，var archive = archiver('zip', {zlib: {level: 9}});
-        # mac install: brew install xz
-        # mode 解压是 r , 压缩是 w 追加压缩是 a
-        # compression 为  zipfile.ZIP_DEFLATED，zipfile.ZIP_STORED， zipfile.ZIP_LZMA
-        zipf = zipfile.ZipFile(file=output_filename, mode='w', compression=zipfile.ZIP_DEFLATED)
-        # zipf = zipfile.ZipFile(file=output_filename, mode='w', compression=zipfile.ZIP_DEFLATED)
-        pre_len = len(os.path.dirname(source_dir))
-        for parent, dirnames, filenames in os.walk(source_dir):
-            for filename in filenames:
-                pathfile = os.path.join(parent, filename)
-                arcname = pathfile[pre_len:].strip(os.path.sep)  # 相对路径
-                zipf.write(pathfile, arcname)
-        zipf.close()
-        return output_filename
+        print(f"{source_dir} 压缩中......")
+        if platform.system() == "Darwin":
+            ret_value = os.system(f"""
+                                cd {os.path.dirname(source_dir)}
+                                zip -rq {output_filename} {os.path.basename(source_dir)}
+                                """)
+            if ret_value == 0:
+                print(f"{output_filename} 压缩成功")
+                return output_filename
+            else:
+                print(f"{output_filename} 压缩失败")
+        else:
+            # compression压缩比例，默认是不压缩，ZIP_LZMA=14级别的压缩，影响的是时间，但是包能更小
+            # vue使用级别=9的，var archive = archiver('zip', {zlib: {level: 9}});
+            # mac install: brew install xz
+            # mode 解压是 r , 压缩是 w 追加压缩是 a
+            # compression 为  zipfile.ZIP_DEFLATED，zipfile.ZIP_STORED， zipfile.ZIP_LZMA
+            zipf = zipfile.ZipFile(file=output_filename, mode='w', compression=zipfile.ZIP_DEFLATED)
+            pre_len = len(os.path.dirname(source_dir))
+            for parent, dirnames, filenames in os.walk(source_dir):
+                for filename in filenames:
+                    pathfile = os.path.join(parent, filename)
+                    arcname = pathfile[pre_len:].strip(os.path.sep)  # 相对路径
+                    zipf.write(pathfile, arcname)
+            zipf.close()
+            print(f"{output_filename} 压缩成功")
+            return output_filename
+    else:
+        print(f"{source_dir}不存在")
+
     return
 
 

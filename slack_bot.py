@@ -25,7 +25,7 @@ def sendMessage(content=None, thread=0):
     try:
         response = client.chat_postMessage(channel=slack_channel_id, text=content, as_user=True,
                                            initial_comment="this is a file", thread_ts=thread)
-        print(response)
+        # print(response)
         return response["ts"]
     except SlackApiError as e:
         # You will get a SlackApiError if "ok" is False
@@ -38,7 +38,7 @@ def sendMessage(content=None, thread=0):
 def uploadFile(file, thread=0):
     try:
         response = client.files_upload_v2(channel=slack_channel_id, file=file, thread_ts=thread)
-        print(response)
+        # print(response)
         return response["ok"]
     except SlackApiError as e:
         # You will get a SlackApiError if "ok" is False

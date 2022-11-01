@@ -12,11 +12,12 @@
 
 stages:
   - arch_plugins
+  - check
   - product_app
 
   
-variables:
-  AndroidPackageOnWindow: 1
+#variables:
+#  AndroidPackageOnWindow: 1
 
 product_app_mac:
   tags:
@@ -86,3 +87,30 @@ arch_plugins:
     paths:
       - Product/Plugins.zip
     expire_in: 1 week
+
+check_mac:
+  tags:
+    - ios-builder
+  stage: check
+  script:
+    - echo $CI_COMMIT_TITLE
+    - export
+    - python3 check_packages.py
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_COMMIT_TITLE =~ /-check/
+
+
+check_win:
+  tags:
+    - tds-packager-win
+  stage: check
+  script:
+    - echo $CI_COMMIT_TITLE
+    - 'dir env:'
+    - python check_packages.py
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_COMMIT_TITLE =~ /-check/

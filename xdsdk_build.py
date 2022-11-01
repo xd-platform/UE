@@ -65,8 +65,8 @@ def parse_need_products(argvs_str: str):
             results = results.difference({android})
     else:
         results = results.difference({mac, iOS})
-        # if "AndroidPackageOnWindow" not in os.environ:
-        #     results = results.difference({android})
+        if "AndroidPackageOnWindow" not in os.environ:
+            results = results.difference({android})
     print(f"package: {results}")
     return tuple(results)
 
@@ -117,22 +117,11 @@ def product_app(target_platform: str):
         final_product = ""
         if target_platform == mac:
             zip_file_name = f"{project_name}_Mac.zip"
-            print(f"{zip_file_name}压缩中.......")
-            # 不知道为什么，这个方法压缩后，应用就闪退了
-            # tds_zip.zipDir(os.path.join(porduct_dir, "MacNoEditor"), os.path.join(porduct_dir, zip_file_name))
-            ret_value = os.system(f"""
-            cd {porduct_dir}
-            zip -rq {zip_file_name} MacNoEditor
-            """)
-            if ret_value == 0:
-                print(f"{zip_file_name}压缩成功")
-                final_product = os.path.join(porduct_dir, zip_file_name)
-
+            tds_zip.zipDir(os.path.join(porduct_dir, "MacNoEditor"), os.path.join(porduct_dir, zip_file_name))
+            final_product = os.path.join(porduct_dir, zip_file_name)
         elif target_platform == win:
             zip_file_name = f"{project_name}_Windows.zip"
-            print(f"{zip_file_name}压缩中.......")
             tds_zip.zipDir(os.path.join(porduct_dir, "WindowsNoEditor"), os.path.join(porduct_dir, zip_file_name))
-            print(f"{zip_file_name}压缩成功")
             final_product = os.path.join(porduct_dir, zip_file_name)
         elif target_platform == iOS:
             final_product = os.path.join(porduct_dir, iOS_product_name)

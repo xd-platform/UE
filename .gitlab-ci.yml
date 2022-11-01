@@ -16,8 +16,9 @@ stages:
   - product_app
 
   
-#variables:
-#  AndroidPackageOnWindow: 1
+variables:
+  AndroidPackageDisableOnWindow: 1
+#  AndroidPackageDisableOnMac: 1
 
 product_app_mac:
   tags:

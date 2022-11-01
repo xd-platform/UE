@@ -70,7 +70,6 @@ def parse_need_products(argvs_str: str):
     print(f"package: {results}")
     return tuple(results)
 
-
 def product_app(target_platform: str):
     # mobile 平台会自己生成 该平台的文件夹，pc的不会.target_dir只用于打包
     if target_platform == mac or target_platform == win:

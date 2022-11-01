@@ -65,8 +65,8 @@ def parse_need_products(argvs_str: str):
             results = results.difference({android})
     else:
         results = results.difference({mac, iOS})
-        if "AndroidPackageOnWindow" not in os.environ:
-            results = results.difference({android})
+        # if "AndroidPackageOnWindow" not in os.environ:
+        #     results = results.difference({android})
     print(f"package: {results}")
     return tuple(results)
 

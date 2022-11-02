@@ -225,7 +225,6 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 	DeviceID->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnDeviceIDClicked);
 	AutoLogin->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnAutoLoginClicked);
 	
-
 	XDUE::OnUserStatusChange.AddLambda([](XUType::UserChangeState UserState, const FString& Msg) {
 		if (UserState == XUType::UserLogout) {
 			TUDebuger::DisplayShow(TEXT("游戏账号应登出"));

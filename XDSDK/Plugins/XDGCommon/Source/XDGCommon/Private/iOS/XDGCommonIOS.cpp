@@ -141,6 +141,10 @@ void XDGCommonIOS::TrackUser(FString userId){
     NSLog(@"点击 TrackUser %@", userId.GetNSString());
 }
 
+void XDGCommonIOS::TrackUser() {
+    [XDGTrackerManager trackUser];
+}
+
 void XDGCommonIOS::TrackRole(FString serverId, FString roleId, FString roleName, int32 level){
     [XDGTrackerManager trackRoleWithRoleId:roleId.GetNSString() roleName:roleName.GetNSString() serverId:serverId.GetNSString() level:(NSInteger)level];
     NSLog(@"点击 TrackRole %@", roleId.GetNSString());

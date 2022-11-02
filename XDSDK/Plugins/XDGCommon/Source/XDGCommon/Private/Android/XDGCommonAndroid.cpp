@@ -195,6 +195,21 @@ void XDGCommonAndroid::TrackUser(FString userId){
     env->DeleteLocalRef(jXDSDKUnreal4Class);
 }
 
+void XDGCommonAndroid::TrackUser() {
+    JNIEnv *env = FAndroidApplication::GetJavaEnv();
+    auto jXDSDKUnreal4Class = FAndroidApplication::FindJavaClass(UNREAL4_CLASS_NAME_COMMON);
+    if (jXDSDKUnreal4Class)
+    {
+        const char *strMethod = "trackUser";
+        auto jMethod = env->GetStaticMethodID(jXDSDKUnreal4Class, strMethod, "()V");
+        if (jMethod)
+        {
+            env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod);
+        }
+    }
+    env->DeleteLocalRef(jXDSDKUnreal4Class);
+}
+
 
 void XDGCommonAndroid::TrackRole(FString serverId, FString roleId, FString roleName, int32 level){
 

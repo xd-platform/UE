@@ -139,6 +139,11 @@ public class XDGCommonUnreal4 {
         print("点击trackUser");
         XDGSDK.trackUser(userId);
     }
+    
+    public static void trackUser() {
+        print("点击trackUser");
+        XDGSDK.trackUser();
+    }
 
     public static void trackRole(String serverId,
             String roleId,

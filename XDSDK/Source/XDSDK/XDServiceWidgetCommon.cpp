@@ -104,6 +104,14 @@ void UXDServiceWidgetCommon::OnStoreReviewClicked()
 #endif	
 }
 
+void UXDServiceWidgetCommon::OnTrackUser_XDIDClicked() {
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	UXDGCommonBPLibrary::TrackUser();
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	XDUE::TrackUser();
+#endif
+}
+
 void UXDServiceWidgetCommon::OnTrackUserClicked()
 {
 #if PLATFORM_IOS || PLATFORM_ANDROID
@@ -369,6 +377,7 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	Report->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnReportClicked);
 	StoreReview->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnStoreReviewClicked);
 	TrackUser->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnTrackUserClicked);
+	TrackUser_XDID->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnTrackUser_XDIDClicked);
 	TrackRole->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnTrackRoleClicked);
 	TrackEvent->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnTrackEventClicked);
 	SetCurrentUserPushServiceEnable->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnSetCurrentUserPushServiceEnableClicked);

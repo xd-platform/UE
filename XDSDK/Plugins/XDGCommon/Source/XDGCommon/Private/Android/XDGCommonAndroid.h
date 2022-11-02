@@ -33,6 +33,7 @@ public:
 	void ShareImage(int32 type, FString imagePath);
 
 	void TrackUser(FString userId);
+	void TrackUser();
 	void TrackRole(FString serverId, FString roleId, FString roleName, int32 level);
 	void TrackEvent(FString eventName);
 

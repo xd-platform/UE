@@ -22,6 +22,8 @@ public:
 	virtual void ShareImage(int32 type, FString imagePath) = 0;
 
 	virtual void TrackUser(FString userId) = 0;  //登录成功后调用，tapdb 统计用户
+	virtual void TrackUser() = 0;  //登录成功后调用，tapdb 统计用户
+
 	virtual void TrackRole(FString serverId, FString roleId, FString roleName, int32 level) = 0;
 	virtual void TrackEvent(FString eventName) = 0;
 

@@ -93,6 +93,9 @@ class XDSDK_API UXDServiceWidgetCommon : public UUserWidget
 	void OnStoreReviewClicked();
 
 	UFUNCTION()
+	void OnTrackUser_XDIDClicked();
+
+	UFUNCTION()
 	void OnTrackUserClicked();
 
 	UFUNCTION()
@@ -194,6 +197,9 @@ protected:
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* TrackUser;
 
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* TrackUser_XDID;
+	
 	UPROPERTY(Meta = (BindWidget))
 	UEditableTextBox* ETB_Role_ServerID;
 	UPROPERTY(Meta = (BindWidget))

@@ -50,6 +50,8 @@ class XDGCOMMON_API UXDGCommonBPLibrary : public UBlueprintFunctionLibrary
 
 	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
 	static void TrackUser(FString userId);
+
+	static void TrackUser();
 	
 	UFUNCTION(BlueprintCallable, Category = "XDGCommon")
 	static void TrackRole(FString serverId, FString roleId, FString roleName, int32 level);

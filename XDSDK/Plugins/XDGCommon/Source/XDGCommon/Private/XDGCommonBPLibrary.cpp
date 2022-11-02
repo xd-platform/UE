@@ -46,8 +46,6 @@ void UXDGCommonBPLibrary::StoreReview(){
 }
 
 
-
-
 void UXDGCommonBPLibrary::ShareFlavors(int32 type, FString uri, FString message){
     GetXDGCommonBridge()->ShareFlavors(type, uri, message);
 }
@@ -57,10 +55,12 @@ void UXDGCommonBPLibrary::ShareImage(int32 type, FString imagePath){
 }
 
 
-
-
 void UXDGCommonBPLibrary::TrackUser(FString userId){
     GetXDGCommonBridge()->TrackUser(userId);
+}
+
+void UXDGCommonBPLibrary::TrackUser() {
+    GetXDGCommonBridge()->TrackUser();
 }
 
 void UXDGCommonBPLibrary::TrackRole(FString serverId, FString roleId, FString roleName, int32 level){

@@ -99,6 +99,8 @@
 
     <buildGradleAdditions>
         <insert>
+           
+            apply plugin: 'com.google.gms.google-services'
             repositories {
                 flatDir{ dirs 'src/main/libs/' }
             }

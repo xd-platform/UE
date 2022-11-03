@@ -17,11 +17,6 @@
 ![plugins](image/gms02.png)
 ![plugins](image/gms03.png)
 
-#### 4.如果plugin: 'com.google.gms.google-services'加载失败
-
-可以在引擎源码中修改`Engine/Build/Android/Java/gradle/build.gradle`中添加：`classpath 'com.google.gms:google-services:4.0.2'`
-![](image/16673769756857.jpg)
-
 
 ## XDGCommon 使用
 

@@ -96,6 +96,13 @@
         </addElements>
     </androidManifestUpdates>
 
+    <buildscriptGradleAdditions>
+        <insert>
+            dependencies {
+                classpath 'com.google.gms:google-services:4.0.2'
+            }
+        </insert>
+    </buildscriptGradleAdditions>
 
     <buildGradleAdditions>
         <insert>

@@ -30,8 +30,9 @@ product_app_mac:
     - python3 package_upload.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: never
+      when: manual
     - if: $CI_COMMIT_TITLE =~ /-ios/
+    - if: $CI_COMMIT_TITLE =~ /-android/
     - if: $CI_COMMIT_TITLE =~ /-mac/
     - if: $CI_COMMIT_TITLE =~ /-mobile/
     - if: $CI_COMMIT_TITLE =~ /-pc/
@@ -66,7 +67,7 @@ product_app_win:
     - python package_upload.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: never
+      when: manual
     - if: $CI_COMMIT_TITLE =~ /-android/
     - if: $CI_COMMIT_TITLE =~ /-win/
     - if: $CI_COMMIT_TITLE =~ /-mobile/

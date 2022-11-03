@@ -30,7 +30,7 @@ product_app_mac:
     - python3 package_upload.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
+      when: never
     - if: $CI_COMMIT_TITLE =~ /-ios/
     - if: $CI_COMMIT_TITLE =~ /-android/
     - if: $CI_COMMIT_TITLE =~ /-mac/
@@ -67,12 +67,37 @@ product_app_win:
     - python package_upload.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
+      when: never
     - if: $CI_COMMIT_TITLE =~ /-android/
     - if: $CI_COMMIT_TITLE =~ /-win/
     - if: $CI_COMMIT_TITLE =~ /-mobile/
     - if: $CI_COMMIT_TITLE =~ /-pc/
     - if: $CI_COMMIT_TITLE =~ /-all/
+    
+manual_product_app_mac:
+  tags:
+    - ios-builder
+  stage: product_app
+  script:
+    - echo $CI_COMMIT_TITLE
+    - export
+    - python3 package_upload.py -all
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+
+
+manual_product_app_win:
+  tags:
+    - tds-packager-win
+  stage: product_app
+  script:
+    - echo $CI_COMMIT_TITLE
+    - 'dir env:'
+    - python package_upload.py -all
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
 
 arch_plugins:
   tags:

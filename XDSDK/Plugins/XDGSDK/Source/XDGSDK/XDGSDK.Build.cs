@@ -7,6 +7,20 @@ public class XDGSDK : ModuleRules
 {
 	public XDGSDK(ReadOnlyTargetRules Target) : base(Target)
 	{
+		bool isSteamPackage = true;
+
+		if (isSteamPackage)
+		{
+			PrivateDefinitions.Add("XD_Steam_Package=1");
+
+			PrivateDependencyModuleNames.AddRange(
+				new string[]
+				{
+					"OnlineSubsystemSteam",
+				}
+			);
+		}
+		
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		PrivateIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "Private")));
 		PrivateIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "Model")));
@@ -51,6 +65,7 @@ public class XDGSDK : ModuleRules
 				// "OpenSSL",
 				"JsonUtilities",
 				"ApplicationCore",
+				"OnlineSubsystemSteam",
 				"TapBootstrap",
 				"TapCommon",
 				"TapLogin",

@@ -13,7 +13,8 @@ public:
 
 	static FSimpleDelegate OnLoginSuccess;
 	static FSimpleDelegate OnLogoutSuccess;
-
+	static FSimpleDelegate OnTokenIsInvalid;
+	
 	enum InitStateType {
 		Uninit,
 		Initing,

@@ -198,7 +198,17 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 			TUDebuger::DisplayShow("PlayerNicknam: " + SteamOSS->GetIdentityInterface()->GetPlayerNickname(0));
 
 			TUDebuger::DisplayShow("UniquePlayerId: " + SteamOSS->GetIdentityInterface()->GetUniquePlayerId(0)->ToString());
-			TUDebuger::DisplayShow("Steam Token: " + SteamOSS->GetIdentityInterface()->GetAuthToken(0));
+			FString AuthToken = SteamOSS->GetIdentityInterface()->GetAuthToken(0);
+			TUDebuger::DisplayShow("Steam Token: " + AuthToken);
+			const TSharedPtr<TUHttpRequest> request = MakeShareable(new TUHttpRequest());
+			request->URL = "https://partner.steam-api.com/ISteamUserAuth/AuthenticateUserTicket/v1/";
+			request->Parameters->SetStringField("key", "C00A6DC47AF2DB4A515D9E67C9F50EDD");
+			request->Parameters->SetStringField("appid", "2207420");
+			request->Parameters->SetStringField("ticket", AuthToken);
+			request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
+				TUDebuger::DisplayShow(response->contentString);
+			});
+			TUHttpManager::Get().request(request);
 		} else {
 			TUDebuger::DisplayShow(TEXT("OnlineSteamSubsystem is Not enable"));
 		}

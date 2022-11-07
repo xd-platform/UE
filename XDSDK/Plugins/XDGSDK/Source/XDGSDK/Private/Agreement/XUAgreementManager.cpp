@@ -24,6 +24,7 @@ XUAgreementManager& XUAgreementManager::SharedInstance() {
 XUAgreementManager::XUAgreementManager() {
 	XUImpl::OnLoginSuccess.AddRaw(this, &XUAgreementManager::UploadUserAgreement);
 	XUImpl::OnLogoutSuccess.AddRaw(this, &XUAgreementManager::ShowAgreementWhenLogout);
+	XUImpl::OnTokenIsInvalid.AddRaw(this, &XUAgreementManager::ShowAgreementWhenLogout);
 }
 
 TSharedPtr<FXUAgreementConfig> XUAgreementManager::GetCurrentAgreement() {

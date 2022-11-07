@@ -23,6 +23,7 @@ static int Success = 200;
 
 XUImpl::FSimpleDelegate XUImpl::OnLoginSuccess;
 XUImpl::FSimpleDelegate XUImpl::OnLogoutSuccess;
+XUImpl::FSimpleDelegate XUImpl::OnTokenIsInvalid;
 
 void XUImpl::InitSDK(XUInitCallback CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig) {
 	if (InitState == Initing) {
@@ -95,6 +96,16 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
                          TFunction<void(FXUError error)> ErrorBlock) {
 	auto lmd = XULanguageManager::GetCurrentModel();
 	if (LoginType == XUType::Default) {
+		bool TokenInfoIsInvalid = TUDataStorage<FXUStorage>::LoadBool(FXUStorage::TokenInfoIsInvalid);
+		if (TokenInfoIsInvalid) { // 如果token已经失效了, 清除登录缓存及协议
+			TUDataStorage<FXUStorage>::Remove(FXUStorage::TokenInfoIsInvalid);
+			FXUUser::ClearUserData();
+			OnTokenIsInvalid.Broadcast();
+			if (ErrorBlock) {
+				ErrorBlock(FXUError(lmd->tds_login_failed));
+			}
+			return;
+		}
 		auto localUser = XDUE::GetUserInfo();
 		if (localUser.IsValid()) {
 			RequestUserInfo(true, [](TSharedPtr<FXUUser> user) {}, [](FXUError Error) {});
@@ -102,7 +113,9 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			LoginSuccess(localUser, resultBlock);
 		}
 		else {
-			ErrorBlock(FXUError(lmd->tds_login_failed));
+			if (ErrorBlock) {
+				ErrorBlock(FXUError(lmd->tds_login_failed));
+			}
 		}
 	}
 	else {
@@ -440,11 +453,10 @@ void XUImpl::RequestUserInfo(bool saveToLocal,
 				callback(user);
 			}
 			else {
+				if (saveToLocal) { // 标记已经失效
+					TUDataStorage<FXUStorage>::SaveBool(FXUStorage::TokenInfoIsInvalid, true);
+				}
 				ErrorBlock(error);
-			}
-		}, [=]() {
-			if (saveToLocal) {
-				FXUUser::ClearUserData();
 			}
 		});
 

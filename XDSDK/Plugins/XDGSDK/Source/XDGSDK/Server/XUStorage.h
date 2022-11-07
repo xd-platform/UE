@@ -10,6 +10,7 @@ struct FXUStorage
 	static FString InitConfig;
 	static FString IpInfo;
 	static FString TokenInfo;
+	static FString TokenInfoIsInvalid;
 	static FString UserInfo;
 	// static FString ClientId ;
 	static FString PrivacyKey;

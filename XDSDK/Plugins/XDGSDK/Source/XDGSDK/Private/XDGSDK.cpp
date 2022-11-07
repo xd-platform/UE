@@ -7,19 +7,19 @@
 #include "OnlineSubsystemSteam.h"
 // #include "SteamSharedModule.h"
 #include "SocketSubsystemModule.h"
+#include "TUDebuger.h"
 
 #define LOCTEXT_NAMESPACE "FXDGSDKModule"
 
 void FXDGSDKModule::StartupModule()
 {
 	// FOnlineSubsystemSteam* OnlineSteamSubsystem = static_cast<FOnlineSubsystemSteam*>(IOnlineSubsystem::Get(STEAM_SUBSYSTEM));
-	// // FSteamSharedModule& SharedModule = FSteamSharedModule::Get();
-	// const bool bIsNotEditor = (IsRunningDedicatedServer() || IsRunningGame());
 	// const bool bSteamOSSEnabled = (OnlineSteamSubsystem && OnlineSteamSubsystem->IsEnabled());
-
-	// Load the Steam modules before first call to API
-	// if (SharedModule.AreSteamDllsLoaded() && bIsNotEditor && bSteamOSSEnabled)
-	
+	// if (bSteamOSSEnabled) {
+	// 	TUDebuger::DisplayShow(TEXT("OnlineSteamSubsystem is enable"));
+	// } else {
+	// 	TUDebuger::DisplayShow(TEXT("OnlineSteamSubsystem is Not enable"));
+	// }
 }
 
 void FXDGSDKModule::ShutdownModule()

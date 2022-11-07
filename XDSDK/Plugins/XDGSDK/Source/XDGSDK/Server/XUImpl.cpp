@@ -17,6 +17,7 @@
 #include "Track/XUPaymentTracker.h"
 #include "Agreement/XUAgreementManager.h"
 #include "OnlineSubsystemSteam.h"
+#include "Interfaces/OnlineIdentityInterface.h"
 // #include "onlinesteam.h"
 
 static int Success = 200;
@@ -190,8 +191,18 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 	}
 	else if (LoginType == XUType::Steam) {
 		TUDebuger::DisplayLog("Steam Login");
-		auto OSS = static_cast<FOnlineSubsystemSteam*>(FOnlineSubsystemSteam::Get());
-		OSS->GetAuthInterface()
+		auto SteamOSS = FOnlineSubsystemSteam::Get(STEAM_SUBSYSTEM);
+		const bool bSteamOSSEnabled = (SteamOSS && SteamOSS->IsEnabled());
+		if (bSteamOSSEnabled) {
+			TUDebuger::DisplayShow(TEXT("OnlineSteamSubsystem is enable"));
+			TUDebuger::DisplayShow("PlayerNicknam: " + SteamOSS->GetIdentityInterface()->GetPlayerNickname(0));
+
+			TUDebuger::DisplayShow("UniquePlayerId: " + SteamOSS->GetIdentityInterface()->GetUniquePlayerId(0)->ToString());
+			TUDebuger::DisplayShow("Steam Token: " + SteamOSS->GetIdentityInterface()->GetAuthToken(0));
+		} else {
+			TUDebuger::DisplayShow(TEXT("OnlineSteamSubsystem is Not enable"));
+		}
+
 	}
 	else {
 		ErrorBlock(FXUError("No Login Param"));

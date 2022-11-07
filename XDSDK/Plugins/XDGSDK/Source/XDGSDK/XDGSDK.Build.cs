@@ -19,6 +19,7 @@ public class XDGSDK : ModuleRules
 					"OnlineSubsystemSteam",
 				}
 			);
+			// AddEngineThirdPartyPrivateStaticDependencies(Target, "Steamworks");
 		}
 		
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;

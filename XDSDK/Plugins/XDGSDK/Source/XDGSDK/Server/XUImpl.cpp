@@ -98,6 +98,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 	if (LoginType == XUType::Default) {
 		bool TokenInfoIsInvalid = TUDataStorage<FXUStorage>::LoadBool(FXUStorage::TokenInfoIsInvalid);
 		if (TokenInfoIsInvalid) { // 如果token已经失效了, 清除登录缓存及协议
+			TUDataStorage<FXUStorage>::Remove(FXUStorage::TokenInfoIsInvalid);
 			FXUUser::ClearUserData();
 			OnTokenIsInvalid.Broadcast();
 			if (ErrorBlock) {

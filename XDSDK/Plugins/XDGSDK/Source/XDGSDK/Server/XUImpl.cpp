@@ -14,10 +14,10 @@
 #include "XUThirdPayHelper.h"
 #include "XDGSDK/UI/XUAccountCancellationWidget.h"
 #include "XDGSDK/UI/XUPayWebWidget.h"
-#include "XDGSDK/UI/XUPrivacyWidget.h"
-#include "Track/XUTracker.h"
 #include "Track/XUPaymentTracker.h"
 #include "Agreement/XUAgreementManager.h"
+#include "OnlineSubsystemSteam.h"
+// #include "onlinesteam.h"
 
 static int Success = 200;
 
@@ -174,6 +174,11 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 				AuthParas->SetNumberField("type", (int)LoginType);
 				resultBlock(AuthParas);
 			}, ErrorBlock);
+	}
+	else if (LoginType == XUType::Steam) {
+		TUDebuger::DisplayLog("Steam Login");
+		auto OSS = static_cast<FOnlineSubsystemSteam*>(FOnlineSubsystemSteam::Get());
+		OSS->GetAuthInterface()
 	}
 	else {
 		ErrorBlock(FXUError("No Login Param"));

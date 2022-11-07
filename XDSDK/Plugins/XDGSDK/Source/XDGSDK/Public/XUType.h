@@ -65,6 +65,7 @@ namespace XUType {
 		// TapTap登录
 		// Line = 6,
 		// Twitter = 7,
+		Steam = 8,
 	};
 
 	enum CheckPayType {

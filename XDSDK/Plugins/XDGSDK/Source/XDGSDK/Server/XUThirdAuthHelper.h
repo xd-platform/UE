@@ -7,6 +7,7 @@ public:
 	enum WebAuthType {
 		GoogleAuth,
 		AppleAuth,
+		SteamAuth,
 	};
 
 	static void TapTapAuth(TFunction<void(FTUAccessToken AccessToken)> Callback, TFunction<void(FXUError Error)> ErrorBlock);

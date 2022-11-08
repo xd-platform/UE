@@ -2,20 +2,35 @@
 
 using UnrealBuildTool;
 using System.IO;
+using System;
+using Tools.DotNETCommon;
 
 public class XDGSDK : ModuleRules
 {
 	public XDGSDK(ReadOnlyTargetRules Target) : base(Target)
 	{
-		bool isSteamPackage = true;
+		bool isSteamPackage = false;
 
+        string UprojectPath = GetUproject(Path.GetDirectoryName(Path.GetDirectoryName(PluginDirectory)));
+        
+        FileReference UprojectRefer = new FileReference(UprojectPath);
+        PluginInfo UprojectInfo = new PluginInfo(UprojectRefer, PluginType.Project);
+        foreach (PluginReferenceDescriptor PluginRef in UprojectInfo.Descriptor.Plugins) // 循环文件 
+        {
+	        if (PluginRef.Name == "OnlineSubsystemSteam")
+	        {
+		        isSteamPackage = PluginRef.bEnabled;
+	        }
+        } 
+        
 		if (isSteamPackage)
 		{
-			PrivateDefinitions.Add("XD_Steam_Package=1");
+			PrivateDefinitions.Add("XD_Steam_Package");
 
 			PrivateDependencyModuleNames.AddRange(
 				new string[]
 				{
+					"OnlineSubsystem",
 					"OnlineSubsystemSteam",
 				}
 			);
@@ -66,8 +81,6 @@ public class XDGSDK : ModuleRules
 				// "OpenSSL",
 				"JsonUtilities",
 				"ApplicationCore",
-				"OnlineSubsystem",
-				"OnlineSubsystemSteam",
 				"TapBootstrap",
 				"TapCommon",
 				"TapLogin",
@@ -86,4 +99,25 @@ public class XDGSDK : ModuleRules
 			}
 			);
 	}
+	
+	public string GetUproject(string dir) 
+	{ 
+		try 
+		{ 
+			string[] files = Directory.GetFiles(dir); // 得到文件 
+			foreach (string file in files) // 循环文件 
+			{
+			    Console.WriteLine(file);
+				if (file.EndsWith(".uproject"))
+				{
+					return file;
+				} 
+			} 
+		} 
+		catch
+		{
+			return "";
+		} 
+		return "";
+	} 
 }

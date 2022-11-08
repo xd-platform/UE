@@ -16,9 +16,10 @@
 #include "XDGSDK/UI/XUPayWebWidget.h"
 #include "Track/XUPaymentTracker.h"
 #include "Agreement/XUAgreementManager.h"
+#ifdef XD_Steam_Package
 #include "OnlineSubsystemSteam.h"
 #include "Interfaces/OnlineIdentityInterface.h"
-// #include "onlinesteam.h"
+#endif
 
 static int Success = 200;
 
@@ -191,27 +192,42 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 	}
 	else if (LoginType == XUType::Steam) {
 		TUDebuger::DisplayLog("Steam Login");
+#ifdef XD_Steam_Package
 		auto SteamOSS = FOnlineSubsystemSteam::Get(STEAM_SUBSYSTEM);
 		const bool bSteamOSSEnabled = (SteamOSS && SteamOSS->IsEnabled());
 		if (bSteamOSSEnabled) {
-			TUDebuger::DisplayShow(TEXT("OnlineSteamSubsystem is enable"));
-			TUDebuger::DisplayShow("PlayerNicknam: " + SteamOSS->GetIdentityInterface()->GetPlayerNickname(0));
-
-			TUDebuger::DisplayShow("UniquePlayerId: " + SteamOSS->GetIdentityInterface()->GetUniquePlayerId(0)->ToString());
+			TUDebuger::DisplayLog(TEXT("OnlineSteamSubsystem is enable"));
+			TUDebuger::DisplayLog("PlayerNicknam: " + SteamOSS->GetIdentityInterface()->GetPlayerNickname(0));
+			TUDebuger::DisplayLog(
+				"UniquePlayerId: " + SteamOSS->GetIdentityInterface()->GetUniquePlayerId(0)->ToString());
 			FString AuthToken = SteamOSS->GetIdentityInterface()->GetAuthToken(0);
-			TUDebuger::DisplayShow("Steam Token: " + AuthToken);
-			const TSharedPtr<TUHttpRequest> request = MakeShareable(new TUHttpRequest());
-			request->URL = "https://partner.steam-api.com/ISteamUserAuth/AuthenticateUserTicket/v1/";
-			request->Parameters->SetStringField("key", "C00A6DC47AF2DB4A515D9E67C9F50EDD");
-			request->Parameters->SetStringField("appid", "2207420");
-			request->Parameters->SetStringField("ticket", AuthToken);
-			request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
-				TUDebuger::DisplayShow(response->contentString);
-			});
-			TUHttpManager::Get().request(request);
+			TUDebuger::DisplayLog("Steam Token: " + AuthToken);
+
+			TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+			JsonObject->SetNumberField("type", (int)LoginType);
+			JsonObject->SetStringField("token", AuthToken);
+			// JsonObject->SetStringField("secret", AccessToken.mac_key);
+			resultBlock(JsonObject);
+			// const TSharedPtr<TUHttpRequest> request = MakeShareable(new TUHttpRequest());
+			// request->URL = "https://partner.steam-api.com/ISteamUserAuth/AuthenticateUserTicket/v1/";
+			// request->Parameters->SetStringField("key", "C00A6DC47AF2DB4A515D9E67C9F50EDD");
+			// request->Parameters->SetStringField("appid", "2207420");
+			// request->Parameters->SetStringField("ticket", AuthToken);
+			// request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
+			// 	TUDebuger::DisplayShow(response->contentString);
+			// });
+			// TUHttpManager::Get().request(request);
 		} else {
-			TUDebuger::DisplayShow(TEXT("OnlineSteamSubsystem is Not enable"));
+			ErrorBlock(FXUError("OnlineSteamSubsystem is Not enable"));
+			TUDebuger::WarningLog(TEXT("OnlineSteamSubsystem is Not enable"));
 		}
+#else
+		XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::SteamAuth,
+		[=](TSharedPtr<FJsonObject> AuthParas) {
+			AuthParas->SetNumberField("type", (int)LoginType);
+			resultBlock(AuthParas);
+		}, ErrorBlock);
+#endif
 
 	}
 	else {

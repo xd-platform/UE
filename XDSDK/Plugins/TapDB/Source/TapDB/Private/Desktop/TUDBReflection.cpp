@@ -7,8 +7,8 @@
 #include "TUDBType.h"
 
 void UTUDBReflection::Init() {
-	TUType::Config Config = *TUType::Config::Get().Get();
-	TUDBType::Config DBConfig;
+	FTUConfig Config = *FTUConfig::Get().Get();
+	FTUDBConfig DBConfig;
 	DBConfig.ClientId = Config.ClientID;
 	DBConfig.Channel = Config.DBConfig.Channel;
 	DBConfig.GameVersion = Config.DBConfig.GameVersion;

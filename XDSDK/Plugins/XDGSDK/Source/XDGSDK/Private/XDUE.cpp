@@ -3,6 +3,7 @@
 #include "TapUEDB.h"
 #include "TapUELogin.h"
 #include "TUDebuger.h"
+#include "TUHelper.h"
 #include "XUConfigManager.h"
 #include "XUImpl.h"
 #include "XUThirdAuthHelper.h"
@@ -10,16 +11,16 @@
 #include "XDGSDK/UI/XUUserCenterWidget.h"
 #include "XDGSDK/UI/XUPayHintAlert.h"
 
-XDUE::XUSimpleDelegate XDUE::OnLogout;
+XDUE::FUserStateChangeDelegate XDUE::OnUserStatusChange;
 
-void XDUE::InitSDK(const FString& GameVersion, TFunction<void(bool Result, const FString& Message)> CallBack) {
+void XDUE::InitSDK(TFunction<void(bool Result, const FString& Message)> CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig) {
 	if (IsInitialized()) {
 		if (CallBack) {
 			CallBack(true, TEXT("已经初始化"));
 		}
 		return;
 	}
-	XUImpl::Get()->InitSDK(GameVersion, CallBack);
+	XUImpl::Get()->InitSDK(CallBack, EditConfig);
 }
 
 void XDUE::InitSDK(const XUType::Config& Config, TFunction<void(bool Result, const FString& Message)> CallBack) {
@@ -68,7 +69,7 @@ TSharedPtr<FXUUser> XDUE::GetUserInfo() {
 		return UserPtr;
 	}
 	else {
-		Logout();
+		FXUUser::ClearUserData();
 		return nullptr;
 	}
 }
@@ -94,9 +95,7 @@ void XDUE::SetLanguage(XUType::LangType Type) {
 }
 
 void XDUE::Logout() {
-	// await TDSUser.Logout();
-	TapUELogin::Logout();
-	FXUUser::ClearUserData();
+	XUImpl::Get()->Logout();
 }
 
 void XDUE::AccountCancellation() {
@@ -107,14 +106,13 @@ void XDUE::AccountCancellation() {
 	XUImpl::Get()->AccountCancellation();
 }
 
-void XDUE::OpenUserCenter(TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> BindCallBack,
-                          TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> UnbindCallBack) {
+void XDUE::OpenUserCenter() {
 	if (!FXUUser::GetLocalModel().IsValid()) {
 		TUDebuger::WarningLog("Please Login First");
 		return;
 	}
 
-	UXUUserCenterWidget::ShowWidget(BindCallBack, UnbindCallBack);
+	UXUUserCenterWidget::ShowWidget();
 }
 
 void XDUE::CheckPay(TFunction<void(XUType::CheckPayType CheckType)> SuccessBlock,
@@ -145,7 +143,7 @@ void XDUE::OpenCustomerCenter(const FString& ServerId, const FString& RoleId, co
 	if (UrlStr.IsEmpty()) {
 		TUDebuger::ErrorLog("please login first");
 	} else {
-		UTapCommonBPLibrary::LaunchURL(*UrlStr, nullptr, nullptr);
+		TUHelper::LaunchURL(*UrlStr, nullptr, nullptr);
 	}
 }
 
@@ -164,6 +162,13 @@ bool XDUE::IsPushServiceEnable() {
 	return FXUUser::IsPushServiceEnable();
 }
 
+void XDUE::TrackUser()
+{
+	auto UserPtr = GetUserInfo();
+	if (UserPtr.IsValid()) {
+		TrackUser(UserPtr->userId);
+	}
+}
 
 //TapDB 统计用户
 void XDUE::TrackUser(FString userId)
@@ -201,6 +206,10 @@ void XDUE::EventCompletedTutorial()
 //TapDB 创建角色埋点
 void XDUE::EventCreateRole() {
 	//没有tap db 只有第三方
+}
+
+void XDUE::BindByType(XUType::LoginType BindType, TFunction<void(bool Success, const FXUError& Error)> CallBack) {
+	XUImpl::Get()->BindByType(BindType, CallBack);
 }
 
 #if !UE_BUILD_SHIPPING

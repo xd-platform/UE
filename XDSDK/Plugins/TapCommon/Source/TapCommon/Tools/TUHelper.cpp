@@ -1,5 +1,6 @@
 #include "TUHelper.h"
 #include "ImageUtils.h"
+#include "TUSettings.h"
 #include "GenericPlatform/GenericPlatformHttp.h"
 #if PLATFORM_WINDOWS
 #include "Windows/WindowsWindow.h"
@@ -9,7 +10,28 @@
 #include "Desktop/qrcodegen.hpp"
 #endif
 
+void TUHelper::LaunchURL(const TCHAR* URL, const TCHAR* Param, FString* Error)
+{
+	auto Block = TUSettings::GetBlockBeforeLaunchUrl();
+	if (Block) {
+		Block();
+	}
+	FPlatformProcess::LaunchURL(URL, Param, Error);
+}
 
+void TUHelper::PerformOnGameThread(TFunction<void()> Function) {
+	if (!Function) {
+		return;
+	}
+	if (IsInGameThread())
+	{
+		Function();
+	}
+	else
+	{
+		AsyncTask(ENamedThreads::GameThread, Function);
+	}
+}
 
 
 FString TUHelper::GetRandomStr(int len)

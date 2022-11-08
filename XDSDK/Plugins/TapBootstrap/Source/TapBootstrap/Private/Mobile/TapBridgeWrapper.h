@@ -17,7 +17,7 @@ struct FTapLoginWrapper
 };
 
 USTRUCT(BlueprintType)
-struct FTapUserStatusWrapper
+struct FTDSUserStatusWrapper
 {
     GENERATED_USTRUCT_BODY()
 
@@ -30,7 +30,7 @@ struct FTapUserStatusWrapper
 };
 
 USTRUCT(BlueprintType)
-struct FTapUserInfoWrapper
+struct FTDSUserInfoWrapper
 {
     GENERATED_USTRUCT_BODY()
 
@@ -43,7 +43,7 @@ struct FTapUserInfoWrapper
 };
 
 USTRUCT(BlueprintType)
-struct FTapUserDetailInfoWrapper
+struct FTDSUserDetailInfoWrapper
 {
     GENERATED_USTRUCT_BODY()
 

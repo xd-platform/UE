@@ -6,6 +6,7 @@
 #include "TapUEMoment.h"
 #include "TUDebuger.h"
 #include "XDGCommon.h"
+#include "XDGCommonBPLibrary.h"
 #include "XDSDK/SubWidgets/ServiceItemWidget.h"
 #include "XDUE.h"
 #include "Components/CheckBox.h"
@@ -13,6 +14,7 @@
 #include "Components/EditableTextBox.h"
 #include "XDSDK/XDSDK.h"
 #include "XDGSDK.h"
+#include "XUAgreement.h"
 #include "XUSettings.h"
 #if PLATFORM_IOS || PLATFORM_ANDROID
 #include "TapUEMoment.h"
@@ -48,7 +50,7 @@ void UXDServiceWidgetCommon::OnInitSDKClicked()
 	{
 		DEMO_LOG_STRING(Message);
 	};
-	XDUE::InitSDK(TEXT("1.2.3"), Callback);
+	XDUE::InitSDK(Callback);
 #endif
 }
 
@@ -61,6 +63,26 @@ void UXDServiceWidgetCommon::OnIsInitializedClicked()
 	const bool bIsInitialized = XDUE::IsInitialized();
 	DEMO_LOG(TEXT("IsInitialized:%s"), bIsInitialized ? TEXT("True") : TEXT("False"));
 #endif
+}
+
+void UXDServiceWidgetCommon::OnGetAgreementBeansClicked() {
+	FString ResutlStr;
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	ResutlStr = TUJsonHelper::GetJsonString(UXDGCommonBPLibrary::GetAgreementList());
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	ResutlStr = TUJsonHelper::GetJsonString(XUAgreement::GetAgreementList());
+#endif
+	TUDebuger::DisplayShow("AgreementBeans :\n\t" + ResutlStr);
+}
+
+void UXDServiceWidgetCommon::OnOpenAgreementBeanClicked() {
+	FString Url = ETB_AgreementBean_Url->GetText().ToString();
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	UXDGCommonBPLibrary::ShowDetailAgreement(Url);
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	XUAgreement::ShowDetailAgreement(Url);
+#endif
+
 }
 
 void UXDServiceWidgetCommon::OnReportClicked()
@@ -80,6 +102,14 @@ void UXDServiceWidgetCommon::OnStoreReviewClicked()
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	UXDGCommonBPLibrary::StoreReview();
 #endif	
+}
+
+void UXDServiceWidgetCommon::OnTrackUser_XDIDClicked() {
+#if PLATFORM_IOS || PLATFORM_ANDROID
+	UXDGCommonBPLibrary::TrackUser();
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	XDUE::TrackUser();
+#endif
 }
 
 void UXDServiceWidgetCommon::OnTrackUserClicked()
@@ -253,7 +283,9 @@ void UXDServiceWidgetCommon::OnDevelopInitClicked()
 			TUDebuger::ErrorShow(TEXT("初始化失败：") + Message);
 		}
 	};
-	XDUE::InitSDK(TEXT("1.2.3"), Callback);
+	XDUE::InitSDK(Callback, [](TSharedRef<XUType::Config> Config) {
+		// Config->TapConfig.ClientID = "1111";
+	});
 #endif
 }
 
@@ -302,8 +334,8 @@ void UXDServiceWidgetCommon::OnOpenWebTopicClicked()
 {
 #if PLATFORM_WINDOWS || PLATFORM_MAC
 	TUMomentType::Config Config;
-	Config.ClientID = TUType::Config::Get()->ClientID;
-    Config.RegionType = TUType::Config::Get()->RegionType;
+	Config.ClientID = FTUConfig::Get()->ClientID;
+    Config.RegionType = FTUConfig::Get()->RegionType;
 	Config.AppID = ETB_Topic_AppID->GetText().ToString();
 	TapUEMoment::Init(Config);
 	TapUEMoment::OpenWebTopic();
@@ -345,6 +377,7 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 	Report->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnReportClicked);
 	StoreReview->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnStoreReviewClicked);
 	TrackUser->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnTrackUserClicked);
+	TrackUser_XDID->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnTrackUser_XDIDClicked);
 	TrackRole->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnTrackRoleClicked);
 	TrackEvent->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnTrackEventClicked);
 	SetCurrentUserPushServiceEnable->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnSetCurrentUserPushServiceEnableClicked);
@@ -363,22 +396,23 @@ void UXDServiceWidgetCommon::NativeOnInitialized()
 
 	OpenWebTopic->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenWebTopicClicked);
 
+	GetAgreementBeans->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnGetAgreementBeansClicked);
+	OpenAgreementBean->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetCommon::OnOpenAgreementBeanClicked);
+
 	CB_Init_EnvironmentBox->OnSelectionChanged.AddDynamic(this, &UXDServiceWidgetCommon::OnEnvironmentSelectChanged);
 
 	TUDebuger::IsTest = false;
+
 	
-	TUDebuger::ReplaceHosts.Add("https://xdsdk-6.xd.cn", "https://test-xdsdk-6.xd.cn");
-	TUDebuger::ReplaceHosts.Add("https://xdsdk-intnl-6.xd.com", "https://test-xdsdk-intnl-6.xd.com");
-	TUDebuger::ReplaceHosts.Add("https://ecdn-xdsdk-intnl-6.xd.com", "https://test-xdsdk-intnl-6.xd.com");
-	TUDebuger::ReplaceHosts.Add("https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track", "https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-test/track");
-	TUDebuger::ReplaceHosts.Add("https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track", "https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-test/track");
+	TUDebuger::AddReplacedHostPair("https://xdsdk-6.xd.cn", "https://test-xdsdk-6.xd.cn");
+	TUDebuger::AddReplacedHostPair("https://xdsdk-intnl-6.xd.com", "https://test-xdsdk-intnl-6.xd.com");
+	TUDebuger::AddReplacedHostPair("https://ecdn-xdsdk-intnl-6.xd.com", "https://test-xdsdk-intnl-6.xd.com");
+	TUDebuger::AddReplacedHostPair("https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track", "https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-test/track");
+	TUDebuger::AddReplacedHostPair("https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track", "https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-test/track");
 
-	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.cn", "https://login-xdsdk.xd.cn");
-	TUDebuger::ReplaceHosts.Add("https://login-xdsdk.xd.com", "https://login-xdsdk-test.xd-cf-2022.workers.dev");
+	TUDebuger::AddReplacedHostPair("https://login-xdsdk.xd.cn", "https://login-xdsdk.xd.cn");
+	TUDebuger::AddReplacedHostPair("https://login-xdsdk.xd.com", "https://login-xdsdk-test.xd-cf-2022.workers.dev");
 
-	XDUE::OnLogout.AddLambda([]() {
-		TUDebuger::DisplayShow(TEXT("游戏账号应登出"));
-	});
 
 #if PLATFORM_IOS || PLATFORM_ANDROID
 	FXDGCommonModule::OnXDGSDKInitCompleted.AddUObject(this, &UXDServiceWidgetCommon::OnXDGSDKInitCompleted);

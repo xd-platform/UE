@@ -10,6 +10,9 @@ public:
 
 	//获取配置
 	FString InitSDKUrl();
+
+	//获取配置
+	FString AgreementUrl();
 	
 	// login
 	FString UserProfileUrl();

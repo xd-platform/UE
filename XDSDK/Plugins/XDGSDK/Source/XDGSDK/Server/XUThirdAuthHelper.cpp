@@ -108,16 +108,11 @@ void XUThirdAuthHelper::WebAuth(WebAuthType AuthType, TFunction<void(TSharedPtr<
 		
 		FString ParaStr = TUHelper::CombinParameters(Paras);
 		FString URL = XURegionConfig::Get()->LoginWebHost() + "?" + ParaStr;
-		if (TUDebuger::IsTest) {
-			for (auto Replace : TUDebuger::ReplaceHosts) {
-				if (URL.Contains(Replace.Key)) {
-					URL.ReplaceInline(*Replace.Key, *Replace.Value);
-					break;
-				}
-			}
-		}
+
+		URL = TUDebuger::GetReplacedUrl(URL);
+		
 		// FString URL = "https://xd-website.oss-cn-beijing.aliyuncs.com/xd-order-sgp/v1.0-dev/test/index.html?" + ParaStr;
-		UTapCommonBPLibrary::LaunchURL(*URL, nullptr, nullptr);
+		TUHelper::LaunchURL(*URL, nullptr, nullptr);
 	}
 }
 

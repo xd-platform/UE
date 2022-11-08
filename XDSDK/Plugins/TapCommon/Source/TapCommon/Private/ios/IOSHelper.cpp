@@ -1,5 +1,7 @@
 #include "IOSHelper.h"
 
+#include "TUDebuger.h"
+
 NSDictionary<NSString *, NSString *> * IOSHelper::convertMap(const TMap<FString, FString>& map)
 {
 	
@@ -25,12 +27,11 @@ NSArray<NSString *> * IOSHelper::convertArray(const TArray<FString>& array)
 	return [tempArr copy];
 }
 
-FString IOSHelper::convertString(NSString *string)
-{
+FString IOSHelper::convertString(NSString* string) {
 	return FString(UTF8_TO_TCHAR([string UTF8String]));
 }
 
-NSString * IOSHelper::convertString(FString& string) {
+NSString * IOSHelper::convertString(const FString& string) {
 	return string.GetNSString();
 }
 

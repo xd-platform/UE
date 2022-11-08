@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "XDGAgreement.h"
 
 /**
  * 
@@ -21,11 +22,16 @@ public:
 	virtual void ShareImage(int32 type, FString imagePath) = 0;
 
 	virtual void TrackUser(FString userId) = 0;  //登录成功后调用，tapdb 统计用户
+	virtual void TrackUser() = 0;  //登录成功后调用，tapdb 统计用户
+
 	virtual void TrackRole(FString serverId, FString roleId, FString roleName, int32 level) = 0;
 	virtual void TrackEvent(FString eventName) = 0;
 
 	virtual void SetCurrentUserPushServiceEnable(bool enable) = 0;
 	virtual bool IsCurrentUserPushServiceEnable() = 0;
+
+	virtual void ShowDetailAgreement(FString Url) = 0;
+	virtual TArray<FXDGAgreement> GetAgreementList() = 0;
 
 	virtual void GetRegionInfo() = 0;
 	virtual void GetXDGInfoJson() = 0; //游戏需要使用

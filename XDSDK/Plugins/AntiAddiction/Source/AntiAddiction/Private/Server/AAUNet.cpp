@@ -1,6 +1,7 @@
 #include "AAUNet.h"
 
 #include "AAUImpl.h"
+#include "AAURegionConfig.h"
 #include "AntiAddiction.h"
 #include "TUCrypto.h"
 #include "TUDebuger.h"
@@ -8,6 +9,7 @@
 #include "TUHttpManager.h"
 #include "TUJsonHelper.h"
 #include "TUOpenSSL.h"
+#include "TUType.h"
 #include "Model/AAUUser.h"
 
 
@@ -85,16 +87,6 @@ void PerfromWrapperResponseCallBack(const TSharedPtr<TUHttpResponse>& Response, 
 }
 
 
-static FString TDSBaseUrl = "https://tds-tapsdk.cn.tapapis.com";  // TDS的域名
-static FString TapBaseUrl = "https://openapi.taptap.com";			// TapTap的域名
-
-
-
-static FString RealNameAuthenticationPath = "/real-name/v1/";  // 实名认证部分
-static FString AntiAddictionPath = "/anti-addiction/v1/";      // 防沉迷部分
-
-static FString TDSPublicConfigUrl = "https://tds-public-config-sh.oss-cn-shanghai.aliyuncs.com";    // 拉取配置阿里云的地址
-
 AAUNet::AAUNet() {
 	TimeoutSecs = 15;
 	Form = Json;
@@ -103,7 +95,7 @@ AAUNet::AAUNet() {
 /// 获取防沉迷静态配置，目前只有一个stand_alone_mode字段
 void AAUNet::GetStaticSetting(TFunction<void(TSharedPtr<FAAUSettingsModel> ModelPtr, const FTUError& Error)> CallBack) {
 	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
-	request->URL = TDSPublicConfigUrl / "/antiaddiction-settings.json";
+	request->URL = AAURegionConfig::Get()->TDSPublicConfigUrl() / "/antiaddiction-settings.json";
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromResponseCallBack(response, CallBack);
 	});
@@ -112,31 +104,40 @@ void AAUNet::GetStaticSetting(TFunction<void(TSharedPtr<FAAUSettingsModel> Model
 
 void AAUNet::GetServerTime(TFunction<void(TSharedPtr<FAAUServerTimeModel> ModelPtr, const FTUError& Error)> CallBack) {
 	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
-	request->URL = TDSBaseUrl / AntiAddictionPath / "server-time";
+	request->URL = AAURegionConfig::Get()->AntiAddictionUrl() / "server-time";
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromWrapperResponseCallBack(response, CallBack);
 	});
 	TUHttpManager::Get().request(request);
 }
 
-void AAUNet::GetSDKConfig(TFunction<void(TSharedPtr<FAAUConfigModel> ModelPtr, const FTUError& Error)> CallBack) {
+template <typename ConfigType>
+void CommonGetSDKConfig(TFunction<void(TSharedPtr<ConfigType> ModelPtr, const FTUError& Error)> CallBack) {
 	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
-	request->URL = TDSBaseUrl / AntiAddictionPath / "clients/{clients}/configuration" ;
-	request->PathParameters.Add("{clients}", AAUImpl::Get()->Config.ClientID);
+	request->URL = AAURegionConfig::Get()->AntiAddictionUrl() / "{region}/clients/{clients}/configuration" ;
+	AAUNet::AddUriParas(request->URL, "", request->PathParameters);
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromWrapperResponseCallBack(response, CallBack);
 	});
 	TUHttpManager::Get().request(request);
 }
 
-void AAUNet::SetPayment(int Amount,
-	TFunction<void(TSharedPtr<FAAUPaymentModel> ModelPtr, const FTUError& Error)> CallBack) {
+void AAUNet::GetSDKConfig(TFunction<void(TSharedPtr<FAAUChinaConfigModel> ModelPtr, const FTUError& Error)> CallBack) {
+	CommonGetSDKConfig(CallBack);
+}
+
+void AAUNet::
+GetSDKConfig(TFunction<void(TSharedPtr<FAAUVietnamConfigModel> ModelPtr, const FTUError& Error)> CallBack) {
+	CommonGetSDKConfig(CallBack);
+}
+
+void AAUNet::SetPayment(int Amount, const FAAUUser& User,
+                        TFunction<void(TSharedPtr<FAAUPaymentModel> ModelPtr, const FTUError& Error)> CallBack) {
 	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
-	request->URL = TDSBaseUrl / AntiAddictionPath / "clients/{clients}/users/{users}/payments";
-	request->PathParameters.Add("{clients}", AAUImpl::Get()->Config.ClientID);
-	request->PathParameters.Add("{users}", FAAUUser::GetCurrentUser()->UserID);
+	request->URL = AAURegionConfig::Get()->AntiAddictionUrl() / "{region}/clients/{clients}/users/{users}/payments";
+	AddUriParas(request->URL, User.UserID, request->PathParameters);
 	request->Type = Post;
-	request->Headers.Add("Authorization", FAAUUser::GetCurrentUser()->AccessToken);
+	request->Headers.Add("Authorization", User.AccessToken);
 	request->Parameters->SetNumberField("amount", Amount);
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromWrapperResponseCallBack(response, CallBack);
@@ -144,14 +145,13 @@ void AAUNet::SetPayment(int Amount,
 	TUHttpManager::Get().request(request);
 }
 
-void AAUNet::CheckPayment(int Amount,
+void AAUNet::CheckPayment(int Amount, const FAAUUser& User,
 	TFunction<void(TSharedPtr<FAAUPayableModel> ModelPtr, const FTUError& Error)> CallBack) {
 	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
-	request->URL = TDSBaseUrl / AntiAddictionPath / "clients/{clients}/users/{users}/payable";
-	request->PathParameters.Add("{clients}", AAUImpl::Get()->Config.ClientID);
-	request->PathParameters.Add("{users}", FAAUUser::GetCurrentUser()->UserID);
+	request->URL = AAURegionConfig::Get()->AntiAddictionUrl() / "{region}/clients/{clients}/users/{users}/payable";
+	AddUriParas(request->URL, User.UserID, request->PathParameters);
 	request->Type = Post;
-	request->Headers.Add("Authorization", FAAUUser::GetCurrentUser()->AccessToken);
+	request->Headers.Add("Authorization", User.AccessToken);
 	request->Parameters->SetNumberField("amount", Amount);
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromWrapperResponseCallBack(response, CallBack);
@@ -163,11 +163,12 @@ void AAUNet::CheckPlayable(const FString& UserID, const FString& Token, TArray<T
                            TArray<TArray<int>> LocalTimes,
                            TFunction<void(TSharedPtr<FAAUPlayableModel> ModelPtr, const FTUError& Error)> CallBack, bool IsLogin) {
 	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
-	request->URL = TDSBaseUrl / AntiAddictionPath / "clients/{clients}/users/{users}/playable";
-	request->PathParameters.Add("{clients}", AAUImpl::Get()->Config.ClientID);
-	request->PathParameters.Add("{users}", UserID);
+	request->URL = AAURegionConfig::Get()->AntiAddictionUrl() / "{region}/clients/{clients}/users/{users}/playable";
+	AddUriParas(request->URL, UserID, request->PathParameters);
 	request->Type = Post;
-	request->RepeatCount = 3;
+	if (AAUImpl::Config.Region == EAAURegion::China) {
+		request->RepeatCount = 3;
+	}
 	request->Headers.Add("Authorization", Token);
 
 	FString JsonStr;
@@ -216,28 +217,48 @@ void AAUNet::CheckPlayable(const FString& UserID, const FString& Token, TArray<T
 
 
 
-void AAUNet::ManualVerify(const FString& UserID, const FString& Name, const FString& CardID,
+void AAUNet::ChinaManualVerify(const FString& UserID, const FString& Name, const FString& CardID,
                           TFunction<void(TSharedPtr<FAAURealNameResultModel> ModelPtr, const FTUError& Error)> CallBack) {
 	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
-	request->URL = TDSBaseUrl / RealNameAuthenticationPath / "clients/{clients}/users/{users}/manual" ;
-	request->PathParameters.Add("{clients}", AAUImpl::Get()->Config.ClientID);
-	request->PathParameters.Add("{users}", UserID);
+	request->URL = AAURegionConfig::Get()->RealNameUrl() / "{region}/clients/{clients}/users/{users}/manual" ;
+	AddUriParas(request->URL, UserID, request->PathParameters);
 	request->Type = Post;
-	request->RepeatCount = 3;
+	if (AAUImpl::Config.Region == EAAURegion::China) {
+		request->RepeatCount = 3;
+	}
 	
 	TSharedPtr<FJsonObject> UserInfo = MakeShareable(new FJsonObject);
 	UserInfo->SetStringField("name", Name);
 	UserInfo->SetStringField("id_card", CardID);
 	FString UserInfoStr = TUJsonHelper::GetJsonString(UserInfo);
-	FString Key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1pM6yfulomBTXWKiQT5gK9fY4hq11Kv8D+ewum25oPGReuEn6dez7ogA8bEyQlnYYUoEp5cxYPBbIxJFy7q1qzQhTFphuFzoC1x7DieTvfZbh+b60psEottrCD8M0Pa3h44pzyIp5U5WRpxRcQ9iULolGLHZXJr9nW6bpOsyEIFG5tQ7qCBj8HSFoNBKZH+5Cwh3j5cjmyg55WdJTimg9ysbbwZHYmI+TFPuGo/ckHT6j4TQLCmmxI8Qf5pycn3/qJWFhjx/y8zaxgn2hgxbma8hyyGRCMnhM5tISYQv4zlQF+5RashvKa2zv+FHA5DALzIsGXONeTxk6TSBalX5gQIDAQAB";
-	if (TUDebuger::IsTest) {
-		for (auto Replace : TUDebuger::ReplaceOtherContents) {
-			if (Key.Contains(Replace.Key)) {
-				Key.ReplaceInline(*Replace.Key, *Replace.Value);
-				break;
-			}
+	FString Key = TUDebuger::GetReplacedHost(AAURegionConfig::Get()->GetRSAPublicKey());
+
+	auto EncryptData = TUOpenSSL::RSAEncryptPublic(TUCrypto::UTF8Encode(UserInfoStr), Key);
+	request->Parameters->SetStringField("data", TUCrypto::Base64Encode(EncryptData));
+	
+	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
+		JudgeServerIsCrash(response);
+		FTUError Error;
+		TSharedPtr<FAAURealNameResultModel> ModelPtr = nullptr;
+		GenerateWrapperResponse(response, ModelPtr, Error);
+		if (CallBack) {
+			CallBack(ModelPtr, Error);
 		}
-	}
+	});
+	TUHttpManager::Get().request(request);
+}
+
+void AAUNet::VietnamManualVerify(const FString& UserID, const FString& Year, const FString& Mouth, const FString& Day,
+	TFunction<void(TSharedPtr<FAAURealNameResultModel> ModelPtr, const FTUError& Error)> CallBack) {
+	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
+	request->URL = AAURegionConfig::Get()->RealNameUrl() / "{region}/clients/{clients}/users/{users}/manual" ;
+	AddUriParas(request->URL, UserID, request->PathParameters);
+	request->Type = Post;
+	
+	TSharedPtr<FJsonObject> UserInfo = MakeShareable(new FJsonObject);
+	UserInfo->SetStringField("birthDate", FString::Printf(TEXT("%s-%s-%s"), *Year, *Mouth, *Day));
+	FString UserInfoStr = TUJsonHelper::GetJsonString(UserInfo);
+	FString Key = TUDebuger::GetReplacedHost(AAURegionConfig::Get()->GetRSAPublicKey());
 
 	auto EncryptData = TUOpenSSL::RSAEncryptPublic(TUCrypto::UTF8Encode(UserInfoStr), Key);
 	request->Parameters->SetStringField("data", TUCrypto::Base64Encode(EncryptData));
@@ -255,13 +276,14 @@ void AAUNet::ManualVerify(const FString& UserID, const FString& Name, const FStr
 }
 
 void AAUNet::CheckRealNameState(const FString& UserID,
-	TFunction<void(TSharedPtr<FAAURealNameResultModel> ModelPtr, const FTUError& Error)> CallBack) {
+                                TFunction<void(TSharedPtr<FAAURealNameResultModel> ModelPtr, const FTUError& Error)> CallBack) {
 	const TSharedPtr<AAUNet> request = MakeShareable(new AAUNet());
-	request->URL = TDSBaseUrl / RealNameAuthenticationPath / "clients/{clients}/users/{users}";
-	request->PathParameters.Add("{clients}", AAUImpl::Get()->Config.ClientID);
-	request->PathParameters.Add("{users}", UserID);
+	request->URL = AAURegionConfig::Get()->RealNameUrl() / "{region}/clients/{clients}/users/{users}";
+	AddUriParas(request->URL, UserID, request->PathParameters);
 	request->Type = Get;
-	request->RepeatCount = 3;
+	if (AAUImpl::Config.Region == EAAURegion::China) {
+		request->RepeatCount = 3;
+	}
 	
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		JudgeServerIsCrash(response);
@@ -291,6 +313,11 @@ TMap<FString, FString> AAUNet::CommonHeaders() {
 	TMap<FString, FString> HeadMap = TUHttpRequest::CommonHeaders();
 	FString UAStr = FString::Printf(TEXT("Version=%s&Platform=%s&Unreal-SDK-Version=%s"), TEXT(AntiAddictionUE_VERSION), *TUDeviceInfo::GetPlatform(), *TUDeviceInfo::GetEngineVersion());
 	HeadMap.Add("UA", UAStr);
+	if (AAUImpl::Config.Region == EAAURegion::China) {
+		HeadMap.Add("Accept-Language", "zh-CN");
+	} else {
+		HeadMap.Add("Accept-Language", "vi-VN");
+	}
 	return HeadMap;
 	
 	// [request setValue:[requestParams objectForKey:ANTI_AUTH_KEY] forHTTPHeaderField:ANTI_AUTH_KEY]; Authorization
@@ -306,5 +333,27 @@ TSharedPtr<FJsonObject> AAUNet::CommonParameters() {
 bool AAUNet::ResetHeadersBeforeRequest() {
 	return TUHttpRequest::ResetHeadersBeforeRequest();
 }
+
+void AAUNet::AddUriParas(const FString& Url, const FString& UserID, TMap<FString, FString>& PathParas) {
+	if (Url.Contains("{clients}")) {
+		PathParas.Add("{clients}", AAUImpl::Config.ClientID);
+	}
+	if (Url.Contains("{users}")) {
+		PathParas.Add("{users}", UserID);
+	}
+	if (Url.Contains("{region}")) {
+		FString Region = "";
+		switch (AAUImpl::Config.Region) {
+		case EAAURegion::China:
+			Region = "china";
+			break;
+		case EAAURegion::Vietnam:
+			Region = "vietnam";
+			break;
+		}
+		PathParas.Add("{region}", Region);
+	}
+}
+
 
 

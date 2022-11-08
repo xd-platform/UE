@@ -34,6 +34,12 @@ class XDSDK_API UXDServiceWidgetAccount : public UUserWidget
 
 	UFUNCTION()
 	void OnLoginClicked();
+
+	UFUNCTION()
+	void OnAutoLoginClicked();
+
+	UFUNCTION()
+	void OnDeviceIDClicked();
 	
 	UFUNCTION()
 	void OnLoginByTypeClicked();
@@ -74,10 +80,15 @@ protected:
 
 	void OnXDGSDKBindByTypeCompleted(const bool, const int32, const FString&);
 
-	UPROPERTY(Meta = (BindWidget))
-	UEditableTextContainerWidget* ET_Login_LoginTypes;
+
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* Login;
+
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* AutoLogin;
+
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* DeviceID;
 
 	UPROPERTY(Meta = (BindWidget))
 	UComboBoxString* CB_LoginByType_LoginType;
@@ -103,9 +114,9 @@ protected:
 	UEditableTextBox* ETB_Token_LoginType;
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* IsTokenActiveWithType;
-
+	
 	UPROPERTY(Meta = (BindWidget))
-	UEditableTextBox* ETB_Bind_LoginType;
+	UComboBoxString* CB_Bind_LoginType;
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* BindByType;
 };

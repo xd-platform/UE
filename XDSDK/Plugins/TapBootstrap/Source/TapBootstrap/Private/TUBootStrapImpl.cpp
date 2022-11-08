@@ -6,6 +6,8 @@
 #include "Mobile/TUBootStrapMobileImpl.h"
 #endif
 
+#define UnsupportedPlatformsLog TUDebuger::ErrorLog(FString::Printf(TEXT("Unsupported Platforms Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
+
 TSharedPtr<TUBootStrapImpl> TUBootStrapImpl::Instance = nullptr;
 
 TSharedPtr<TUBootStrapImpl>& TUBootStrapImpl::Get() {
@@ -21,35 +23,35 @@ TSharedPtr<TUBootStrapImpl>& TUBootStrapImpl::Get() {
 	return Instance;
 }
 
-void TUBootStrapImpl::Init(const TUType::Config& Config) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+void TUBootStrapImpl::Init(const FTUConfig& Config) {
+	UnsupportedPlatformsLog
 }
 
-void TUBootStrapImpl::Login(TArray<FString> Permissions, TFunction<void(const FTapUser& User)> SuccessBlock,
+void TUBootStrapImpl::Login(TArray<FString> Permissions, TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 	// if (FailBlock) {
 	// 	FailBlock(FTUError(FTUError::ERROR_CODE_LOGIN_Platforms_Unsupported, "Unsupported Platforms"));
 	// }
 }
 
-void TUBootStrapImpl::AnonymouslyLogin(TFunction<void(const FTapUser& User)> SuccessBlock,
+void TUBootStrapImpl::AnonymouslyLogin(TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 	// if (FailBlock) {
 	// 	FailBlock(FTUError(FTUError::ERROR_CODE_LOGIN_Platforms_Unsupported, "Unsupported Platforms"));
 	// }
 }
 
 void TUBootStrapImpl::Logout() {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
-TSharedPtr<FTapUser> TUBootStrapImpl::GetUser() {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+TSharedPtr<FTDSUser> TUBootStrapImpl::GetUser() {
+	UnsupportedPlatformsLog
 	return nullptr;
 }
 
-void TUBootStrapImpl::SetPreferLanguage(TUType::LanguageType LangType) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+void TUBootStrapImpl::SetPreferLanguage(ELanguageType LangType) {
+	UnsupportedPlatformsLog
 }

@@ -3,23 +3,28 @@
 
 class ANTIADDICTION_API AntiAddictionUE {
 public:
+	enum ResultHandlerCode {
+		LoginSuccess     = 500,		// 登录成功
+		Exited			 = 1000,	// 退出登录
+		DurationLimit    = 1050,	// 可玩时长耗尽
+		PeriodRestrict   = 1030,	// 达到宵禁时长
+		RealNameStop     = 9002,	// 实名过程中点击了关闭实名窗
+		SwitchAccount    = 1001,	// 切换账号
+	};
 
-	DECLARE_MULTICAST_DELEGATE(SimpleDelegate)
+	DECLARE_DELEGATE_TwoParams( FCallBack, ResultHandlerCode , const FString& );
 
-	// 未成年可玩时间耗尽，强制退出游戏，可以做一些保存用户数据的行为
-	static SimpleDelegate OnExit;
-
-	// 未成年可玩时间耗尽，可以选择切换账号（配置支持），游戏可以触发退出账号的逻辑
-	static SimpleDelegate OnSwitchAccount;
+	// 回调
+	static FCallBack OnCallBack;
 
 	// 防沉迷初始化
-	static void Init(const AAUType::Config& Config);
+	static void Init(const FAAUConfig& Config);
 
 	// 启动防沉迷
-	static void Login(const FString& UserID, TFunction<void(bool Result, const FString& Msg)> CallBack);
+	static void Startup(const FString& UserID);
 
 	// 防沉迷退出
-	static void Logout();
+	static void Exit();
 
 	// 进入游戏，游戏从后台激活时调用该API
 	static void EnterGame();
@@ -27,11 +32,14 @@ public:
 	// 离开游戏，游戏进入后台时调用
 	static void LeaveGame();
 
-	// 并不是返回用户准确年龄，只是返回一个年龄区间，比如大于18岁，只会返回18；
-	static int GetCurrentUserAgeLimit();
+	// 获取年龄段；
+	static EAAUAgeLimit GetAgeRange();
 
-	/// 获取用户剩余时长
-	static int GetCurrentUserRemainTime();
+	/// 获取用户剩余时长（单位：分钟）
+	static int GetRemainingTimeInMinutes();
+
+	/// 获取用户剩余时长（单位：秒）
+	static int GetRemainingTime();
 	
 
 	/// 查询能否支付
@@ -47,7 +55,8 @@ public:
 		TFunction<void(bool Success)> CallBack,
 		TFunction<void(const FString& Msg)> FailureHandler);
 
-
+	// 获取防沉迷Token
+	static FString CurrentToken();
 
 	static void Test();
 	

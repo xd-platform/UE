@@ -63,9 +63,8 @@ void UXUAccountCancellationWidget::GoBack()
 
 void UXUAccountCancellationWidget::Close()
 {
-	if (HasCancelAccount)
-	{
-		XDUE::OnLogout.Broadcast();
+	if (HasCancelAccount) {
+		XDUE::OnUserStatusChange.Broadcast(XUType::UserLogout, "");
 	}
 	Super::Close();
 }

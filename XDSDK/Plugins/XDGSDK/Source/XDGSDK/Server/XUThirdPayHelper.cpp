@@ -68,18 +68,11 @@ void XUThirdPayHelper::StartWebPay(FString PayUrl, TFunction<void(XUType::PayRes
 		Paras->SetStringField("state", State);
 		FString ParaStr = TUHelper::CombinParameters(Paras);
 		FString FinalUrl = PayUrl + "&" + ParaStr;
-		
-		if (TUDebuger::IsTest) {
-			for (auto Replace : TUDebuger::ReplaceHosts) {
-				if (FinalUrl.Contains(Replace.Key)) {
-					FinalUrl.ReplaceInline(*Replace.Key, *Replace.Value);
-					break;
-				}
-			}
-		}
+
+		FinalUrl = TUDebuger::GetReplacedUrl(FinalUrl);
 
 		TUDebuger::WarningLog(FString::Printf(TEXT("打开Url: %s"), *FinalUrl));
-		UTapCommonBPLibrary::LaunchURL(*FinalUrl, nullptr, nullptr);
+		TUHelper::LaunchURL(*FinalUrl, nullptr, nullptr);
 	}
 }
 

@@ -4,7 +4,7 @@
 class TAPDB_API TapUEDB {
 public:
 
-	static void Init(TUDBType::Config Config);
+	static void Init(FTUDBConfig Config);
 	
 	static void SetUserWithLoginType(const FString& UserId, const FString& LoginType = "");
 
@@ -42,5 +42,7 @@ public:
 
 	// iOS 独有
 	static void AdvertiserIDCollectionEnabled(bool Enable);
+
+	static void EnableLog(bool Enable);
 	
 };

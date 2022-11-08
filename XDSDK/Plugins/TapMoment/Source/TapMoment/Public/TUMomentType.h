@@ -6,7 +6,7 @@ namespace TUMomentType {
 	class TAPMOMENT_API Config {
 	public:
 		FString ClientID;
-		TUType::RegionType RegionType;
+		ERegionType RegionType;
 		FString AppID;  // PC 如果国内国外论坛ID不一样，那么在RegionType不同的时候传不同的值
 	};
 

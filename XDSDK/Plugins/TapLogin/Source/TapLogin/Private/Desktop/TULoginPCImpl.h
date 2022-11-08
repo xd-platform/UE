@@ -3,8 +3,7 @@
 
 class TULoginPCImpl: public TULoginImpl {
 public:
-	virtual void Init(TULoginType::Config _Config) override;
-	virtual void ChangeLanguage(TUType::LanguageType LanguageType) override;
+	virtual void Init(FTULoginConfig _Config) override;
 	virtual TSharedPtr<FTULoginProfileModel> GetProfile() override;
 	virtual void FetchProfile(
 		TFunction<void(TSharedPtr<FTULoginProfileModel> ModelPtr, const FTUError& Error)> CallBack) override;

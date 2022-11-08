@@ -4,8 +4,8 @@
 
 #include "Modules/ModuleManager.h"
 
-#define TapUEMoment_VERSION_NUMBER "30900001"
-#define TapUEMoment_VERSION "3.9.0"
+#define TapUEMoment_VERSION_NUMBER "31501001"
+#define TapUEMoment_VERSION "3.15.1"
 
 class FTapMomentModule : public IModuleInterface
 {

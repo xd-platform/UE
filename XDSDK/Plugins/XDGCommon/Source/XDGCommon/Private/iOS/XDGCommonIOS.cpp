@@ -2,6 +2,8 @@
 
 #include "XDGCommonIOS.h"
 #include "Engine.h"
+#include "IOSHelper.h"
+#include "TUDebuger.h"
 #include "XDGCommon.h"
 
 
@@ -28,6 +30,9 @@ void XDGCommonIOS::SetLanguage(int32 langType){
 }
 
 void XDGCommonIOS::InitSDK(){
+    [XDGSDKSettings setExitHandler:^{
+        FPlatformMisc::RequestExit( true );
+    }];
     [XDGSDK initSDK:^(BOOL success, NSString *msg) {
         if (success) {
             NSLog(@"初始化 成功： %@", msg);
@@ -136,6 +141,10 @@ void XDGCommonIOS::TrackUser(FString userId){
     NSLog(@"点击 TrackUser %@", userId.GetNSString());
 }
 
+void XDGCommonIOS::TrackUser() {
+    [XDGTrackerManager trackUser];
+}
+
 void XDGCommonIOS::TrackRole(FString serverId, FString roleId, FString roleName, int32 level){
     [XDGTrackerManager trackRoleWithRoleId:roleId.GetNSString() roleName:roleName.GetNSString() serverId:serverId.GetNSString() level:(NSInteger)level];
     NSLog(@"点击 TrackRole %@", roleId.GetNSString());
@@ -212,6 +221,22 @@ void XDGCommonIOS::DevelopInit(int32 num){
         [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-test/track"];
     }
     InitSDK();
+}
+
+void XDGCommonIOS::ShowDetailAgreement(FString Url) {
+    [XDGSDK showDetailAgreement:Url.GetNSString()];
+}
+
+TArray<FXDGAgreement> XDGCommonIOS::GetAgreementList() {
+    NSArray *agreementList = [XDGSDK getAgreementList];
+    TArray<FXDGAgreement> Arr;
+    for (XDGAgreement *bean in agreementList) {
+        FXDGAgreement Agreement;
+        Agreement.url = IOSHelper::convertString(bean.url);
+        Agreement.type = IOSHelper::convertString(bean.type);
+        Arr.Add(Agreement);
+    }
+    return Arr;
 }
 
 void XDGCommonIOS::ClearAllUserDefaultsData() {

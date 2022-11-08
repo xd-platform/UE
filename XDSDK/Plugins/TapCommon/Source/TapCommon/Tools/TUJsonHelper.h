@@ -1,12 +1,11 @@
 #pragma once
 #include "JsonObjectConverter.h"
 
-
- inline TSharedPtr<FJsonObject>& operator+=(TSharedPtr<FJsonObject> & Object, const TSharedPtr<FJsonObject> & AddObject) {
- 	if (Object.IsValid() && AddObject.IsValid())
- 	{
- 		Object->Values.Append(AddObject->Values);
- 	}
+inline TSharedPtr<FJsonObject>& operator+=(TSharedPtr<FJsonObject> & Object, const TSharedPtr<FJsonObject> & AddObject) {
+	if (Object.IsValid() && AddObject.IsValid())
+	{
+		Object->Values.Append(AddObject->Values);
+	}
 	return Object;
 }
 
@@ -26,17 +25,35 @@ public:
 	}
 
 	template <typename UStructType>
-	static FString GetJsonString(const TSharedPtr<UStructType>& value)
+	static FString GetJsonString(const TSharedPtr<UStructType>& Value)
 	{
-		TSharedPtr<FJsonObject> JsonObject = FJsonObjectConverter::UStructToJsonObject(*value.Get());
+		TSharedPtr<FJsonObject> JsonObject = FJsonObjectConverter::UStructToJsonObject(*Value.Get());
 		return GetJsonString(JsonObject);
 	}
 
 	template <typename UStructType>
-	static FString GetJsonString(const UStructType& value)
+	static FString GetJsonString(const UStructType& Value)
 	{
-		TSharedPtr<FJsonObject> JsonObject = FJsonObjectConverter::UStructToJsonObject(value);
+		TSharedPtr<FJsonObject> JsonObject = FJsonObjectConverter::UStructToJsonObject(Value);
 		return GetJsonString(JsonObject);
+	}
+
+	template <typename UStructType>
+	static FString GetJsonString(const TArray<UStructType>& Values)
+	{
+		FString JsonStr;
+		TSharedRef<TJsonWriter<>> JsonWriter = TJsonWriterFactory<>::Create(&JsonStr);
+		JsonWriter->WriteArrayStart();
+		for (auto Value : Values) {
+			auto ValueJsonStr = GetJsonString(Value);
+			if (!ValueJsonStr.IsEmpty()) {
+				JsonWriter->WriteRawJSONValue(ValueJsonStr);
+			}
+		}
+		JsonWriter->WriteArrayEnd();
+		JsonWriter->Close();
+
+		return JsonStr;
 	}
 
 	
@@ -89,5 +106,13 @@ public:
 	static TSharedPtr<UStructType> GetUStruct(const FString& JsonString)
 	{
 		return GetUStruct<UStructType>(GetJsonObject(JsonString));
+	}
+
+	template <typename UStructType>
+	static TArray<UStructType> GetUStructArray(const FString& JsonString)
+	{
+		TArray<UStructType> Results;
+		FJsonObjectConverter::JsonArrayStringToUStruct(JsonString, &Results, 0, 0);
+		return Results;
 	}
 };

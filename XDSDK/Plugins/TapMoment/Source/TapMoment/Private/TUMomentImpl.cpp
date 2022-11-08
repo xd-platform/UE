@@ -6,6 +6,8 @@
 #include "Mobile/TUMomentMobileImpl.h"
 #endif
 
+#define UnsupportedPlatformsLog TUDebuger::ErrorLog(FString::Printf(TEXT("Unsupported Platforms Call %s"), ANSI_TO_TCHAR(__FUNCTION__)));
+
 TSharedPtr<TUMomentImpl> TUMomentImpl::Instance = nullptr;
 
 TSharedPtr<TUMomentImpl>& TUMomentImpl::Get() {
@@ -22,57 +24,57 @@ TSharedPtr<TUMomentImpl>& TUMomentImpl::Get() {
 }
 
 void TUMomentImpl::Init(const TUMomentType::Config& InitConfig) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::SetCallback(TFunction<void(int Code, const FString& Msg)> CallBack) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::Open(TUMomentType::Orientation Orientation) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::Publish(TUMomentType::Orientation Orientation, const TArray<FString>& ImagePaths,
 	const FString& Content) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::PublishVideo(TUMomentType::Orientation Orientation, const TArray<FString>& VideoPaths,
 	const TArray<FString>& ImagePaths, const FString& Title, const FString& Desc) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::PublishVideo(TUMomentType::Orientation Orientation, const TArray<FString>& VideoPaths,
 	const FString& Title, const FString& Desc) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::FetchNotification() {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::Close() {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::Close(const FString& Title, const FString& Content) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 // void TUMomentImpl::SetUseAutoRotate(bool UseAuto) {
-// 	TUDebuger::ErrorLog("Unsupported Platforms");
+// 	UnsupportedPlatformsLog
 // }
 
 void TUMomentImpl::DirectlyOpen(TUMomentType::Orientation Orientation, const FString& Page,
 	TSharedPtr<FJsonObject> Extras) {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::NeedDeferSystemGestures() {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }
 
 void TUMomentImpl::OpenWebTopic() {
-	TUDebuger::ErrorLog("Unsupported Platforms");
+	UnsupportedPlatformsLog
 }

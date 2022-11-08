@@ -8,6 +8,7 @@
 #include "XUUser.h"
 #include "XUPayCheckModel.h"
 #include "XUUploadAgreementResultModel.h"
+#include "Agreement/XUAgreementConfig.h"
 
 class XUNet: public TUHttpRequest
 {
@@ -17,9 +18,12 @@ public:
 	
 
 	static void RequestIpInfo(TFunction<void(TSharedPtr<FXUIpInfoModel> Model, FXUError Error)> Callback);
-	static void RequestConfig(bool IsFirst, TFunction<void(TSharedPtr<FXUServerConfig> Model, FXUError Error)> Callback);
+	static void RequestConfig(TFunction<void(TSharedPtr<FXUServerConfig> Model, FXUError Error)> Callback);
+	static void RequestAgreement(bool IsFirst, TFunction<void(TSharedPtr<FXUAgreementConfig> Model, FXUError Error)> Callback);
+
 	static void RequestKidToken(const TSharedPtr<FJsonObject>& Paras, TFunction<void(TSharedPtr<FXUTokenModel> Model, FXUError Error)> Callback);
-	static void RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> Model, FXUError Error)> Callback, TFunction<void()> ClearInfoBlock);
+	// 可以通过Error的非200 表示token失效
+	static void RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> Model, FXUError Error)> Callback);
 	static void RequestSyncToken(TFunction<void(TSharedPtr<FXUSyncTokenModel> Model, FXUError Error)> Callback);
 	static void RequestPrivacyTxt(const FString& Url, TFunction<void(FString Txt)> Callback);
 	static void RequestBindList(TFunction<void(TSharedPtr<FXUBindResponseModel> Model, FXUError Error)> Callback);

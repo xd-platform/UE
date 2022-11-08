@@ -9,9 +9,9 @@ public:
 
 	static TSharedPtr<TULoginImpl>& Get();
 
-	TULoginType::Config Config;
+	FTULoginConfig Config;
 	
-	virtual void Init(TULoginType::Config _Config);
+	virtual void Init(FTULoginConfig _Config);
 	
 	virtual TSharedPtr<FTULoginProfileModel> GetProfile();
 	
@@ -22,8 +22,6 @@ public:
 	virtual void Login(TArray<FString> Permissions, TFunction<void(const TUAuthResult& Result)> CallBack);
 
 	virtual void Logout();
-	
-	virtual void ChangeLanguage(TUType::LanguageType LanguageType);
 	
 	virtual void GetTestQualification(TFunction<void(bool IsQualified, const FTUError& Error)> CallBack);
 	

@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "TAULoginWidget.h"
 #include "TULoginImpl.h"
-#include "Desktop/TAULoginLanguage.h"
+#include "Desktop/TULoginLanguage.h"
 #include "Desktop/Server/TULoginNet.h"
 #include "TUHelper.h"
 #include "TUDebuger.h"
 #include "TUSettings.h"
-#include "Desktop/TauWebAuthHelper.h"
+#include "Desktop/TUWebAuthHelper.h"
 
 
 UTAULoginWidget::UTAULoginWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -34,14 +34,14 @@ void UTAULoginWidget::NativeConstruct()
 	RefreshButton->OnClicked.AddUniqueDynamic(this, &UTAULoginWidget::OnRefreshBtnClick);
 	JumpWebButton->OnClicked.AddUniqueDynamic(this, &UTAULoginWidget::OnJumpWebBtnClick);
 
-	TitleUseLabel->SetText(FText::FromString(TAULoginLanguage::GetCurrentLang()->TitleUse()));
-	TitleLoginLabel->SetText(FText::FromString(TAULoginLanguage::GetCurrentLang()->TitleLogin()));
-	QrTitleLoginLabel->SetText(FText::FromString(TAULoginLanguage::GetCurrentLang()->QrTitleLogin()));
-	QrRefreshLabel->SetText(FText::FromString(TAULoginLanguage::GetCurrentLang()->QrRefresh()));
-	QrNoticeScanToLoginRichLabel->SetText(FText::FromString(TAULoginLanguage::GetCurrentLang()->QrNoticeScanToLogin()));
-	WebLoginLabel->SetText(FText::FromString(TAULoginLanguage::GetCurrentLang()->WebLogin()));
-	WebNoticeLabel->SetText(FText::FromString(TAULoginLanguage::GetCurrentLang()->WebNotice()));
-	WebButtonJumpToWebLabel->SetText(FText::FromString(TAULoginLanguage::GetCurrentLang()->WebButtonJumpToWeb()));
+	TitleUseLabel->SetText(FText::FromString(TULoginLanguage::GetCurrentLang()->TitleUse()));
+	TitleLoginLabel->SetText(FText::FromString(TULoginLanguage::GetCurrentLang()->TitleLogin()));
+	QrTitleLoginLabel->SetText(FText::FromString(TULoginLanguage::GetCurrentLang()->QrTitleLogin()));
+	QrRefreshLabel->SetText(FText::FromString(TULoginLanguage::GetCurrentLang()->QrRefresh()));
+	QrNoticeScanToLoginRichLabel->SetText(FText::FromString(TULoginLanguage::GetCurrentLang()->QrNoticeScanToLogin()));
+	WebLoginLabel->SetText(FText::FromString(TULoginLanguage::GetCurrentLang()->WebLogin()));
+	WebNoticeLabel->SetText(FText::FromString(TULoginLanguage::GetCurrentLang()->WebNotice()));
+	WebButtonJumpToWebLabel->SetText(FText::FromString(TULoginLanguage::GetCurrentLang()->WebButtonJumpToWeb()));
 	
 	HiddenRefreshButton();
 
@@ -79,7 +79,7 @@ void UTAULoginWidget::OnRefreshBtnClick()
 void UTAULoginWidget::OnJumpWebBtnClick()
 {
 	if (!WebAuthHelper.IsValid()) {
-		WebAuthHelper = MakeShareable(new TauWebAuthHelper);
+		WebAuthHelper = MakeShareable(new TUWebAuthHelper);
 	}
 	// static TauWebAuthHelper Helper(Permissions);
 	WebAuthHelper->ProcessWebAuth(Permissions, [=](FString WebCode) {
@@ -133,12 +133,12 @@ void UTAULoginWidget::CheckScanRequest(int64 ExpireAt) {
 
 				}
 				else if (Error.error == "authorization_waiting") {
-					ShowTip(TAULoginLanguage::GetCurrentLang()->QrnNoticeSuccess(),
-							TAULoginLanguage::GetCurrentLang()->QrnNoticeSuccess2());
+					ShowTip(TULoginLanguage::GetCurrentLang()->QrnNoticeSuccess(),
+							TULoginLanguage::GetCurrentLang()->QrnNoticeSuccess2());
 				}
 				else if (Error.error == "access_denied") {
-					ShowTip(TAULoginLanguage::GetCurrentLang()->QrNoticeCancel(),
-							TAULoginLanguage::GetCurrentLang()->QrNoticeCancel2());
+					ShowTip(TULoginLanguage::GetCurrentLang()->QrNoticeCancel(),
+							TULoginLanguage::GetCurrentLang()->QrNoticeCancel2());
 					GetQrCode();
 					InvalidCheckScanTimer();
 				}
@@ -264,7 +264,7 @@ void UTAULoginWidget::GetTokenFromWebCode(const FString& WebCode) {
 	Paras->SetStringField("redirect_uri", WebAuthHelper->RedirectUri);
 	Paras->SetStringField("code_verifier", WebAuthHelper->GetCodeVerifier());
 
-	ShowTip(TAULoginLanguage::GetCurrentLang()->WebNoticeLogin(),"");
+	ShowTip(TULoginLanguage::GetCurrentLang()->WebNoticeLogin(),"");
 	const TWeakObjectPtr<UTAULoginWidget> WeakSelf(this);
 	TULoginNet::RequestAccessTokenFromWeb(Paras, [=](TSharedPtr<FTUAccessToken> Model, FTULoginError Error) {
 		if (!WeakSelf.IsValid()) {
@@ -274,7 +274,7 @@ void UTAULoginWidget::GetTokenFromWebCode(const FString& WebCode) {
 			GetProfile(Model);
 		} else {
 			TUDebuger::WarningLog("web login fail");
-			ShowTip(TAULoginLanguage::GetCurrentLang()->WebNoticeFail(), TAULoginLanguage::GetCurrentLang()->WebNoticeFail2());
+			ShowTip(TULoginLanguage::GetCurrentLang()->WebNoticeFail(), TULoginLanguage::GetCurrentLang()->WebNoticeFail2());
 		}
 	});
 }

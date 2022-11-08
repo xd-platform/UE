@@ -1,4 +1,5 @@
 #pragma once
+#include "AAUType.h"
 
 class AAUHelper {
 public:
@@ -10,6 +11,7 @@ public:
 
 	// FDateTime对象本身不带时区的概念。
 	static FDateTime GetChinaCurrentTime();
+	static FDateTime GetVietnamCurrentTime();
 
 	static TArray<int> ParseCurfewTimeString(const FString& ServerTime);
 
@@ -22,4 +24,6 @@ public:
 	static FString RemoveHtmlTag(const FString& Content);
 
 	static FString ReplaceHtmlTag(FString Content);
+
+	static EAAUAgeLimit MakeAgeLimit(int64 Age);
 };

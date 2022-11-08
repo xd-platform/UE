@@ -21,20 +21,12 @@ public:
 
 	static void ReadLocalConfig(XUConfigHandler Handler);
 
-	static void LoadRemoteOrCachedServiceTerms(TSharedPtr<XUType::Config> Config, XUConfigHandler Handler);
-
-	static void RequestServerConfig(bool FirstRequest);
-
-	static void RequestServerConfig(bool FirstRequest, TFunction<void(bool Success)> Handler);
+	static void UpdateConfigWithCache();
+	
+	static void RequestServerConfig();
 
 	static void InitTapSDK();
-
-	static bool NeedShowAgreement();
-
-	static FString GetAgreementUrl();
-
-	static void UploadUserAgreement();
-
+	
 	// static void UpdateBindEntriesConfig:(NSArray *)config;
 
 	// static void UpdateHttpConfig();
@@ -62,16 +54,10 @@ public:
 
 	static bool GetKRPushSetting();
 
-	static FString GetRegionAgreementCacheName();
-	
 private:
 	
 	static XUConfigManager * Instance;
 	TSharedPtr<XUType::Config> Config;
-	bool ConfigRequestSuccess = false;
-
-	static XUType::AgreementConfig GenerateAgreementConfig(const TSharedPtr<FJsonObject>& JsonObject);
-	static void SaveAgreementConfig(XUType::AgreementConfig& AgreementConfig, bool Upload);
-
+	
 	static void UpdateConfig(TSharedPtr<FXUServerConfig> ServerConfig);
 };

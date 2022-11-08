@@ -71,7 +71,13 @@ void AAUHelper::GetTimeSpanWithSeverTime(TFunction<void(int64 TimeSpan)> CallBac
 
 FDateTime AAUHelper::GetChinaCurrentTime() {
 	auto Time = FDateTime::UtcNow();
-	Time += 8 * ETimespan::TicksPerHour; // 8个小时
+	Time += 8 * ETimespan::TicksPerHour; // 东八区
+	return Time;
+}
+
+FDateTime AAUHelper::GetVietnamCurrentTime() {
+	auto Time = FDateTime::UtcNow();
+	Time += 7 * ETimespan::TicksPerHour; // 东七区
 	return Time;
 }
 
@@ -90,7 +96,7 @@ int64 AAUHelper::IntervalForCurfew(FDateTime ChinaTime) {
 	int64 RetainSeconds = INT64_MAX;
 	// int64 RetainSeconds = 0;
 	int64 NowMins = ChinaTime.GetHour() * 60 + ChinaTime.GetMinute();
-	auto ConfigModel = FAAUConfigModel::GetLocalModel();
+	auto ConfigModel = FAAUChinaConfigModel::GetLocalModel();
 	auto Start = ParseCurfewTimeString(ConfigModel->child_protected_config.night_strict_start);
 	if (Start.Num() != 2) {
 		return RetainSeconds;
@@ -121,7 +127,7 @@ int64 AAUHelper::IntervalForCurfew(FDateTime ChinaTime) {
 
 bool AAUHelper::IsHoliday(FDateTime ChinaTime) {
 	FString TodayStr = FString::Printf(TEXT("%02i.%02i"), ChinaTime.GetMonth(), ChinaTime.GetDay());
-	for (auto Holiday : FAAUConfigModel::GetLocalModel()->holiday) {
+	for (auto Holiday : FAAUChinaConfigModel::GetLocalModel()->holiday) {
 		if (TodayStr == Holiday) {
 			return true;
 		}
@@ -159,6 +165,20 @@ FString AAUHelper::ReplaceHtmlTag(FString Content) {
 	Content.ReplaceInline(TEXT("<font color=\"#FF8156\">"), TEXT("<TapColor>"));
 	Content.ReplaceInline(TEXT("</font>"), TEXT("</>"));
 	return Content;
+}
+
+EAAUAgeLimit AAUHelper::MakeAgeLimit(int64 Age) {
+	if (Age < 0) {
+		return EAAUAgeLimit::Unknown;
+	} else if (Age < 8) {
+		return EAAUAgeLimit::Child;
+	} else if (Age < 16) {
+		return EAAUAgeLimit::Teen;
+	} else if (Age < 18) {
+		return EAAUAgeLimit::Young;
+	} else {
+		return EAAUAgeLimit::Adult;
+	}
 }
 
 

@@ -32,6 +32,7 @@ public class AntiAddiction : ModuleRules
 			new string[]
 			{
 				"Core",
+				"InputCore",
 				"TapCommon",
 				"Json",
 				"JsonUtilities",
@@ -52,6 +53,25 @@ public class AntiAddiction : ModuleRules
 			}
 			);
 		
+		if (Target.Platform == UnrealTargetPlatform.IOS)
+		{
+
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+					"AntiAddictionService",
+					"../AntiAddiction/ios/framework/AntiAddictionService.zip"
+				)
+			);
+			
+			PublicAdditionalFrameworks.Add(
+				new Framework(
+					"AntiAddictionUI",
+					"../AntiAddiction/ios/framework/AntiAddictionUI.zip",
+					"AntiAdictionResources.bundle"
+				)
+			);
+		}
+		
 		
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
@@ -59,5 +79,19 @@ public class AntiAddiction : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+		
+		if (Target.Platform == UnrealTargetPlatform.Android)
+		{
+			PrivateDependencyModuleNames.AddRange(
+				new string[]
+				{
+					"Launch"
+				}
+			);
+			AdditionalPropertiesForReceipt.Add(
+				"AndroidPlugin",
+				Path.Combine(ModuleDirectory, "AntiAddiction_Android_UPL.xml")
+			);
+		}
 	}
 }

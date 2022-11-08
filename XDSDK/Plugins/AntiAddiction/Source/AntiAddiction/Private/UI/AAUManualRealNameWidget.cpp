@@ -33,8 +33,8 @@ void UAAUManualRealNameWidget::ShowError(const FString& ErrorMsg) {
 
 void UAAUManualRealNameWidget::ChangeType(AAURealNameWordType _Type) {
 	Type = _Type;
-	FAAUAuthIdentifyWord CurrentWord;
-	for (auto Auth_Identify_Word : FAAUConfigModel::GetLocalModel()->ui_config.auth_identify_words) {
+	FAAUChinaAuthIdentifyWord CurrentWord;
+	for (auto Auth_Identify_Word : FAAUChinaConfigModel::GetLocalModel()->ui_config.auth_identify_words) {
 		if (FCString::Atoi(*Auth_Identify_Word.type) == Type) {
 			CurrentWord = Auth_Identify_Word;
 			break;

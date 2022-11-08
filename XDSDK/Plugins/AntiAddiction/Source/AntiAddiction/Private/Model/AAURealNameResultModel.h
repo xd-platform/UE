@@ -38,19 +38,5 @@ struct FAAURealNameResultModel
 			return Success;
 		}
 	}
-
-	AAUType::AgeLimit GetAgeLimit() {
-		if (age_limit == AAUType::Child) {
-			return AAUType::Child;
-		} else if (age_limit == AAUType::Teen) {
-			return AAUType::Teen;
-		} else if (age_limit == AAUType::Young) {
-			return AAUType::Young;
-		} else if (age_limit == AAUType::Adult) {
-			return AAUType::Adult;
-		} else {
-			return AAUType::Child;
-		}
-	}
 	
 };

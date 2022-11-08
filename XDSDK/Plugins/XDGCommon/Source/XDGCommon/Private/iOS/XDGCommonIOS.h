@@ -39,6 +39,7 @@ public:
 	void ShareImage(int32 type, FString imagePath);
 
 	void TrackUser(FString userId);
+	void TrackUser();
 	void TrackRole(FString serverId, FString roleId, FString roleName, int32 level);
 	void TrackEvent(FString eventName);
 
@@ -52,6 +53,10 @@ public:
 	void SetCountryRegion(FString region);
 
 	void DevelopInit(int32 num);
+	
+	virtual void ShowDetailAgreement(FString Url) override;
+	virtual TArray<FXDGAgreement> GetAgreementList() override;
+	
 	virtual void ClearAllUserDefaultsData() override;
 	void TrackAchievement();
 	void EventCompletedTutorial();

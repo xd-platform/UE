@@ -19,7 +19,7 @@ public:
 	// 4.27.0-17155196+++UE4+Release-4.27
 	static FString GetCompatibleEngineVersion();
 	
-	//OS: 10.16 (21E258)
+	//OS: macOS 10.16 (21E258)
 	static FString GetOSVersion();
 
 	static int GetScreenWidth();

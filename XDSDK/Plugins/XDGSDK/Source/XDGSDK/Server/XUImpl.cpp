@@ -1,5 +1,4 @@
 #include "XUImpl.h"
-#include "TapUEBootstrap.h"
 #include "XUStorage.h"
 #include "TUDeviceInfo.h"
 #include "TUJsonHelper.h"
@@ -18,10 +17,15 @@
 #include "XDGSDK/UI/XUPrivacyWidget.h"
 #include "Track/XUTracker.h"
 #include "Track/XUPaymentTracker.h"
+#include "Agreement/XUAgreementManager.h"
 
 static int Success = 200;
 
-void XUImpl::InitSDK(const FString& GameVersion, XUInitCallback CallBack) {
+XUImpl::FSimpleDelegate XUImpl::OnLoginSuccess;
+XUImpl::FSimpleDelegate XUImpl::OnLogoutSuccess;
+XUImpl::FSimpleDelegate XUImpl::OnTokenIsInvalid;
+
+void XUImpl::InitSDK(XUInitCallback CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig) {
 	if (InitState == Initing) {
 		if (CallBack) {
 			CallBack(false, "XD SDK Initing");
@@ -38,8 +42,9 @@ void XUImpl::InitSDK(const FString& GameVersion, XUInitCallback CallBack) {
 	XUConfigManager::ReadLocalConfig([=](TSharedPtr<XUType::Config> Config, const FString& Msg) {
 		InitState = Uninit;
 		if (Config.IsValid()) {
-			Config->GameVersion = GameVersion;
-			Config->TapConfig.DBConfig.GameVersion = GameVersion;
+			if (EditConfig) {
+				EditConfig(Config.ToSharedRef());
+			}
 			InitSDK(Config, CallBack);
 		} else {
 			if (CallBack) {
@@ -73,13 +78,16 @@ void XUImpl::InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack)
 			CallBack(Result, Message);
 		}
 	};
-	XUConfigManager::LoadRemoteOrCachedServiceTerms(Config, [=](TSharedPtr<XUType::Config> ConfigTerms, const FString& Msg) {
-		if (ConfigTerms.IsValid()) {
-			XUConfigManager::SetConfig(ConfigTerms);
-			CheckAgreement(ConfigTerms, NewCallBack);
-		} else {
-			NewCallBack(false, Msg);
-		}
+	// 用本地缓存更新当前 config
+	XUConfigManager::UpdateConfigWithCache();
+
+	// 海外请求最新协议内容，国内直接返回
+	XUAgreementManager::RequestServerAgreementsExceptCN([=](bool ResultSuccess) {
+		// 检查协议
+		XUAgreementManager::CheckAgreementWithHandler([=]() {
+			// 协议完成
+			InitFinish(NewCallBack);
+		});
 	});
 }
 
@@ -88,14 +96,26 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
                          TFunction<void(FXUError error)> ErrorBlock) {
 	auto lmd = XULanguageManager::GetCurrentModel();
 	if (LoginType == XUType::Default) {
+		bool TokenInfoIsInvalid = TUDataStorage<FXUStorage>::LoadBool(FXUStorage::TokenInfoIsInvalid);
+		if (TokenInfoIsInvalid) { // 如果token已经失效了, 清除登录缓存及协议
+			TUDataStorage<FXUStorage>::Remove(FXUStorage::TokenInfoIsInvalid);
+			FXUUser::ClearUserData();
+			OnTokenIsInvalid.Broadcast();
+			if (ErrorBlock) {
+				ErrorBlock(FXUError(lmd->tds_login_failed));
+			}
+			return;
+		}
 		auto localUser = XDUE::GetUserInfo();
 		if (localUser.IsValid()) {
 			RequestUserInfo(true, [](TSharedPtr<FXUUser> user) {}, [](FXUError Error) {});
 			AsyncLocalTdsUser(localUser->userId, FXUSyncTokenModel::GetLocalModel()->sessionToken);
-			resultBlock(localUser);
+			LoginSuccess(localUser, resultBlock);
 		}
 		else {
-			ErrorBlock(FXUError(lmd->tds_login_failed));
+			if (ErrorBlock) {
+				ErrorBlock(FXUError(lmd->tds_login_failed));
+			}
 		}
 	}
 	else {
@@ -114,6 +134,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			UTUHUD::ShowWait();
 			TFunction<void(FXUError error)> ErrorCallBack = [=](FXUError error) {
 				UTUHUD::Dismiss();
+				FXUUser::ClearUserData();
 				if (ErrorBlock) {
 					ErrorBlock(error);
 				}
@@ -123,7 +144,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 					AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
 						UTUHUD::Dismiss();
 						user->SaveToLocal();
-						resultBlock(user);
+						LoginSuccess(user, resultBlock);
 					}, ErrorCallBack);
 				}, ErrorCallBack);
 			}, ErrorCallBack);
@@ -318,7 +339,7 @@ void XUImpl::OpenWebPay(const FString& ServerId, const FString& RoleId, const FS
 
 void XUImpl::ResetPrivacy() {
 	TUDataStorage<FXUStorage>::Remove(FXUStorage::PrivacyKey);
-	TUDataStorage<FXUStorage>::Remove(XUConfigManager::GetRegionAgreementCacheName());
+	XUAgreementManager::ResetAgreement();
 }
 
 void XUImpl::AccountCancellation() {
@@ -344,16 +365,61 @@ void XUImpl::AccountCancellation() {
 	UXUAccountCancellationWidget::Show(UrlStr);
 }
 
+void XUImpl::Logout() {
+	// await TDSUser.Logout();
+	TapUELogin::Logout();
+	FXUUser::ClearUserData();
+	OnLogoutSuccess.Broadcast();
+}
+
 TSharedPtr<XUImpl> XUImpl::Instance = nullptr;
 
 TSharedPtr<XUImpl>& XUImpl::Get() {
 	if (!Instance.IsValid()) {
 		Instance = MakeShareable(new XUImpl);
-		XDUE::OnLogout.AddLambda([]() {
-			XDUE::Logout();
+		XDUE::OnUserStatusChange.AddLambda([](XUType::UserChangeState UserState, const FString& Msg) {
+			if (UserState == XUType::UserLogout) {
+				XDUE::Logout();
+			}
 		});
 	}
 	return Instance;
+}
+
+void XUImpl::BindByType(XUType::LoginType BindType, TFunction<void(bool Success, const FXUError& Error)> CallBack) {
+	auto LangModel = XULanguageManager::GetCurrentModel();
+	TFunction<void(TSharedPtr<FJsonObject> Paras)> BindBlock = [=](TSharedPtr<FJsonObject> Paras) {
+		XUNet::Bind(Paras, [=](TSharedPtr<FXUResponseModel> ResponseModel, FXUError Error) {
+			if (!CallBack) {
+				return;
+			}
+			if (ResponseModel.IsValid()) {
+				CallBack(true, Error);
+			}
+			else {
+				if (Error.code > 200) {
+					CallBack(false, Error);
+				}
+				else {
+					CallBack(false, FXUError(LangModel->tds_bind_error));
+				}
+			}
+		});
+	};
+
+	GetAuthParam(BindType, [=](TSharedPtr<FJsonObject> Paras) {
+		             BindBlock(Paras);
+	             }, [=](FXUError Error) {
+		             if (!CallBack) {
+			             return;
+		             }
+		             if (Error.code == 80081) {
+			             CallBack(false, FXUError(LangModel->tds_login_cancel));
+		             }
+		             else {
+			             CallBack(false, Error);
+		             }
+	             });
 }
 
 void XUImpl::RequestKidToken(TSharedPtr<FJsonObject> paras,
@@ -365,13 +431,7 @@ void XUImpl::RequestKidToken(TSharedPtr<FJsonObject> paras,
 			resultBlock(kidToken);
 		}
 		else {
-			auto localToken = FXUTokenModel::GetLocalModel();
-			if (localToken == nullptr) {
-				ErrorBlock(error);
-			}
-			else {
-				resultBlock(kidToken);
-			}
+			ErrorBlock(error);
 		}
 	});
 }
@@ -388,17 +448,10 @@ void XUImpl::RequestUserInfo(bool saveToLocal,
 				callback(user);
 			}
 			else {
-				auto localUser = FXUUser::GetLocalModel();
-				if (localUser == nullptr) {
-					ErrorBlock(error);
+				if (saveToLocal) { // 标记已经失效
+					TUDataStorage<FXUStorage>::SaveBool(FXUStorage::TokenInfoIsInvalid, true);
 				}
-				else {
-					callback(localUser);
-				}
-			}
-		}, [=]() {
-			if (saveToLocal) {
-				FXUUser::ClearUserData();
+				ErrorBlock(error);
 			}
 		});
 
@@ -415,13 +468,7 @@ void XUImpl::AsyncNetworkTdsUser(const FString& userId,
 				callback(model->sessionToken);
 			}
 			else {
-				auto localModel = FXUSyncTokenModel::GetLocalModel();
-				if (localModel.IsValid()) {
-					AsyncLocalTdsUser(userId, localModel->sessionToken);
-					callback(localModel->sessionToken);
-				} else {
-					ErrorBlock(error);
-				}
+				ErrorBlock(error);
 			}
 		}
 	);
@@ -433,29 +480,30 @@ void XUImpl::AsyncLocalTdsUser(const FString& userId, const FString& sessionToke
 	// await lcUser.SaveToLocal();
 }
 
-void XUImpl::CheckAgreement(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack) {
-	if (!XUConfigManager::NeedShowAgreement()) {
-		InitFinish(CallBack);
-		return;
-	}
-	UXUPrivacyWidget::ShowPrivacy([=]() {
-		XUTracker::Get()->UserAgreeProtocol();
-		InitFinish(CallBack);
-	});
-}
 
 void XUImpl::InitFinish(XUInitCallback CallBack) {
 	XUConfigManager::InitTapSDK();
 	if (CallBack) {
 		CallBack(true, "");
 	}
+	// 请求服务端 config
 	RequestServerConfig();
-	XUConfigManager::UploadUserAgreement();
 }
 
 void XUImpl::RequestServerConfig() {
-	XUConfigManager::RequestServerConfig(false);
+	XUConfigManager::RequestServerConfig();
+	XUAgreementManager::RequestServerAgreements(false, nullptr);
+	if (XUConfigManager::IsCN()) {
+		return;
+	}
 	XUConfigManager::GetRegionInfo([](TSharedPtr<FXUIpInfoModel> ModelPtr) {
 		
 	});
+}
+
+void XUImpl::LoginSuccess(TSharedPtr<FXUUser> User, TFunction<void(TSharedPtr<FXUUser>)> SuccessBlock) {
+	OnLoginSuccess.Broadcast();
+	if (SuccessBlock) {
+		SuccessBlock(User);
+	}
 }

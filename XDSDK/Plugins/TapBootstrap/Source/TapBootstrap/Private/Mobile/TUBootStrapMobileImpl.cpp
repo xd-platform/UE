@@ -13,7 +13,7 @@ TUBootStrapMobileImpl::TUBootStrapMobileImpl() {
 	TUMobileBridge::Register(TEXT(TAP_BOOTSTRAP_CLZ),TEXT(TAP_BOOTSTRAP_IMPL));
 }
 
-void TUBootStrapMobileImpl::Init(const TUType::Config& Config) {
+void TUBootStrapMobileImpl::Init(const FTUConfig& Config) {
 	FString ConfigJSON;
 	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> ConfigWriter = TJsonWriterFactory<
 		TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&ConfigJSON);
@@ -21,7 +21,7 @@ void TUBootStrapMobileImpl::Init(const TUType::Config& Config) {
 	ConfigWriter->WriteValue("clientID", Config.ClientID);
 	ConfigWriter->WriteValue("clientToken", Config.ClientToken);
 	ConfigWriter->WriteValue("serverUrl", Config.ServerURL);
-	ConfigWriter->WriteValue("isCN", Config.RegionType == TUType::CN);
+	ConfigWriter->WriteValue("isCN", Config.RegionType == ERegionType::CN);
 	if (Config.DBConfig.Enable)
 	{
 		ConfigWriter->WriteObjectStart("dbConfig");
@@ -48,7 +48,7 @@ void TUBootStrapMobileImpl::Init(const TUType::Config& Config) {
 
 }
 
-void TUBootStrapMobileImpl::Login(TArray<FString> Permissions, TFunction<void(const FTapUser& User)> SuccessBlock,
+void TUBootStrapMobileImpl::Login(TArray<FString> Permissions, TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
 	
 #if PLATFORM_IOS
@@ -72,7 +72,7 @@ void TUBootStrapMobileImpl::Login(TArray<FString> Permissions, TFunction<void(co
 #endif
 }
 
-void TUBootStrapMobileImpl::AnonymouslyLogin(TFunction<void(const FTapUser& User)> SuccessBlock,
+void TUBootStrapMobileImpl::AnonymouslyLogin(TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
 #if PLATFORM_IOS
 	dispatch_async(dispatch_get_main_queue(), ^{
@@ -92,11 +92,11 @@ void TUBootStrapMobileImpl::Logout() {
 	TUMobileBridge::AsyncPerform(TAP_BOOTSTRAP_SERVICE, "logout", "");
 }
 
-TSharedPtr<FTapUser> TUBootStrapMobileImpl::GetUser() {
+TSharedPtr<FTDSUser> TUBootStrapMobileImpl::GetUser() {
 #if PLATFORM_IOS
 	TDSUser *iOSUser = [TDSUser currentUser];
 	if (iOSUser) {
-		TSharedPtr<FTapUser> User = MakeShareable(new FTapUser((NSObject *)iOSUser));
+		TSharedPtr<FTDSUser> User = MakeShareable(new FTDSUser((NSObject *)iOSUser));
 		return User;
 	} else {
 		return nullptr;
@@ -107,7 +107,7 @@ TSharedPtr<FTapUser> TUBootStrapMobileImpl::GetUser() {
 	if (ResultJsonObject.IsValid() && ResultJsonObject->GetIntegerField("getUserInfoCode") == 0) {
 		FString WrapStr;
 		if (ResultJsonObject->TryGetStringField("wrapper", WrapStr)) {
-			return TUJsonHelper::GetUStruct<FTapUser>(WrapStr);
+			return TUJsonHelper::GetUStruct<FTDSUser>(WrapStr);
 		}
 	}
 	return nullptr;
@@ -116,18 +116,18 @@ TSharedPtr<FTapUser> TUBootStrapMobileImpl::GetUser() {
 	
 }
 
-void TUBootStrapMobileImpl::SetPreferLanguage(TUType::LanguageType LangType) {
+void TUBootStrapMobileImpl::SetPreferLanguage(ELanguageType LangType) {
 	TSharedPtr<FJsonObject> Args = MakeShareable(new FJsonObject);
 	Args->SetNumberField(TEXT("preferredLanguage"),(int)LangType);
-	TUMobileBridge::AsyncPerform(TAP_BOOTSTRAP_SERVICE, "login", TUJsonHelper::GetJsonString(Args));
+	TUMobileBridge::AsyncPerform(TAP_BOOTSTRAP_SERVICE, "setPreferredLanguage", TUJsonHelper::GetJsonString(Args));
 }
 
-void TUBootStrapMobileImpl::DealLoginCallBack(const FString& ResultStr, TFunction<void(const FTapUser& User)> SuccessBlock,
+void TUBootStrapMobileImpl::DealLoginCallBack(const FString& ResultStr, TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
 	auto LoginWrapper = TUJsonHelper::GetUStruct<FTapLoginWrapper>(ResultStr);
 	if (LoginWrapper.IsValid()) {
 		if (LoginWrapper->loginCallbackCode == 0) {
-			auto UserPtr = TUJsonHelper::GetUStruct<FTapUser>(LoginWrapper->wrapper);
+			auto UserPtr = TUJsonHelper::GetUStruct<FTDSUser>(LoginWrapper->wrapper);
 			if (UserPtr.IsValid() && SuccessBlock) {
 				SuccessBlock(*UserPtr.Get());
 				return;
@@ -146,21 +146,24 @@ void TUBootStrapMobileImpl::DealLoginCallBack(const FString& ResultStr, TFunctio
 }
 
 #if PLATFORM_IOS
-void TUBootStrapMobileImpl::DealLoginCallBack(TDSUser* user, NSError* error, TFunction<void(const FTapUser& User)> SuccessBlock,
+void TUBootStrapMobileImpl::DealLoginCallBack(TDSUser* user, NSError* error, TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
-	AsyncTask(ENamedThreads::GameThread, [=]() {
-		if (error) {
-			if (FailBlock) {
-				FTUError Error = IOSHelper::convertError(error);
+	if (error) {
+		if (FailBlock) {
+			FTUError Error = IOSHelper::convertError(error);
+			AsyncTask(ENamedThreads::GameThread, [=]() {
 				FailBlock(Error);
-			}
+			});
 		}
-		else {
-			if (SuccessBlock) {
-				FTapUser User = FTapUser((NSObject *)user);
+	}
+	else {
+		if (SuccessBlock) {
+			FTDSUser User = FTDSUser((NSObject *)user);
+			AsyncTask(ENamedThreads::GameThread, [=]() {
 				SuccessBlock(User);
-			}
+			});
+			
 		}
-	});
+	}
 }
 #endif

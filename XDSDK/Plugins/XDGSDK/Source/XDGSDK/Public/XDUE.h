@@ -7,10 +7,17 @@
 class XDGSDK_API XDUE {
 public:
 
-	DECLARE_MULTICAST_DELEGATE(XUSimpleDelegate)
-
-	// 配置文件初始化
-	static void InitSDK(const FString& GameVersion, TFunction<void(bool Result, const FString& Message)> CallBack);
+	DECLARE_MULTICAST_DELEGATE_TwoParams(FUserStateChangeDelegate, XUType::UserChangeState UserState, const FString& Msg);
+	
+	static FUserStateChangeDelegate OnUserStatusChange;
+	
+	/**
+	* 从XDConfig.json文件中初始化
+	*
+	* @param CallBack        初始化结果回调
+	* @param EditConfig      读取完json文件后，可以动态更改config。（比如修改TapDB的Channel，游戏版本号等）
+	*/
+	static void InitSDK(TFunction<void(bool Result, const FString& Message)> CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig = nullptr);
 
 	// 手动初始化
 	static void InitSDK(const XUType::Config& Config, TFunction<void(bool Result, const FString& Message)> CallBack);
@@ -39,12 +46,8 @@ public:
 	// 注销账户
 	static void AccountCancellation();
 
-	// 被动登出的回调，游戏方需要监听这个代理委托，触发游戏的登出操作（目前只有注销账户才会触发这个）
-	static XUSimpleDelegate OnLogout;
-
-	// 打开用户中心，有绑定和解绑的回调，如果Error指针为空，说明绑定或解绑成功
-	static void OpenUserCenter(TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> BindCallBack,
-	TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> UnbindCallBack);
+	// 打开用户中心
+	static void OpenUserCenter();
 
 	// 检测是否需要补款，如果发现需要补款，会有弹窗封住画面，让用户去移动端完成补款（某些游戏需求）
 	static void CheckPay(TFunction<void(XUType::CheckPayType CheckType)> SuccessBlock, TFunction<void(const FXUError& Error)> FailBlock);
@@ -78,6 +81,9 @@ public:
 	static bool IsPushServiceEnable();
 
 	//TapDB 统计用户
+	static void TrackUser();
+	
+	//TapDB 统计用户
 	static void TrackUser(FString userId);
 
 	//TapDB 设置属性
@@ -94,6 +100,9 @@ public:
 
 	//TapDB 创建角色埋点
 	static void EventCreateRole();
+
+	// 绑定第三方账号
+	static void BindByType(XUType::LoginType BindType, TFunction<void(bool Success, const FXUError& Error)> CallBack);
 
 #if !UE_BUILD_SHIPPING
 	// only test

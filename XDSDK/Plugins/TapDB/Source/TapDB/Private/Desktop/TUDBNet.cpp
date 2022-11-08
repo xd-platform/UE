@@ -8,12 +8,12 @@ TQueue<TSharedPtr<TUDBNet>> TUDBNet::RequestQueue;
 FTimerHandle TUDBNet::RetryTimerHandle = FTimerHandle();
 int TUDBNet::CacheCount = 0;
 
-void TUDBNet::SendEvent(TSharedPtr<FJsonObject> Paras, TFunction<void()> SuccessBlock) {
-	SendEvent(TUDBRegionConfig::Get()->GetEventUrl(), Paras, SuccessBlock);
+void TUDBNet::SendEvent(TSharedPtr<FJsonObject> Paras, TFunction<void()> SuccessBlock, TFunction<void()> FailBlock) {
+	SendEvent(TUDBRegionConfig::Get()->GetEventUrl(), Paras, SuccessBlock, FailBlock);
 }
 
-void TUDBNet::SendEvent(const FString& Url, TSharedPtr<FJsonObject> Paras, TFunction<void()> SuccessBlock)
-{
+void TUDBNet::SendEvent(const FString& Url, TSharedPtr<FJsonObject> Paras, TFunction<void()> SuccessBlock,
+	TFunction<void()> FailBlock) {
 	const TSharedPtr<TUDBNet> request = MakeShareable(new TUDBNet);
 	request->URL = Url;
 	request->Type = Post;
@@ -21,12 +21,14 @@ void TUDBNet::SendEvent(const FString& Url, TSharedPtr<FJsonObject> Paras, TFunc
 	request->Parameters = Paras;
 	// 查下有没有循环引用
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> Response) {
-		if (Response->state == TUHttpResponse::success)
+		if (Response->state == TUHttpResponse::success || Response->state == TUHttpResponse::clientError)
 		{
-			if (SuccessBlock) {
+			if (Response->state == TUHttpResponse::success && SuccessBlock) {
 				SuccessBlock();
+			} else if (Response->state == TUHttpResponse::clientError && FailBlock) {
+				FailBlock();
 			}
-			// 如果请求成功，那么去掉队列的第一个，执行下一个请求
+			// 去掉队列的第一个，执行下一个请求
 			if (!RequestQueue.IsEmpty() && request == *RequestQueue.Peek())
 			{
 				RequestQueue.Pop();

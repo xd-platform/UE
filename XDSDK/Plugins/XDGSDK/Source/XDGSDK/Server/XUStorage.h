@@ -10,6 +10,7 @@ struct FXUStorage
 	static FString InitConfig;
 	static FString IpInfo;
 	static FString TokenInfo;
+	static FString TokenInfoIsInvalid;
 	static FString UserInfo;
 	// static FString ClientId ;
 	static FString PrivacyKey;
@@ -17,7 +18,6 @@ struct FXUStorage
 	static FString ProtocolAgreedKey;
 
 	static FString XD_CACHE_CONFIG;
-	static FString XD_CACHE_AGREEMENT;
 	static FString AgreementKRPush;
 	
 };

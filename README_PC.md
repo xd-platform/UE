@@ -264,5 +264,30 @@ XDSDK支持14种语言，TapSDK仅支持7种，如果XDSDK设置的语言种类�
 	static void EventCreateRole();
 ```
 
+### 协议相关
+```cpp
+// 获取子协议列表
+TArray<FXUAgreementBean> AgreementList = XUAgreement::GetAgreementList();
+
+// 展示协议链接
+XUAgreement::ShowDetailAgreement(Url);
+
+// FXUAgreementBean 定义
+USTRUCT()
+struct FXUAgreementBean
+{
+    GENERATED_BODY()
+    
+    UPROPERTY()
+    FString type;
+
+    UPROPERTY()
+    FString url;
+
+    FXUAgreementBean() = default;
+    FXUAgreementBean(const FString& Type, const FString& Url);
+};
+```
+
 
 

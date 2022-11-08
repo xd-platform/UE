@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd $(cd "$(dirname $0)";pwd)
-python3 ./Android_update_aar.py $1
+python3 ./AndroidUpdateAAR.py $1
 
 
 

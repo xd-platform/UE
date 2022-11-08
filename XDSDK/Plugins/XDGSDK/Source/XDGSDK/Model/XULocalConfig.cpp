@@ -44,7 +44,7 @@ TSharedPtr<XUType::Config> FXULocalConfig::GenerateXUConfig() {
 	ConfigPtr->TapConfig.ClientID = tapsdk.client_id;
 	ConfigPtr->TapConfig.ClientToken = tapsdk.client_token;
 	ConfigPtr->TapConfig.ServerURL = tapsdk.server_url;
-	ConfigPtr->TapConfig.RegionType = ConfigPtr->RegionType == XUType::CN ? TUType::CN : TUType::Global;
+	ConfigPtr->TapConfig.RegionType = ConfigPtr->RegionType == XUType::CN ? ERegionType::CN : ERegionType::Global;
 	ConfigPtr->TapLoginPermissions = tapsdk.permissions;
 	// tap db
 	ConfigPtr->TapConfig.DBConfig.Enable = tapsdk.db_config.enable;
@@ -74,13 +74,6 @@ TSharedPtr<XUType::Config> FXULocalConfig::GenerateXUConfig() {
 	//
 	// ConfigPtr->AppsflyerInfo.DevKey = appsflyer.dev_key;
 	// ConfigPtr->AppsflyerInfo.AppID = appsflyer.app_id;
-
-	if (ConfigPtr->RegionType == XUType::CN) {
-		ConfigPtr->Agreement.Url = "https://protocol.xd.cn/sdk/merger.html";
-		ConfigPtr->Agreement.Version = "latest";
-		ConfigPtr->Agreement.Region = "DF";
-		ConfigPtr->Agreement.IsKRPushServiceSwitchEnable = false;
-	}
 	
 	return ConfigPtr;
 }

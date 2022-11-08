@@ -29,6 +29,14 @@ bool UXDGCommonBPLibrary::IsInitialized(){
     return GetXDGCommonBridge()->IsInitialized();
 }
 
+void UXDGCommonBPLibrary::ShowDetailAgreement(FString Url) {
+    GetXDGCommonBridge()->ShowDetailAgreement(Url);
+}
+
+TArray<FXDGAgreement> UXDGCommonBPLibrary::GetAgreementList() {
+    return GetXDGCommonBridge()->GetAgreementList();
+}
+
 void UXDGCommonBPLibrary::Report(FString serverId, FString roleId, FString roleName){
     GetXDGCommonBridge()->Report(serverId, roleId, roleName);
 }
@@ -36,8 +44,6 @@ void UXDGCommonBPLibrary::Report(FString serverId, FString roleId, FString roleN
 void UXDGCommonBPLibrary::StoreReview(){
     GetXDGCommonBridge()->StoreReview();
 }
-
-
 
 
 void UXDGCommonBPLibrary::ShareFlavors(int32 type, FString uri, FString message){
@@ -49,10 +55,12 @@ void UXDGCommonBPLibrary::ShareImage(int32 type, FString imagePath){
 }
 
 
-
-
 void UXDGCommonBPLibrary::TrackUser(FString userId){
     GetXDGCommonBridge()->TrackUser(userId);
+}
+
+void UXDGCommonBPLibrary::TrackUser() {
+    GetXDGCommonBridge()->TrackUser();
 }
 
 void UXDGCommonBPLibrary::TrackRole(FString serverId, FString roleId, FString roleName, int32 level){

@@ -37,6 +37,7 @@ import com.xd.intl.common.entities.TapDBConfig;
 import com.xd.intl.common.entities.TapSdkConfig;
 import com.xd.intl.common.base.XDGError;
 import com.xd.intl.common.utils.CurrentSessionDataManager;
+import com.xd.intl.common.bean.XDGAgreement;
 
 import java.io.File;
 import java.util.HashMap;
@@ -115,10 +116,33 @@ public class XDGCommonUnreal4 {
         print("点击 report:" + serverId + " roleId:" + roleId + " roleName:" + roleName);
         XDGSDK.report(serverId, roleId, roleName);
     }
+    
+    public static void showDetailAgreement(String url) {
+        print("调用 showDetailAgreement: " + url);
+        XDGSDK.showDetailAgreement(url);
+    }  
+    
+    public static XDGAgreement[] getAgreementList() {
+         print("调用 getAgreementList");
+         List<XDGAgreement> list = XDGSDK.getAgreementList();
+         //初始化需要得到的数组
+         XDGAgreement[] array = new XDGAgreement[list.size()];
+         
+         //使用for循环得到数组
+         for(int i = 0; i < list.size();i++){
+             array[i] = list.get(i);
+         }
+         return array;
+    }
 
     public static void trackUser(String userId) {
         print("点击trackUser");
         XDGSDK.trackUser(userId);
+    }
+    
+    public static void trackUser() {
+        print("点击trackUser");
+        XDGSDK.trackUser();
     }
 
     public static void trackRole(String serverId,

@@ -2,9 +2,7 @@
 
 
 #include "XUPrivacyWidget.h"
-
 #include "SWebBrowser.h"
-#include "TapCommonBPLibrary.h"
 #include "XULanguageManager.h"
 #include "TUHelper.h"
 #include "TUHUD.h"
@@ -12,6 +10,7 @@
 #include "XUConfigManager.h"
 #include "XUPrivacyDisagreeWidget.h"
 #include "Components/CheckBox.h"
+#include "Agreement/XUAgreementManager.h"
 
 
 void UXUPrivacyWidget::ShowPrivacy(TFunction<void()> Completed)
@@ -38,7 +37,7 @@ void UXUPrivacyWidget::NativeOnInitialized()
 	ComfirmButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnConfirmBtnClick);
 	DeclineButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnDeclineBtnClick);
 
-	OriginURL = XUConfigManager::GetAgreementUrl();
+	OriginURL = XUAgreementManager::GetAgreementUrl();
 	// OriginURL = "https://protocol.xd.com/sdk/merger-test.html?language=ru_RU";
 	if (OriginURL.Contains("?"))
 	{
@@ -161,7 +160,7 @@ bool UXUPrivacyWidget::OnBeforeNavigation(const FString& URL, const FWebNavigati
 	}
 	else
 	{
-		UTapCommonBPLibrary::LaunchURL(*URL, nullptr, nullptr);
+		TUHelper::LaunchURL(*URL, nullptr, nullptr);
 		ComfirmButton->SetVisibility(ESlateVisibility::Visible);
 		DeclineButton->SetVisibility(ESlateVisibility::Visible);
 		return true;

@@ -9,7 +9,12 @@ typedef TFunction<void(bool Result, const FString& Message)> XUInitCallback;
 class XUImpl
 {
 public:
+	DECLARE_MULTICAST_DELEGATE(FSimpleDelegate)
 
+	static FSimpleDelegate OnLoginSuccess;
+	static FSimpleDelegate OnLogoutSuccess;
+	static FSimpleDelegate OnTokenIsInvalid;
+	
 	enum InitStateType {
 		Uninit,
 		Initing,
@@ -18,7 +23,7 @@ public:
 
 	InitStateType InitState = Uninit;
 	
-	void InitSDK(const FString& GameVersion, XUInitCallback CallBack);
+	void InitSDK(XUInitCallback CallBack, TFunction<void(TSharedRef<XUType::Config> Config)> EditConfig);
 	
 	void InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack);
 	
@@ -42,8 +47,12 @@ public:
 	void ResetPrivacy();
 
 	void AccountCancellation();
+
+	void Logout();
 	
 	static TSharedPtr<XUImpl>& Get();
+
+	void BindByType(XUType::LoginType BindType, TFunction<void(bool Success, const FXUError& Error)> CallBack);
 
 
 private:
@@ -57,10 +66,10 @@ private:
 
 	void AsyncLocalTdsUser(const FString& userId, const FString& sessionToken);
 	
-	void CheckAgreement(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack);
-
 	void InitFinish(XUInitCallback CallBack);
 
 	void RequestServerConfig();
+
+	void LoginSuccess(TSharedPtr<FXUUser> User, TFunction<void(TSharedPtr<FXUUser>)> SuccessBlock);
 
 };

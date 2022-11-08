@@ -30,5 +30,8 @@ public:
 	/// 设置当前游戏的GameInstance。
 	/// @param GameInstance 游戏当前GameInstance
 	static void SetGameInstance(TWeakObjectPtr<UGameInstance> GameInstance);
+
+	// 设置打开外部浏览器前的回调（用于解决打开外部浏览器出现意外的状态，比如全屏游戏会覆盖浏览器）
+	static void SetBlockBeforeLaunchUrl(TFunction<void()> Block);
 	
 };

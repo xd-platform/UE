@@ -1,6 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-#if PLATFORM_ANDROID
 #pragma once
 
 #include "Core.h"
@@ -35,6 +33,7 @@ public:
 	void ShareImage(int32 type, FString imagePath);
 
 	void TrackUser(FString userId);
+	void TrackUser();
 	void TrackRole(FString serverId, FString roleId, FString roleName, int32 level);
 	void TrackEvent(FString eventName);
 
@@ -50,7 +49,10 @@ public:
 	void DevelopInit(int32 num);
 
 	void TrackAchievement();
+
 	void EventCompletedTutorial();
 	void EventCreateRole();
+
+	virtual void ShowDetailAgreement(FString Url) override;
+	virtual TArray<FXDGAgreement> GetAgreementList() override;
 };
-#endif 

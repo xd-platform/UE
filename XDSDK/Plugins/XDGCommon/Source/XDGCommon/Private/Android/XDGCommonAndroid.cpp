@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#if PLATFORM_ANDROID
-
 #include "XDGCommonAndroid.h"
 #include "Engine.h"
+#include "TUDebuger.h"
 #include "XDGCommon.h"
+#include "Android/AndroidJavaEnv.h"
 
 #define UNREAL4_CLASS_NAME_COMMON "com/xd/XDGCommonUnreal4"
 
@@ -190,6 +190,21 @@ void XDGCommonAndroid::TrackUser(FString userId){
 
             env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod, jUserId);
             env->DeleteLocalRef(jUserId);
+        }
+    }
+    env->DeleteLocalRef(jXDSDKUnreal4Class);
+}
+
+void XDGCommonAndroid::TrackUser() {
+    JNIEnv *env = FAndroidApplication::GetJavaEnv();
+    auto jXDSDKUnreal4Class = FAndroidApplication::FindJavaClass(UNREAL4_CLASS_NAME_COMMON);
+    if (jXDSDKUnreal4Class)
+    {
+        const char *strMethod = "trackUser";
+        auto jMethod = env->GetStaticMethodID(jXDSDKUnreal4Class, strMethod, "()V");
+        if (jMethod)
+        {
+            env->CallStaticVoidMethod(jXDSDKUnreal4Class, jMethod);
         }
     }
     env->DeleteLocalRef(jXDSDKUnreal4Class);
@@ -418,6 +433,66 @@ void XDGCommonAndroid::EventCreateRole(){
     env->DeleteLocalRef(jXDSDKUnreal4Class);   
 }
 
+void XDGCommonAndroid::ShowDetailAgreement(FString Url) {
+    // #if USE_ANDROID_JNI
+    // #endif
+    JNIEnv* JEnv = FAndroidApplication::GetJavaEnv();
+    if (JEnv == nullptr) {
+        return;
+    }
+    jclass Class = FAndroidApplication::FindJavaClass(UNREAL4_CLASS_NAME_COMMON);
+    if (Class == nullptr) {
+        return;
+    }
+    const char *strMethod = "showDetailAgreement";
+    auto jMethod = JEnv->GetStaticMethodID(Class, strMethod, "(Ljava/lang/String;)V");
+    if (jMethod) {
+        auto NameJava = FJavaHelper::ToJavaString(JEnv, Url);
+        JEnv->CallStaticVoidMethod(Class, jMethod, *NameJava);
+    }
+    
+    JEnv->DeleteLocalRef(Class);
+}
+
+TArray<FXDGAgreement> XDGCommonAndroid::GetAgreementList() {
+    TArray<FXDGAgreement> ResultArray;
+    JNIEnv* JEnv = FAndroidApplication::GetJavaEnv();
+    if (JEnv == nullptr) {
+        return ResultArray;
+    }
+    jclass Class = FAndroidApplication::FindJavaClass(UNREAL4_CLASS_NAME_COMMON);
+    jclass Agreement_Class = FAndroidApplication::FindJavaClass("com/xd/intl/common/bean/XDGAgreement");
+    if (Class == nullptr || Agreement_Class == nullptr) {
+        return ResultArray;
+    }
+    auto getAgreementList_method = JEnv->GetStaticMethodID(Class, "getAgreementList", "()[Lcom/xd/intl/common/bean/XDGAgreement;");
+    auto getType_method = JEnv->GetMethodID(Agreement_Class, "getType", "()Ljava/lang/String;");
+    auto getUrl_method = JEnv->GetMethodID(Agreement_Class, "getUrl", "()Ljava/lang/String;");
+    if (getAgreementList_method) {
+        TUDebuger::WarningLog("getAgreementList_method");
+    }
+    if (getType_method) {
+        TUDebuger::WarningLog("getType_method");
+    }
+    if (getUrl_method) {
+        TUDebuger::WarningLog("getUrl_method");
+    }
+    if (getAgreementList_method && getType_method && getUrl_method) {
+        auto ObjectArray = (jobjectArray)(JEnv->CallStaticObjectMethod(Class, getAgreementList_method));
+        int num = JEnv->GetArrayLength(ObjectArray);
+        for (int i = 0; i < num; i++)
+        {
+            jobject jAgreementObject = JEnv->GetObjectArrayElement(ObjectArray, i);
+            FXDGAgreement Agreement;
+            Agreement.type = FJavaHelper::FStringFromLocalRef(JEnv, (jstring)JEnv->CallObjectMethod(jAgreementObject, getType_method));
+            Agreement.url = FJavaHelper::FStringFromLocalRef(JEnv, (jstring)JEnv->CallObjectMethod(jAgreementObject, getUrl_method));
+            ResultArray.Add(Agreement);
+        }
+    }
+    
+    JEnv->DeleteLocalRef(Class);
+    return ResultArray;
+}
 
 
 #ifdef __cplusplus
@@ -475,6 +550,4 @@ extern "C"
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif

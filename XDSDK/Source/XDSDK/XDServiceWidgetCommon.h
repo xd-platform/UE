@@ -79,12 +79,21 @@ class XDSDK_API UXDServiceWidgetCommon : public UUserWidget
 
 	UFUNCTION()
 	void OnIsInitializedClicked();
+
+	UFUNCTION()
+	void OnGetAgreementBeansClicked();
+
+	UFUNCTION()
+	void OnOpenAgreementBeanClicked();
 	
 	UFUNCTION()
 	void OnReportClicked();
 	
 	UFUNCTION()
 	void OnStoreReviewClicked();
+
+	UFUNCTION()
+	void OnTrackUser_XDIDClicked();
 
 	UFUNCTION()
 	void OnTrackUserClicked();
@@ -164,6 +173,14 @@ protected:
 	UServiceItemWidget* IsInitialized;
 
 	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* GetAgreementBeans;
+
+	UPROPERTY(Meta = (BindWidget))
+	UEditableTextBox* ETB_AgreementBean_Url;
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* OpenAgreementBean;
+
+	UPROPERTY(Meta = (BindWidget))
 	UEditableTextBox* ETB_Report_ServerID;
 	UPROPERTY(Meta = (BindWidget))
 	UEditableTextBox* ETB_Report_RoleID;
@@ -180,6 +197,9 @@ protected:
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* TrackUser;
 
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* TrackUser_XDID;
+	
 	UPROPERTY(Meta = (BindWidget))
 	UEditableTextBox* ETB_Role_ServerID;
 	UPROPERTY(Meta = (BindWidget))

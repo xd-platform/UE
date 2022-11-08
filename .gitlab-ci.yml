@@ -1,12 +1,143 @@
-stages:
-  - build
+#stages:
+#  - build
+#
+#build:
+#  tags:
+#    - ios-builder
+#  stage: build
+#  script:
+#    - ./.ci/build.sh
+#  only:
+#    - merge_requests
 
-build:
+stages:
+  - arch_plugins
+  - check
+  - product_app
+
+  
+variables:
+  AndroidPackageDisableOnWindow: 1
+#  AndroidPackageDisableOnMac: 1
+
+product_app_mac:
   tags:
     - ios-builder
-  stage: build
+  stage: product_app
   script:
-    - ./.ci/build.sh
-  only:
-    - merge_requests
+    - echo $CI_COMMIT_TITLE
+    - export
+    - python3 package_upload.py $CI_COMMIT_TITLE
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_COMMIT_TITLE =~ /-ios/
+    - if: $CI_COMMIT_TITLE =~ /-android/
+    - if: $CI_COMMIT_TITLE =~ /-mac/
+    - if: $CI_COMMIT_TITLE =~ /-mobile/
+    - if: $CI_COMMIT_TITLE =~ /-pc/
+    - if: $CI_COMMIT_TITLE =~ /-all/
 
+
+product_app_win:
+#  variables:
+#    ANDROID_HOME:                   "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk"
+#    APPDATA:                        "C:\\Users\\qiank\\AppData\\Roaming"
+#    CLIENTNAME:                     "HuangYiFengTapT"
+#    HOMEDRIVE:                      "C:"
+#    HOMEPATH:                       "\\Users\\qiank"
+#    JAVA_HOME:                      "C:\\Program Files\\Android\\Android Studio\\jre"
+#    LOCALAPPDATA:                   "C:\\Users\\qiank\\AppData\\Local"
+#    LOGONSERVER:                    "\\\\TDSPC"
+#    NDK_ROOT:                       "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk\\ndk\\21.4.7075529"
+#    NDKROOT:                        "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk\\ndk\\21.4.7075529"
+#    SESSIONNAME:                    "RDP-Tcp#0"
+#    TEMP:                           "C:\\Users\\qiank\\AppData\\Local\\Temp"
+#    TMP:                            "C:\\Users\\qiank\\AppData\\Local\\Temp"
+#    USERDOMAIN:                     "TDSPC"
+#    USERDOMAIN_ROAMINGPROFILE:      "TDSPC"
+#    USERNAME:                       "tdswin"
+#    USERPROFILE:                    "C:\\Users\\qiank"
+  tags:
+    - tds-packager-win
+  stage: product_app
+  script:
+    - echo $CI_COMMIT_TITLE
+    - 'dir env:'
+    - python package_upload.py $CI_COMMIT_TITLE
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_COMMIT_TITLE =~ /-android/
+    - if: $CI_COMMIT_TITLE =~ /-win/
+    - if: $CI_COMMIT_TITLE =~ /-mobile/
+    - if: $CI_COMMIT_TITLE =~ /-pc/
+    - if: $CI_COMMIT_TITLE =~ /-all/
+    
+manual_product_app_mac:
+  tags:
+    - ios-builder
+  stage: product_app
+  script:
+    - echo $CI_COMMIT_TITLE
+    - export
+    - python3 package_upload.py -all
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+
+
+manual_product_app_win:
+  tags:
+    - tds-packager-win
+  stage: product_app
+  script:
+    - echo $CI_COMMIT_TITLE
+    - 'dir env:'
+    - python package_upload.py -all
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+
+arch_plugins:
+  tags:
+    - ios-builder
+  stage: arch_plugins
+  script:
+    - echo "arch"
+    - echo $CI_COMMIT_TITLE
+    - python3 archive_plugins.py
+  rules:
+    - if: $CI_COMMIT_TITLE =~ /-arch/
+  artifacts:
+    name: XDSDK_UE_$CI_COMMIT_SHORT_SHA
+    paths:
+      - Product/Plugins.zip
+    expire_in: 1 week
+
+check_mac:
+  tags:
+    - ios-builder
+  stage: check
+  script:
+    - echo $CI_COMMIT_TITLE
+    - export
+    - python3 check_packages.py
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_COMMIT_TITLE =~ /-check/
+
+
+check_win:
+  tags:
+    - tds-packager-win
+  stage: check
+  script:
+    - echo $CI_COMMIT_TITLE
+    - 'dir env:'
+    - python check_packages.py
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_COMMIT_TITLE =~ /-check/

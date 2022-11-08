@@ -7,7 +7,7 @@
 FString TUDBPCImpl::First_login_type = "";
 FString TUDBPCImpl::First_open_id = "";
 
-void TUDBPCImpl::Init(TUDBType::Config InitConfig) {
+void TUDBPCImpl::Init(FTUDBConfig InitConfig) {
 	Config = InitConfig;
 	TapDBEventPtr = MakeShareable(new TUDBEvent(Config.ClientId));
 	

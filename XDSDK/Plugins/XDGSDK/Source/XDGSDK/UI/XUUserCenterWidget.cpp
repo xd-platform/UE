@@ -15,15 +15,12 @@
 UXUUserCenterWidget::UXUUserCenterWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 }
 
-void UXUUserCenterWidget::ShowWidget(TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> BindCallBack,
-                                     TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> UnbindCallBack) {
+void UXUUserCenterWidget::ShowWidget() {
 	if (UClass* MyWidgetClass = LoadClass<UXUUserCenterWidget>(
 		nullptr, TEXT("WidgetBlueprint'/XDGSDK/BPXUUserCenter.BPXUUserCenter_C'"))) {
 		if (TUSettings::GetGameInstance().IsValid()) {
 			auto widget = CreateWidget<UXUUserCenterWidget>(TUSettings::GetGameInstance().Get(), MyWidgetClass);
 			widget->AddToViewport(TUSettings::GetUILevel());
-			widget->BindCallBack = BindCallBack;
-			widget->UnbindCallBack = UnbindCallBack;
 		}
 	}
 }
@@ -195,14 +192,7 @@ void UXUUserCenterWidget::Bind(UXUUserCenterItemWidget* CurrentWidget, TSharedPt
 					UTUHUD::ShowToast(langModel->tds_bind_error);
 				}
 			}
-			if (BindCallBack != nullptr) {
-				TSharedPtr<FXUError> TempError = nullptr;
-				if (!ResponseModel.IsValid()) {
-					TempError = MakeShareable(new FXUError(Error));
-				}
-				int Type = Paras->GetNumberField("type");
-				BindCallBack((XUType::LoginType)Type, TempError);
-			}
+			XDUE::OnUserStatusChange.Broadcast(XUType::UserBindSuccess, Model->LoginTypeName);
 		});
 	};
 
@@ -240,18 +230,12 @@ void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TShared
 				UTUHUD::ShowToast(langModel->tds_unbind_guest_return);
 			}
 		}
-		if (UnbindCallBack != nullptr) {
-			TSharedPtr<FXUError> TempError = nullptr;
-			if (!ResponseModel.IsValid()) {
-				TempError = MakeShareable(new FXUError(Error));
-			}
-			UnbindCallBack(Model->LoginType, TempError);
-		}
+		XDUE::OnUserStatusChange.Broadcast(XUType::UserUnBindSuccess, Model->LoginTypeName);
 		if (ResponseModel.IsValid()) {
 			// 解绑的类型和当前登录的类型一样，那么退出当前账号
 			if (userMd->GetLoginType() == Model->LoginType) {
 				RemoveFromParent();
-				XDUE::OnLogout.Broadcast();
+				XDUE::OnUserStatusChange.Broadcast(XUType::UserLogout, "");
 			}
 		}
 	});

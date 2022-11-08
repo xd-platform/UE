@@ -5,7 +5,7 @@ class TULoginMobileImpl: public TULoginImpl{
 public:
 	TULoginMobileImpl();
 	
-	virtual void Init(TULoginType::Config _Config) override;
+	virtual void Init(FTULoginConfig _Config) override;
 	virtual TSharedPtr<FTULoginProfileModel> GetProfile() override;
 	virtual void FetchProfile(
 		TFunction<void(TSharedPtr<FTULoginProfileModel> ModelPtr, const FTUError& Error)> CallBack) override;

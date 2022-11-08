@@ -14,7 +14,7 @@ public:
 
 	static FString convertString(NSString *string);
 
-	static NSString * convertString(FString& string);
+	static NSString * convertString(const FString& string);
 
 	static FTUError convertError(NSError *error);
 

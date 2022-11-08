@@ -10,13 +10,13 @@ class TUDBNet: public TUHttpRequest
 	
 public:
 
-	static void SendEvent(TSharedPtr<FJsonObject> Paras, TFunction<void()> SuccessBlock = nullptr);
+	static void SendEvent(TSharedPtr<FJsonObject> Paras, TFunction<void()> SuccessBlock = nullptr, TFunction<void()> FailBlock = nullptr);
 
 	static int CacheCount;
 
 private:
 
-	static void SendEvent(const FString& Url, TSharedPtr<FJsonObject> Paras, TFunction<void()> SuccessBlock);
+	static void SendEvent(const FString& Url, TSharedPtr<FJsonObject> Paras, TFunction<void()> SuccessBlock, TFunction<void()> FailBlock);
 
 	static void PerformRequest(const TSharedPtr<TUDBNet>& Request);
 

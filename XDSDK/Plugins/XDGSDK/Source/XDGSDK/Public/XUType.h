@@ -15,6 +15,12 @@ namespace XUType {
 		PayCancel
 	};
 
+	enum UserChangeState {
+		UserLogout          = 0x9001,   // user logout
+		UserBindSuccess     = 0x1001,   // user bind success,msg = entry type in string,eg: @"TAPTAP"
+		UserUnBindSuccess   = 0x1002,   // user unbind success,msg = entry type in string
+	};
+
 	enum LangType {
 		ZH_CN = 0,
 		// 中文
@@ -80,12 +86,12 @@ namespace XUType {
 		FString ServerID;
 	};
 
-	struct AgreementConfig {
-		FString Url;
-		FString Version;
-		FString Region;
-		bool IsKRPushServiceSwitchEnable = false;
-	};
+	// struct AgreementConfig {
+	// 	FString Url;
+	// 	FString Version;
+	// 	FString Region;
+	// 	bool IsKRPushServiceSwitchEnable = false;
+	// };
 
 	struct BindEntriesConfig {
 		bool CanBind;
@@ -102,7 +108,7 @@ namespace XUType {
 		FString ClientId;
 
 		/// TapSDK 配置
-		TUType::Config TapConfig;
+		FTUConfig TapConfig;
 
 		/// 游戏对外名称 显示在 Facebook 登录和客服页面中
 		FString GameName;
@@ -142,6 +148,6 @@ namespace XUType {
 		FString WebPayUrl;
 
 		/// 协议内容
-		AgreementConfig Agreement;
+		// AgreementConfig Agreement;
 	};
 }

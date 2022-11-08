@@ -4,7 +4,7 @@
 
 class TUDBPCImpl: public TUDBImpl {
 public:
-	virtual void Init(TUDBType::Config InitConfig) override;
+	virtual void Init(FTUDBConfig InitConfig) override;
 	virtual void SetUserWithLoginType(const FString& UserId, const FString& LoginType) override;
 	virtual void ClearUser() override;
 	virtual void SetName(const FString& Name) override;

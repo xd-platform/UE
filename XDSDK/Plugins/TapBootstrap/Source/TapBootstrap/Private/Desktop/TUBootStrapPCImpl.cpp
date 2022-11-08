@@ -2,13 +2,14 @@
 
 #include "TapUELogin.h"
 #include "TUHelper.h"
+#include "TULanguage.h"
 #include "TULoginType.h"
 
-void TUBootStrapPCImpl::Init(const TUType::Config& Config) {
-	TUType::Config::Init(Config);
+void TUBootStrapPCImpl::Init(const FTUConfig& Config) {
+	FTUConfig::Init(Config);
 	
 	// 初始化 TapLogin
-	TULoginType::Config LoginConfig;
+	FTULoginConfig LoginConfig;
 	LoginConfig.ClientID = Config.ClientID;
 	LoginConfig.RegionType = Config.RegionType;
 	TapUELogin::Init(LoginConfig);
@@ -20,12 +21,12 @@ void TUBootStrapPCImpl::Init(const TUType::Config& Config) {
 	
 }
 
-void TUBootStrapPCImpl::Login(TArray<FString> Permissions, TFunction<void(const FTapUser& User)> SuccessBlock,
+void TUBootStrapPCImpl::Login(TArray<FString> Permissions, TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
 	TUBootStrapImpl::Login(Permissions, SuccessBlock, FailBlock);
 }
 
-void TUBootStrapPCImpl::AnonymouslyLogin(TFunction<void(const FTapUser& User)> SuccessBlock,
+void TUBootStrapPCImpl::AnonymouslyLogin(TFunction<void(const FTDSUser& User)> SuccessBlock,
 	TFunction<void(const FTUError& Error)> FailBlock) {
 	TUBootStrapImpl::AnonymouslyLogin(SuccessBlock, FailBlock);
 }
@@ -34,10 +35,10 @@ void TUBootStrapPCImpl::Logout() {
 	TapUELogin::Logout();
 }
 
-TSharedPtr<FTapUser> TUBootStrapPCImpl::GetUser() {
+TSharedPtr<FTDSUser> TUBootStrapPCImpl::GetUser() {
 	return TUBootStrapImpl::GetUser();
 }
 
-void TUBootStrapPCImpl::SetPreferLanguage(TUType::LanguageType LangType) {
-	TapUELogin::ChangeLanguage(LangType);
+void TUBootStrapPCImpl::SetPreferLanguage(ELanguageType LangType) {
+	TULanguage::SetCurrentType(LangType);
 }

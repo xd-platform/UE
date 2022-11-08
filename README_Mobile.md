@@ -82,6 +82,29 @@ static void GetRegionInfo();
 //countryCode, city, timeZone, locationInfoType
 UPROPERTY(BlueprintAssignable, Category = "XDGCommon")
 static FXDGSDKGetRegionInfoCompleted OnXDGSDKGetRegionInfoCompleted;
+
+// 获取子协议列表
+TArray<FXDGAgreement> AgreementList = UXDGCommonBPLibrary::GetAgreementList();
+
+// 展示协议链接
+UXDGCommonBPLibrary::ShowDetailAgreement(Url);
+
+// FXDGAgreement 定义
+USTRUCT()
+struct FXDGAgreement
+{
+    GENERATED_BODY()
+    
+    UPROPERTY()
+    FString type;
+
+    UPROPERTY()
+    FString url;
+
+    FXDGAgreement() = default;
+    FXDGAgreement(const FString& Type, const FString& Url): type(Type), url(Url) {};
+};
+
 ```
 
 ## XDGAccount 使用

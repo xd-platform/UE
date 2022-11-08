@@ -23,7 +23,7 @@ class XDGSDK_API UXUUserCenterWidget : public UUserWidget
 public:
 	UXUUserCenterWidget(const FObjectInitializer& ObjectInitializer);
 
-	static void ShowWidget(TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> BindCallBack, TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> UnbindCallBack);
+	static void ShowWidget();
 
 protected:
 	
@@ -81,9 +81,6 @@ private:
 
 	TSharedPtr<FXUUser> userMd;
 	TSharedPtr<FXULanguageModel> langModel;
-
-	TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> BindCallBack;
-	TFunction<void(XUType::LoginType Type, TSharedPtr<FXUError>)> UnbindCallBack;
 
 	FString GetLoginTypeName();
 

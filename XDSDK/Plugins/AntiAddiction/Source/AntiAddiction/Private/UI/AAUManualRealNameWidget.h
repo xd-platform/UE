@@ -7,7 +7,7 @@
 #include "Components/HorizontalBox.h"
 #include "Components/RichTextBlock.h"
 #include "Components/VerticalBox.h"
-#include "Model/AAUConfigModel.h"
+#include "Model/China/AAUChinaConfigModel.h"
 #include "AAUManualRealNameWidget.generated.h"
 
 /**

@@ -12,9 +12,9 @@ private:
 	static TSharedPtr<XUTracker> SingtonInstance;
 	
 	TSharedPtr<FJsonObject> PresetProperties;
-	int64 EventIndex;
+	int64 EventIndex = 0;
 
-	bool ProtocolAgreed;
+	bool ProtocolAgreed = false;
 	TSharedPtr<FJsonObject> GetDeviceInfos();
 	TSharedPtr<FJsonObject> GetCommonProperties();
 	TSharedPtr<FJsonObject> GetStaticPresetProperties();

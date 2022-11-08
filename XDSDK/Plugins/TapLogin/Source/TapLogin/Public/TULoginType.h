@@ -1,14 +1,19 @@
 #pragma once
 #include "TUType.h"
+#include "TULoginType.generated.h"
 
-namespace TULoginType {
-	
-	class Config {
-	public:
-		FString ClientID;
-		TUType::RegionType RegionType = TUType::CN;
-		bool RoundCorner = true;
-		TUType::LanguageType LanguageType = TUType::AUTO;
-	};
-	
+USTRUCT(BlueprintType)
+struct FTULoginConfig
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere,	BlueprintReadWrite)
+	FString ClientID;
+
+	UPROPERTY(EditAnywhere,	BlueprintReadWrite)
+	ERegionType RegionType = ERegionType::CN;
+
+	UPROPERTY(EditAnywhere,	BlueprintReadWrite)
+	bool bRoundCorner = true;
+
 };

@@ -28,13 +28,13 @@ TUDBMobileImpl::TUDBMobileImpl() {
 	TUMobileBridge::Register(TAPDB_SERVICE_CLZ, TAPDB_SERVICE_IMPL);
 }
 
-void TUDBMobileImpl::Init(TUDBType::Config InitConfig) {
+void TUDBMobileImpl::Init(FTUDBConfig InitConfig) {
 	FString JsonOutString;
 	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonOutString);
 	Writer->WriteObjectStart();
 	Writer->WriteValue(TEXT("clientId"), InitConfig.ClientId);
 	Writer->WriteValue(TEXT("channel"), InitConfig.Channel);
-	Writer->WriteValue(TEXT("isCN"), InitConfig.RegionType == TUType::CN);
+	Writer->WriteValue(TEXT("isCN"), InitConfig.RegionType == ERegionType::CN);
 	Writer->WriteValue(TEXT("gameVersion"), InitConfig.GameVersion);
 	Writer->WriteObjectEnd();
 	Writer->Close();
@@ -104,7 +104,7 @@ void TUDBMobileImpl::OnCharge(const FString& OrderId, const FString& Product, in
 	Writer->WriteValue(TEXT("properties"), TUJsonHelper::GetJsonString(Properties));
 	Writer->WriteObjectEnd();
 	Writer->Close();
-	TUMobileBridge::AsyncPerform(TAPDB_SERVICE, "onCharge", JsonOutString);
+	TUMobileBridge::AsyncPerform(TAPDB_SERVICE, "onChargeWithProperties", JsonOutString);
 }
 
 void TUDBMobileImpl::TrackEvent(const FString& EventName, TSharedPtr<FJsonObject> Properties) {
@@ -238,6 +238,16 @@ void TUDBMobileImpl::AdvertiserIDCollectionEnabled(bool Enable) {
 	TUDBImpl::AdvertiserIDCollectionEnabled(Enable);
 #endif
 	
+}
+
+void TUDBMobileImpl::EnableLog(bool Enable) {
+	FString JsonOutString;
+	TSharedRef<TJsonWriter<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>> Writer = TJsonWriterFactory<TCHAR, TCondensedJsonPrintPolicy<TCHAR>>::Create(&JsonOutString);
+	Writer->WriteObjectStart();
+	Writer->WriteValue(TEXT("enableLog"), Enable);
+	Writer->WriteObjectEnd();
+	Writer->Close();
+	TUMobileBridge::AsyncPerform(TAPDB_SERVICE, "enableLog", JsonOutString);
 }
 
 #if PLATFORM_ANDROID

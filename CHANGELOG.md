@@ -1,3 +1,22 @@
+# 6.7.0 （2022年11月8日）
+
+## PC SDK
+### New Feature
+- 协议逻辑调整：用户主动退出登录时会触发协议新签弹窗
+- 新增获取当前子协议列表和展示协议链接窗口的 API
+- 新增 TrackUser 不需要参数的接口，会默认传递当前 xdid
+
+
+## Mobile SDK
+### New Feature
+- [Android][iOS] 协议逻辑调整：用户主动退出登录时会触发协议新签弹窗
+- [Android][iOS] 新增获取当前子协议列表和展示协议链接窗口的 API
+- [Android][iOS] 新增 TrackUser 不需要参数的接口，会默认传递当前 xdid
+- [Android][iOS] 以 Twitter 登录的用户如果 Twitter token 失效会拦截自动登录
+- [iOS] iOS 13 以下的系统支持以网页授权的方式登录 Apple 账号
+- [iOS] 新增 token 失效的 Code (4101)，自动登录失效的 msg 为 "XD token expired."
+
+
 # 6.6.0 （2022年10月18日）
 
 ## Mobile SDK

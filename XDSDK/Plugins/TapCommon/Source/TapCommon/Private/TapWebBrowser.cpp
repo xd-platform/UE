@@ -2,7 +2,6 @@
 
 
 #include "TapWebBrowser.h"
-
 #include "SWebBrowser.h"
 #include "TapCommon.h"
 #include "TUHelper.h"
@@ -106,6 +105,12 @@ void UTapWebBrowser::NativeOnInitialized()
 	{
 		BTN_Retry->OnClicked.AddDynamic(this, &UTapWebBrowser::Reload);
 	}
+}
+
+void UTapWebBrowser::NativeDestruct()
+{
+	Super::NativeDestruct();
+	FTapCommonModule::TapThrobberDismiss();
 }
 
 void UTapWebBrowser::OnURLChanged(const FText& NewURL)

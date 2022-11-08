@@ -190,9 +190,9 @@ void UXDServiceWidgetAccount::OnBindByTypeClicked()
 	auto LoginType = TempType == ETempDemoLoginType::Default ? XUType::LoginType::Default : static_cast<XUType::LoginType>(TempType);
 	XDUE::BindByType(LoginType, [](bool Success, const FXUError& Error) {
 		if (Success) {
-			TUDebuger::DisplayShow("绑定成功");
+			TUDebuger::DisplayShow(TEXT("绑定成功"));
 		} else {
-			TUDebuger::WarningShow("绑定失败：" + Error.msg);
+			TUDebuger::WarningShow(TEXT("绑定失败：") + Error.msg);
 		}
 	});
 #endif

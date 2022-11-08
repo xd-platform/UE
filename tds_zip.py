@@ -13,8 +13,11 @@ def zipDir(source_dir, output_filename):
     if os.path.exists(source_dir):
         print(f"{source_dir} 压缩中......")
         if platform.system() == "Darwin":
+            dir_path = os.path.dirname(source_dir)
+            if len(dir_path) == 0:
+                dir_path = "./"
             ret_value = os.system(f"""
-                                cd {os.path.dirname(source_dir)}
+                                cd {dir_path}
                                 zip -rq {output_filename} {os.path.basename(source_dir)}
                                 """)
             if ret_value == 0:

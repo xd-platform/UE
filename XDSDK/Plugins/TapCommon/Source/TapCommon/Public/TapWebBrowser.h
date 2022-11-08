@@ -47,6 +47,8 @@ public:
 protected:
 	virtual void NativeOnInitialized() override;
 
+	virtual void NativeDestruct() override;
+
 	virtual void OnURLChanged(const FText& NewURL);
 
 	virtual void OnTitleChanged(const FText& NewTitle);

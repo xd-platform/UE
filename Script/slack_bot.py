@@ -13,7 +13,6 @@ logging.basicConfig(level=logging.DEBUG)
 slack_token = os.environ["SLACK_TOKEN"]
 slack_channel_id = os.environ['SLACK_CHANNEL_ID']
 
-print(f"token-- {slack_token.split('-')}")
 client = WebClient(token=slack_token, timeout=300)
 
 def sendMessage(content=None, thread=0):

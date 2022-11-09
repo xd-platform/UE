@@ -76,7 +76,7 @@ product_android(windows):
     - tds-packager-win
   stage: product_app
   script:
-    - python3 Script/package_upload.py -android
+    - python Script/package_upload.py -android
   rules:
     - if: $AndroidPackageDisableOnWindow
       when: never
@@ -88,7 +88,7 @@ product_win:
     - tds-packager-win
   stage: product_app
   script:
-    - python3 Script/package_upload.py -win
+    - python Script/package_upload.py -win
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual

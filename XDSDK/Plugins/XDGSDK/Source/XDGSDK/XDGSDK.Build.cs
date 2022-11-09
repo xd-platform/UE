@@ -26,7 +26,7 @@ public class XDGSDK : ModuleRules
 		if (isSteamPackage)
 		{
 			PrivateDefinitions.Add("XD_Steam_Package");
-
+			// Plugin.Descriptor.Plugins.Add(new PluginReferenceDescriptor("OnlineSubsystem","", true));
 			PrivateDependencyModuleNames.AddRange(
 				new string[]
 				{

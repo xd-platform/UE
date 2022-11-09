@@ -53,7 +53,7 @@ class Framework(object):
 
 
 iOS_frameworks_path = sys.argv[1]
-project_path = os.path.dirname(__file__)
+project_path = os.path.dirname(os.path.dirname(__file__))
 project_path = os.path.join(project_path, "XDSDK")
 
 os.chdir(iOS_frameworks_path)

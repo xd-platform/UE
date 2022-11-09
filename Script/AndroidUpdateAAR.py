@@ -70,7 +70,7 @@ class AndroidAAr(object):
 
 
 android_aar_path = sys.argv[1]
-project_path = os.path.dirname(__file__)
+project_path = os.path.dirname(os.path.dirname(__file__))
 project_path = os.path.join(project_path, "XDSDK")
 # android_aar_path = "/Users/sisiliu/Downloads/Products"
 # project_path = "/Users/sisiliu/Documents/hyfwork/xdsdk-6.0-ue/XDSDK"

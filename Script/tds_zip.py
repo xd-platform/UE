@@ -8,7 +8,7 @@ def zipDir(source_dir, output_filename):
     压缩指定文件夹
     :param source_dir: 目标文件夹路径
     :param output_filename: 压缩文件保存路径+xxxx.zip
-    :return: 无
+    :return: 路径 or None
     """
     if os.path.exists(source_dir):
         print(f"{source_dir} 压缩中......")

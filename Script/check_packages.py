@@ -1,8 +1,6 @@
 import os.path
 
 import xdsdk_build
-import sys
-import upload_npkg
 import slack_bot
 
 

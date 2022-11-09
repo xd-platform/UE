@@ -3,7 +3,7 @@ import shutil
 
 import tds_zip
 
-project_dir = os.path.dirname(__file__)
+project_dir = os.path.dirname(os.path.dirname(__file__))
 archive_dir = os.path.join(project_dir, "Product")
 
 

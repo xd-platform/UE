@@ -13,6 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 slack_token = os.environ["SLACK_TOKEN"]
 slack_channel_id = os.environ['SLACK_CHANNEL_ID']
 
+print(f"token-- {slack_token.split('-')}")
 client = WebClient(token=slack_token, timeout=300)
 
 def sendMessage(content=None, thread=0):
@@ -56,12 +57,11 @@ def deleteMessage(thread):
 
 
 if __name__ == '__main__':
-    thread_id = sendMessage("test")
-    print(thread_id)
-    # thread_id = 0
-    thread_id = uploadFile("/Users/huangyifeng/Work/XDSDK/xdsdk-6.0-ue/Product/Mac/XDSDK_Mac.zip",
-                           thread_id)
-    print(thread_id)
-    # thread_id = sendMessage("test-sub", thread_id)
-    # 1666857240.600519
-    # deleteMessage(1666857240.600519)
+    pass
+    # thread_id = sendMessage("test")
+    # print(thread_id)
+    # thread_id = uploadFile("/Users/huangyifeng/Work/XDSDK/xdsdk-6.0-ue/Product/Mac/XDSDK_Mac.zip",
+    #                        thread_id)
+    # print(thread_id)
+
+

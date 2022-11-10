@@ -21,7 +21,7 @@ enum class ETempDemoLoginType : uint8
 	TapTap = 5,		// TapTap登录
 	Line = 6,
 	Twitter = 7,
-	Steam = 8,
+	Steam = 10,
 	Default	= 100,	// 自动登录
 };
 

@@ -69,17 +69,12 @@ void UXUUserCenterWidget::OnErrorBtnClick() {
 }
 
 FString UXUUserCenterWidget::GetLoginTypeName() {
-	FString result = langModel->tds_guest;
-	if (userMd->GetLoginType() == XUType::TapTap) {
-		result = "TapTap";
-	} else if (userMd->GetLoginType() == XUType::Google) {
-		result = "Google";
-	}
-	else if (userMd->GetLoginType() == XUType::Apple) {
-		result = "Apple";
+	FString Result = XULoginTypeModel::GetName(userMd->GetLoginType());
+	if (Result == "Guest" || Result.IsEmpty()) {
+		Result = langModel->tds_guest;
 	}
 	FString unitStr = langModel->tds_account_format;
-	return unitStr.Replace(TEXT("%s"), *result);
+	return unitStr.Replace(TEXT("%s"), *Result);
 }
 
 void UXUUserCenterWidget::RequestList() {

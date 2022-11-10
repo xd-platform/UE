@@ -40,11 +40,19 @@
 		},
 		{
 			"Name": "OnlineSubsystem",
-			"Enabled": false
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Mac",
+				"Win64"
+			]
 		},
 		{
 			"Name": "OnlineSubsystemSteam",
-			"Enabled": false
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Mac",
+				"Win64"
+			]
 		}
 	]
 }

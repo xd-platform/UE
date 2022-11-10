@@ -47,7 +47,7 @@ XUTracker::XUTracker() {
 TSharedPtr<FJsonObject> XUTracker::GetDeviceInfos() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("device_id", TUDeviceInfo::GetLoginId());
-	Properties->SetStringField("os_version", TUDeviceInfo::GetEngineVersion());
+	Properties->SetStringField("os_version", TUDeviceInfo::GetOSVersion());
 	Properties->SetStringField("brand", TUDeviceInfo::GetGPU());
 	Properties->SetStringField("model", TUDeviceInfo::GetCPU());
 	// provider 运营商
@@ -87,7 +87,7 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 TSharedPtr<FJsonObject> XUTracker::GetStaticPresetProperties() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("source", "client");
-	Properties->SetStringField("os", TUDeviceInfo::GetOSVersion());
+	Properties->SetStringField("os", TUDeviceInfo::GetPlatform());
 	Properties->SetStringField("app_version", XUConfigManager::CurrentConfig()->GameVersion);
 	Properties->SetStringField("sdk_version", XDUESDK_VERSION);
 	Properties->SetStringField("session_uuid", FGuid::NewGuid().ToString());

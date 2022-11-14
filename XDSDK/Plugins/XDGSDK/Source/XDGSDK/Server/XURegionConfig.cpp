@@ -54,6 +54,10 @@ FString XURegionConfig::CommonLoginUrl() {
 	return BaseHost() / "/api/login/v1/union";
 }
 
+FString XURegionConfig::ConsoleLoginUrl() {
+	return BaseHost() / "/api/login/v1/signin";
+}
+
 FString XURegionConfig::LoginSynUrl() {
 	return BaseHost() / "/api/login/v1/syn";
 }

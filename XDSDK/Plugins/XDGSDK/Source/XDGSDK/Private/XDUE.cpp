@@ -45,14 +45,7 @@ void XDUE::LoginByType(XUType::LoginType Type, TFunction<void(const FXUUser& Use
 		return;
 	}
 
-	XUImpl::Get()->LoginByType(Type,
-	[=](TSharedPtr<FXUUser> user)
-	{
-		if (SuccessBlock)
-		{
-			SuccessBlock(*user.Get());
-		}
-	},
+	XUImpl::Get()->LoginByType(Type, SuccessBlock,
 	[=](FXUError error)
 	{
 		if (FailBlock)
@@ -60,6 +53,20 @@ void XDUE::LoginByType(XUType::LoginType Type, TFunction<void(const FXUUser& Use
 			FailBlock(error);
 		}
 	});
+}
+
+void XDUE::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock,
+	TFunction<void(const FXUError& Error)> ErrorBlock) {
+	if (!IsInitialized())
+	{
+		if (ErrorBlock)
+		{
+			ErrorBlock(FXUError(FString::Printf(TEXT("Please Init First Before Call %s"), ANSI_TO_TCHAR(__FUNCTION__))));
+		}
+		return;
+	}
+
+	XUImpl::Get()->LoginByConsole(SuccessBlock, FailBlock, ErrorBlock);
 }
 
 TSharedPtr<FXUUser> XDUE::GetUserInfo() {

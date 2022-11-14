@@ -14,11 +14,14 @@ public:
 	//获取配置
 	FString AgreementUrl();
 	
-	// login
+	// 获取用户信息
 	FString UserProfileUrl();
 	
-	//游客
+	// 获取登录Token
 	FString CommonLoginUrl();
+
+	// 主机获取登录Token
+	FString ConsoleLoginUrl();
 	
 	// 与leanClound同步
 	FString LoginSynUrl();

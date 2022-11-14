@@ -144,6 +144,7 @@ void PerfromWrapperResponseCallBack(const TSharedPtr<TUHttpResponse>& Response, 
 	FXUError Error = XUNet::GenerateErrorInfo(Response);
 	auto JsonObject = TUJsonHelper::GetJsonObject(Response->contentString);
 	if (!JsonObject.IsValid()) {
+		Error.IsNetWorkError = true;
 		Callback(nullptr, Error);
 		return;
 	}
@@ -264,10 +265,15 @@ void XUNet::RequestAgreement(bool IsFirst,
 	TUHttpManager::Get().request(request);
 }
 
-void XUNet::RequestKidToken(const TSharedPtr<FJsonObject>& paras, TFunction<void(TSharedPtr<FXUTokenModel> model, FXUError error)> callback)
+void XUNet::RequestKidToken(bool IsConsole, const TSharedPtr<FJsonObject>& paras, TFunction<void(TSharedPtr<FXUTokenModel> model, FXUError error)> callback)
 {
 	const TSharedPtr<TUHttpRequest> request = MakeShareable(new XUNet());
-	request->URL = XURegionConfig::Get()->CommonLoginUrl();
+	if (IsConsole) {
+		request->URL = XURegionConfig::Get()->ConsoleLoginUrl();
+
+	} else {
+		request->URL = XURegionConfig::Get()->CommonLoginUrl();
+	}
 	request->Parameters = paras;
 	request->Type = Post;
 	request->isPure = true;

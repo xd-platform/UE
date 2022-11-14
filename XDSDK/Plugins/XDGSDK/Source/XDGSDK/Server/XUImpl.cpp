@@ -94,7 +94,7 @@ void XUImpl::InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack)
 }
 
 void XUImpl::LoginByType(XUType::LoginType LoginType,
-                         TFunction<void(TSharedPtr<FXUUser> user)> resultBlock,
+                         TFunction<void(const FXUUser& User)> resultBlock,
                          TFunction<void(FXUError error)> ErrorBlock) {
 	auto lmd = XULanguageManager::GetCurrentModel();
 	if (LoginType == XUType::Default) {
@@ -110,7 +110,11 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 		}
 		auto localUser = XDUE::GetUserInfo();
 		if (localUser.IsValid()) {
-			RequestUserInfo(true, [](TSharedPtr<FXUUser> user) {}, [](FXUError Error) {});
+			RequestUserInfo([](TSharedPtr<FXUUser> ModelPtr) {
+				                ModelPtr->SaveToLocal();
+			                }, nullptr, [](FXUError Error) {
+				                TUDataStorage<FXUStorage>::SaveBool(FXUStorage::TokenInfoIsInvalid, true);
+			                });
 			AsyncLocalTdsUser(localUser->userId, FXUSyncTokenModel::GetLocalModel()->sessionToken);
 			LoginSuccess(localUser, resultBlock);
 		}
@@ -122,6 +126,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 	}
 	else {
 		// 如果已经是登录状态了，那么不再重复登录
+		// User和Token保存在一起，等API改版的时候实现
 		if (XDUE::GetUserInfo().IsValid()) {
 			if (ErrorBlock) {
 				ErrorBlock(FXUError("The user is logged in"));
@@ -131,7 +136,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 		GetAuthParam(LoginType, [=](TSharedPtr<FJsonObject> paras) {
 			if (FXUTokenModel::GetLocalModel().IsValid()) {
 				TUDebuger::WarningLog("Login Token Has Exist");
-				return;
+				FXUTokenModel::ClearToken();
 			}
 			UTUHUD::ShowWait();
 			TFunction<void(FXUError error)> ErrorCallBack = [=](FXUError error) {
@@ -141,22 +146,95 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 					ErrorBlock(error);
 				}
 			};
-			RequestKidToken(paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
-				RequestUserInfo(false, [=](TSharedPtr<FXUUser> user) {
+			RequestKidToken(false, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
+				RequestUserInfo([=](TSharedPtr<FXUUser> user) {
 					AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
 						UTUHUD::Dismiss();
 						user->SaveToLocal();
 						LoginSuccess(user, resultBlock);
 					}, ErrorCallBack);
-				}, ErrorCallBack);
+				}, ErrorCallBack, nullptr);
 			}, ErrorCallBack);
 		}, ErrorBlock);
 	}
 }
 
+void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock,
+	TFunction<void(const FXUError& Error)> ErrorBlock) {
+#ifdef XD_Steam_Package
+	auto SteamOSS = FOnlineSubsystemSteam::Get(STEAM_SUBSYSTEM);
+	if (!(SteamOSS && SteamOSS->IsEnabled())) {
+		ErrorBlock(FXUError("OnlineSteamSubsystem is Not enable"));
+		TUDebuger::WarningLog(TEXT("OnlineSteamSubsystem is Not enable"));
+		return;
+	}
+	FString SteamID = SteamOSS->GetIdentityInterface()->GetUniquePlayerId(0)->ToString();
+	TUDebuger::DisplayLog("SteamID: " + SteamID);
+	if (SteamID.IsEmpty()) {
+		ErrorBlock(FXUError("SteamID is Empty"));
+		TUDebuger::WarningLog(TEXT("SteamID is Empty"));
+		return;
+	}
+	TUDebuger::DisplayLog("PlayerNicknam: " + SteamOSS->GetIdentityInterface()->GetPlayerNickname(0));
+
+	auto XDToken = FXUTokenModel::GetLocalModel();
+	auto XDUser = FXUUser::GetLocalModel();
+	// 如果有缓存，直接返回User
+	if (XDToken.IsValid() && XDUser.IsValid() && !XDToken->ConsoleID.IsEmpty() && XDToken->ConsoleID == SteamID) {
+		SuccessBlock(*XDUser.Get());
+		RequestUserInfo([](TSharedPtr<FXUUser> ModelPtr) {
+							ModelPtr->SaveToLocal();
+						}, nullptr, [=](FXUError Error) {
+			                // token失效，静默重新登录
+			                TFunction<void(FXUError error)> ErrorCallBack = [](FXUError error) {};
+							GetAuthParam(XUType::Steam, [=](TSharedPtr<FJsonObject> paras) {
+								RequestKidToken(false, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
+									RequestUserInfo([=](TSharedPtr<FXUUser> user) {
+										user->SaveToLocal();
+										AsyncNetworkTdsUser(user->userId, nullptr, nullptr);
+									}, ErrorCallBack, nullptr);
+								}, ErrorCallBack);
+							}, ErrorCallBack);
+						});
+		TUDebuger::DisplayLog("Steam 缓存登录成功");
+		return;
+	}
+	UTUHUD::ShowWait();
+	TFunction<void(FXUError Error)> ErrorCallBack = [=](FXUError Error) {
+		UTUHUD::Dismiss();
+		FXUUser::ClearUserData();
+		if (ErrorBlock) {
+			ErrorBlock(Error);
+		}
+	};
+	GetAuthParam(XUType::Steam, [=](TSharedPtr<FJsonObject> paras) {
+		RequestKidToken(true, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
+			RequestUserInfo([=](TSharedPtr<FXUUser> user) {
+				AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
+					UTUHUD::Dismiss();
+					user->SaveToLocal();
+					LoginSuccess(user, SuccessBlock);
+				}, ErrorCallBack);
+			}, ErrorCallBack, nullptr);
+		}, [=](FXUError Error) {
+			if (Error.code == 40111 && FailBlock) {
+				UTUHUD::Dismiss();
+				FailBlock();
+			} else {
+				ErrorCallBack(Error);
+			}
+		}, SteamID);
+	}, ErrorCallBack);
+
+#else
+	ErrorBlock(FXUError("Not Support Platform"));
+#endif
+	
+}
+
 void XUImpl::GetAuthParam(XUType::LoginType LoginType,
-                                 TFunction<void(TSharedPtr<FJsonObject> paras)> resultBlock,
-                                 TFunction<void(FXUError error)> ErrorBlock) {
+                          TFunction<void(TSharedPtr<FJsonObject> paras)> resultBlock,
+                          TFunction<void(FXUError error)> ErrorBlock) {
 	if (LoginType == XUType::Guest) {
 		XUThirdAuthHelper::CancelAllPreAuths();
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
@@ -196,27 +274,14 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 		auto SteamOSS = FOnlineSubsystemSteam::Get(STEAM_SUBSYSTEM);
 		const bool bSteamOSSEnabled = (SteamOSS && SteamOSS->IsEnabled());
 		if (bSteamOSSEnabled) {
-			TUDebuger::DisplayLog(TEXT("OnlineSteamSubsystem is enable"));
 			TUDebuger::DisplayLog("PlayerNicknam: " + SteamOSS->GetIdentityInterface()->GetPlayerNickname(0));
 			TUDebuger::DisplayLog(
 				"UniquePlayerId: " + SteamOSS->GetIdentityInterface()->GetUniquePlayerId(0)->ToString());
 			FString AuthToken = SteamOSS->GetIdentityInterface()->GetAuthToken(0);
-			TUDebuger::DisplayLog("Steam Token: " + AuthToken);
-
 			TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 			JsonObject->SetNumberField("type", (int)LoginType);
 			JsonObject->SetStringField("token", AuthToken);
-			// JsonObject->SetStringField("secret", AccessToken.mac_key);
 			resultBlock(JsonObject);
-			// const TSharedPtr<TUHttpRequest> request = MakeShareable(new TUHttpRequest());
-			// request->URL = "https://partner.steam-api.com/ISteamUserAuth/AuthenticateUserTicket/v1/";
-			// request->Parameters->SetStringField("key", "C00A6DC47AF2DB4A515D9E67C9F50EDD");
-			// request->Parameters->SetStringField("appid", "2207420");
-			// request->Parameters->SetStringField("ticket", AuthToken);
-			// request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
-			// 	TUDebuger::DisplayShow(response->contentString);
-			// });
-			// TUHttpManager::Get().request(request);
 		} else {
 			ErrorBlock(FXUError("OnlineSteamSubsystem is Not enable"));
 			TUDebuger::WarningLog(TEXT("OnlineSteamSubsystem is Not enable"));
@@ -464,11 +529,13 @@ void XUImpl::BindByType(XUType::LoginType BindType, TFunction<void(bool Success,
 	             });
 }
 
-void XUImpl::RequestKidToken(TSharedPtr<FJsonObject> paras,
+void XUImpl::RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras,
                              TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock,
-                             TFunction<void(FXUError error)> ErrorBlock) {
-	XUNet::RequestKidToken(paras, [=](TSharedPtr<FXUTokenModel> kidToken, FXUError error) {
+                             TFunction<void(FXUError error)> ErrorBlock,
+                              const FString& ConsoleID) {
+	XUNet::RequestKidToken(IsConsole, paras, [=](TSharedPtr<FXUTokenModel> kidToken, FXUError error) {
 		if (error.code == Success && kidToken != nullptr) {
+			kidToken->ConsoleID = ConsoleID;
 			kidToken->SaveToLocal();
 			resultBlock(kidToken);
 		}
@@ -478,25 +545,25 @@ void XUImpl::RequestKidToken(TSharedPtr<FJsonObject> paras,
 	});
 }
 
-void XUImpl::RequestUserInfo(bool saveToLocal,
-                                   TFunction<void(TSharedPtr<FXUUser> model)> callback,
-                                   TFunction<void(FXUError error)> ErrorBlock) {
+void XUImpl::RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> ModelPtr)> CallBack,
+	TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock) {
 	XUNet::RequestUserInfo(
-		[=](TSharedPtr<FXUUser> user, FXUError error) {
-			if (error.code == Success && user != nullptr) {
-				if (saveToLocal) {
-					user->SaveToLocal();
-				}
-				callback(user);
+	[=](TSharedPtr<FXUUser> user, FXUError error) {
+		if (error.code == Success && user != nullptr) {
+			if (CallBack) {
+				CallBack(user);
 			}
-			else {
-				if (saveToLocal) { // 标记已经失效
-					TUDataStorage<FXUStorage>::SaveBool(FXUStorage::TokenInfoIsInvalid, true);
+		}
+		else {
+			if (error.IsNetWorkError == false && error.code != Success && TokenInvalidBlock) {
+				TokenInvalidBlock(error);
+			} else {
+				if (ErrorBlock) {
+					ErrorBlock(error);
 				}
-				ErrorBlock(error);
 			}
-		});
-
+		}
+	});
 }
 
 void XUImpl::AsyncNetworkTdsUser(const FString& userId,
@@ -507,10 +574,14 @@ void XUImpl::AsyncNetworkTdsUser(const FString& userId,
 			if (error.code == Success && model != nullptr) {
 				model->SaveToLocal();
 				AsyncLocalTdsUser(userId, model->sessionToken);
-				callback(model->sessionToken);
+				if (callback) {
+					callback(model->sessionToken);
+				}
 			}
 			else {
-				ErrorBlock(error);
+				if (ErrorBlock) {
+					ErrorBlock(error);
+				}
 			}
 		}
 	);
@@ -542,10 +613,9 @@ void XUImpl::RequestServerConfig() {
 		
 	});
 }
-
-void XUImpl::LoginSuccess(TSharedPtr<FXUUser> User, TFunction<void(TSharedPtr<FXUUser>)> SuccessBlock) {
+void XUImpl::LoginSuccess(TSharedPtr<FXUUser> UserPtr, TFunction<void(const FXUUser& User)> SuccessBlock) {
 	OnLoginSuccess.Broadcast();
 	if (SuccessBlock) {
-		SuccessBlock(User);
+		SuccessBlock(*UserPtr.Get());
 	}
 }

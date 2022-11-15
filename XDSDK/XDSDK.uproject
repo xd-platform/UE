@@ -48,7 +48,7 @@
 		},
 		{
 			"Name": "OnlineSubsystemSteam",
-			"Enabled": true,
+			"Enabled": false,
 			"SupportedTargetPlatforms": [
 				"Mac",
 				"Win64"

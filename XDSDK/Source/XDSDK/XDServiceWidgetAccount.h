@@ -40,6 +40,9 @@ class XDSDK_API UXDServiceWidgetAccount : public UUserWidget
 	void OnAutoLoginClicked();
 
 	UFUNCTION()
+	void OnConsoleLoginClicked();
+
+	UFUNCTION()
 	void OnDeviceIDClicked();
 	
 	UFUNCTION()
@@ -87,6 +90,9 @@ protected:
 
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* AutoLogin;
+
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* ConsoleLogin;
 
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* DeviceID;

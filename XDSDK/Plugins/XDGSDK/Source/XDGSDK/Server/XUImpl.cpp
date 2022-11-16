@@ -635,8 +635,6 @@ void XUImpl::GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& Ste
 	SteamAuth = "";
 	auto Handle = FPlatformProcess::GetDllHandle(*SDKPath);
 	if (Handle) {
-		//清除之前存在的错误
-		dlerror();
 		
 		typedef int32 HSteamPipe;
 		typedef int32 HSteamUser;

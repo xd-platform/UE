@@ -623,7 +623,7 @@ FString XUImpl::GetSteamworksSDKPath() {
 	IFileManager::Get().FindFilesRecursive(FindFiles, *Path, TEXT("*.dll"), true, false);
 #endif
 	if (FindFiles.Num() > 0) {
-		TUDebuger::DisplayShow(FindFiles[0]);
+		TUDebuger::DisplayLog(FindFiles[0]);
 		return FindFiles[0];
 	}
 	return "";
@@ -661,7 +661,7 @@ void XUImpl::GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& Ste
 			CreateInterfaceFunc &&
 			GetISteamUserFunc &&
 			GetAuthSessionTicketFunc) {
-			TUDebuger::DisplayShow("funcs are exits");
+			TUDebuger::DisplayLog("funcs are exits");
 			auto user = GetHSteamUserFunc();
 			auto pipe = GetHSteamPipeFunc();
 			auto steamClient = CreateInterfaceFunc(STEAMCLIENT_INTERFACE_VERSION);
@@ -671,14 +671,14 @@ void XUImpl::GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& Ste
 			GetAuthSessionTicketFunc(steamUser, AuthToken, UE_ARRAY_COUNT(AuthToken), &AuthTokenSize);
 			SteamAuth = BytesToHex(AuthToken, AuthTokenSize);
 			SteamID = FString::Printf(TEXT("%lld"), GetSteamIDFunc(steamUser));
-			TUDebuger::DisplayShow("SteamAuth: " + SteamAuth);
-			TUDebuger::DisplayShow("SteamID: " + SteamID);
+			TUDebuger::DisplayLog("SteamAuth: " + SteamAuth);
+			TUDebuger::DisplayLog("SteamID: " + SteamID);
 		}
 		else {
-			TUDebuger::WarningShow("steam funcs are not exits");
+			TUDebuger::WarningLog("steam funcs are not exits");
 		}
 		FPlatformProcess::FreeDllHandle(Handle);
 	} else {
-		TUDebuger::WarningShow("no steam dylib");
+		TUDebuger::WarningLog("no steam dylib");
 	}
 }

@@ -633,7 +633,7 @@ FString XUImpl::GetSteamworksSDKPath() {
 void XUImpl::GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& SteamAuth) {
 	SteamID = "";
 	SteamAuth = "";
-	auto Handle = dlopen(TCHAR_TO_UTF8(*SDKPath), RTLD_NOW);
+	auto Handle = FPlatformProcess::GetDllHandle(*SDKPath);
 	if (Handle) {
 		//清除之前存在的错误
 		dlerror();
@@ -651,12 +651,12 @@ void XUImpl::GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& Ste
 		const char * STEAMUSER_INTERFACE_VERSION = "SteamUser020";
 		const char * STEAMCLIENT_INTERFACE_VERSION = "SteamClient020";
 		
-		GetHSteamUser GetHSteamUserFunc = (GetHSteamUser)dlsym(Handle, "GetHSteamUser");
-		GetHSteamPipe GetHSteamPipeFunc = (GetHSteamPipe)dlsym(Handle, "GetHSteamPipe");
-		CreateInterface CreateInterfaceFunc = (CreateInterface)dlsym(Handle, "SteamInternal_CreateInterface");
-		GetISteamUser GetISteamUserFunc = (GetISteamUser)dlsym(Handle, "SteamAPI_ISteamClient_GetISteamUser");
-		GetSteamID GetSteamIDFunc = (GetSteamID)dlsym(Handle, "SteamAPI_ISteamUser_GetSteamID");
-		GetAuthSessionTicket GetAuthSessionTicketFunc = (GetAuthSessionTicket)dlsym(Handle, "SteamAPI_ISteamUser_GetAuthSessionTicket");
+		GetHSteamUser GetHSteamUserFunc = (GetHSteamUser)FPlatformProcess::GetDllExport(Handle, TEXT("GetHSteamUser"));
+		GetHSteamPipe GetHSteamPipeFunc = (GetHSteamPipe)FPlatformProcess::GetDllExport(Handle, TEXT("GetHSteamPipe"));
+		CreateInterface CreateInterfaceFunc = (CreateInterface)FPlatformProcess::GetDllExport(Handle, TEXT("SteamInternal_CreateInterface"));
+		GetISteamUser GetISteamUserFunc = (GetISteamUser)FPlatformProcess::GetDllExport(Handle, TEXT("SteamAPI_ISteamClient_GetISteamUser"));
+		GetSteamID GetSteamIDFunc = (GetSteamID)FPlatformProcess::GetDllExport(Handle, TEXT("SteamAPI_ISteamUser_GetSteamID"));
+		GetAuthSessionTicket GetAuthSessionTicketFunc = (GetAuthSessionTicket)FPlatformProcess::GetDllExport(Handle, TEXT("SteamAPI_ISteamUser_GetAuthSessionTicket"));
 
 		if (GetHSteamUserFunc &&
 			GetHSteamPipeFunc &&
@@ -679,7 +679,7 @@ void XUImpl::GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& Ste
 		else {
 			TUDebuger::WarningShow("steam funcs are not exits");
 		}
-		dlclose(Handle);
+		FPlatformProcess::FreeDllHandle(Handle);
 	} else {
 		TUDebuger::WarningShow("no steam dylib");
 	}

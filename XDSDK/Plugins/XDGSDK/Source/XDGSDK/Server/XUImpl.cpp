@@ -617,7 +617,11 @@ FString XUImpl::GetSteamworksSDKPath() {
 	TArray<FString> FindFiles;
 	FString Path = FPlatformProcess::BaseDir();
 	Path = Path + "../../../Engine/Binaries/ThirdParty/Steamworks";
+#if PLATFORM_MAC
 	IFileManager::Get().FindFilesRecursive(FindFiles, *Path, TEXT("*.dylib"), true, false);
+#elif PLATFORM_WINDOWS
+	IFileManager::Get().FindFilesRecursive(FindFiles, *Path, TEXT("*.dll"), true, false);
+#endif
 	if (FindFiles.Num() > 0) {
 		TUDebuger::DisplayShow(FindFiles[0]);
 		return FindFiles[0];
@@ -673,10 +677,10 @@ void XUImpl::GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& Ste
 			TUDebuger::DisplayShow("SteamID: " + SteamID);
 		}
 		else {
-			TUDebuger::WarningLog("steam funcs are not exits");
+			TUDebuger::WarningShow("steam funcs are not exits");
 		}
 		dlclose(Handle);
 	} else {
-		TUDebuger::WarningLog("no steam dylib");
+		TUDebuger::WarningShow("no steam dylib");
 	}
 }

@@ -47,7 +47,7 @@ void UXUUserCenterItemWidget::SetBindModel(TSharedPtr<XUUserCenterItemModel> Mod
 	}
 	else if (Model->LoginType == XUType::Steam) {
 		UTexture2D* TapTexture = LoadObject<UTexture2D>(
-			nullptr, TEXT("Texture2D'/XDGSDK/Images/type_icon_apple.type_icon_apple'"));
+			nullptr, TEXT("Texture2D'/XDGSDK/Images/type_icon_steam.type_icon_steam'"));
 		TitleImage->SetBrushFromTexture(TapTexture);
 	}
 	if (Model->BindState == FXDGBindState::Bind) {

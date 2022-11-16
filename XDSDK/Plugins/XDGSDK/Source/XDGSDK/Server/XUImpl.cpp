@@ -16,10 +16,6 @@
 #include "XDGSDK/UI/XUPayWebWidget.h"
 #include "Track/XUPaymentTracker.h"
 #include "Agreement/XUAgreementManager.h"
-#ifdef XD_Steam_Package
-#include "OnlineSubsystemSteam.h"
-#include "Interfaces/OnlineIdentityInterface.h"
-#endif
 
 static int Success = 200;
 
@@ -161,75 +157,71 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 
 void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock,
 	TFunction<void(const FXUError& Error)> ErrorBlock) {
-#ifdef XD_Steam_Package
-	auto SteamOSS = FOnlineSubsystemSteam::Get(STEAM_SUBSYSTEM);
-	if (!(SteamOSS && SteamOSS->IsEnabled())) {
-		ErrorBlock(FXUError("OnlineSteamSubsystem is Not enable"));
-		TUDebuger::WarningLog(TEXT("OnlineSteamSubsystem is Not enable"));
-		return;
-	}
-	FString SteamID = SteamOSS->GetIdentityInterface()->GetUniquePlayerId(0)->ToString();
-	TUDebuger::DisplayLog("SteamID: " + SteamID);
-	if (SteamID.IsEmpty()) {
-		ErrorBlock(FXUError("SteamID is Empty"));
-		TUDebuger::WarningLog(TEXT("SteamID is Empty"));
-		return;
-	}
-	TUDebuger::DisplayLog("PlayerNicknam: " + SteamOSS->GetIdentityInterface()->GetPlayerNickname(0));
-
-	auto XDToken = FXUTokenModel::GetLocalModel();
-	auto XDUser = FXUUser::GetLocalModel();
-	// 如果有缓存，直接返回User
-	if (XDToken.IsValid() && XDUser.IsValid() && !XDToken->ConsoleID.IsEmpty() && XDToken->ConsoleID == SteamID) {
-		SuccessBlock(*XDUser.Get());
-		RequestUserInfo([](TSharedPtr<FXUUser> ModelPtr) {
-							ModelPtr->SaveToLocal();
-						}, nullptr, [=](FXUError Error) {
-			                // token失效，静默重新登录
-			                TFunction<void(FXUError error)> ErrorCallBack = [](FXUError error) {};
-							GetAuthParam(XUType::Steam, [=](TSharedPtr<FJsonObject> paras) {
-								RequestKidToken(false, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
-									RequestUserInfo([=](TSharedPtr<FXUUser> user) {
-										user->SaveToLocal();
-										AsyncNetworkTdsUser(user->userId, nullptr, nullptr);
-									}, ErrorCallBack, nullptr);
-								}, ErrorCallBack);
-							}, ErrorCallBack);
-						});
-		TUDebuger::DisplayLog("Steam 缓存登录成功");
-		return;
-	}
-	UTUHUD::ShowWait();
-	TFunction<void(FXUError Error)> ErrorCallBack = [=](FXUError Error) {
-		UTUHUD::Dismiss();
-		FXUUser::ClearUserData();
-		if (ErrorBlock) {
-			ErrorBlock(Error);
+	FString SteamPath = GetSteamworksSDKPath();
+	if (!SteamPath.IsEmpty()) {
+		FString SteamID;
+		FString SteamAuth;
+		GetSteamInfo(SteamPath, SteamID, SteamAuth);
+		
+		if (SteamID.IsEmpty()) {
+			ErrorBlock(FXUError("SteamID is Empty"));
+			TUDebuger::WarningLog(TEXT("SteamID is Empty"));
+			return;
 		}
-	};
-	GetAuthParam(XUType::Steam, [=](TSharedPtr<FJsonObject> paras) {
-		RequestKidToken(true, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
-			RequestUserInfo([=](TSharedPtr<FXUUser> user) {
-				AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
-					UTUHUD::Dismiss();
-					user->SaveToLocal();
-					LoginSuccess(user, SuccessBlock);
-				}, ErrorCallBack);
-			}, ErrorCallBack, nullptr);
-		}, [=](FXUError Error) {
-			if (Error.code == 40111 && FailBlock) {
-				UTUHUD::Dismiss();
-				FailBlock();
-			} else {
-				ErrorCallBack(Error);
-			}
-		}, SteamID);
-	}, ErrorCallBack);
 
-#else
+		auto XDToken = FXUTokenModel::GetLocalModel();
+		auto XDUser = FXUUser::GetLocalModel();
+		// 如果有缓存，直接返回User
+		if (XDToken.IsValid() && XDUser.IsValid() && !XDToken->ConsoleID.IsEmpty() && XDToken->ConsoleID == SteamID) {
+			SuccessBlock(*XDUser.Get());
+			RequestUserInfo([](TSharedPtr<FXUUser> ModelPtr) {
+				                ModelPtr->SaveToLocal();
+			                }, nullptr, [=](FXUError Error) {
+				                // token失效，静默重新登录
+				                TFunction<void(FXUError error)> ErrorCallBack = [](FXUError error) {
+				                };
+				                GetAuthParam(XUType::Steam, [=](TSharedPtr<FJsonObject> paras) {
+					                RequestKidToken(false, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
+						                RequestUserInfo([=](TSharedPtr<FXUUser> user) {
+							                user->SaveToLocal();
+							                AsyncNetworkTdsUser(user->userId, nullptr, nullptr);
+						                }, ErrorCallBack, nullptr);
+					                }, ErrorCallBack);
+				                }, ErrorCallBack);
+			                });
+			TUDebuger::DisplayLog("Steam 缓存登录成功");
+			return;
+		}
+		UTUHUD::ShowWait();
+		TFunction<void(FXUError Error)> ErrorCallBack = [=](FXUError Error) {
+			UTUHUD::Dismiss();
+			FXUUser::ClearUserData();
+			if (ErrorBlock) {
+				ErrorBlock(Error);
+			}
+		};
+		GetAuthParam(XUType::Steam, [=](TSharedPtr<FJsonObject> paras) {
+			RequestKidToken(true, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
+				                RequestUserInfo([=](TSharedPtr<FXUUser> user) {
+					                AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
+						                UTUHUD::Dismiss();
+						                user->SaveToLocal();
+						                LoginSuccess(user, SuccessBlock);
+					                }, ErrorCallBack);
+				                }, ErrorCallBack, nullptr);
+			                }, [=](FXUError Error) {
+				                if (Error.code == 40111 && FailBlock) {
+					                UTUHUD::Dismiss();
+					                FailBlock();
+				                }
+				                else {
+					                ErrorCallBack(Error);
+				                }
+			                }, SteamID);
+		}, ErrorCallBack);
+		return;
+	}
 	ErrorBlock(FXUError("Not Support Platform"));
-#endif
-	
 }
 
 void XUImpl::GetAuthParam(XUType::LoginType LoginType,
@@ -270,30 +262,28 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 	}
 	else if (LoginType == XUType::Steam) {
 		TUDebuger::DisplayLog("Steam Login");
-#ifdef XD_Steam_Package
-		auto SteamOSS = FOnlineSubsystemSteam::Get(STEAM_SUBSYSTEM);
-		const bool bSteamOSSEnabled = (SteamOSS && SteamOSS->IsEnabled());
-		if (bSteamOSSEnabled) {
-			TUDebuger::DisplayLog("PlayerNicknam: " + SteamOSS->GetIdentityInterface()->GetPlayerNickname(0));
-			TUDebuger::DisplayLog(
-				"UniquePlayerId: " + SteamOSS->GetIdentityInterface()->GetUniquePlayerId(0)->ToString());
-			FString AuthToken = SteamOSS->GetIdentityInterface()->GetAuthToken(0);
-			TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
-			JsonObject->SetNumberField("type", (int)LoginType);
-			JsonObject->SetStringField("token", AuthToken);
-			resultBlock(JsonObject);
-		} else {
-			ErrorBlock(FXUError("OnlineSteamSubsystem is Not enable"));
-			TUDebuger::WarningLog(TEXT("OnlineSteamSubsystem is Not enable"));
+		FString SteamPath = GetSteamworksSDKPath();
+		if (SteamPath.IsEmpty()) {
+			XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::SteamAuth,
+			                           [=](TSharedPtr<FJsonObject> AuthParas) {
+				                           AuthParas->SetNumberField("type", (int)LoginType);
+				                           resultBlock(AuthParas);
+			                           }, ErrorBlock);
 		}
-#else
-		XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::SteamAuth,
-		[=](TSharedPtr<FJsonObject> AuthParas) {
-			AuthParas->SetNumberField("type", (int)LoginType);
-			resultBlock(AuthParas);
-		}, ErrorBlock);
-#endif
-
+		else {
+			FString SteamID;
+			FString SteamAuth;
+			GetSteamInfo(SteamPath, SteamID, SteamAuth);
+			if (!SteamID.IsEmpty() && !SteamAuth.IsEmpty()) {
+				TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+				JsonObject->SetNumberField("type", (int)LoginType);
+				JsonObject->SetStringField("token", SteamAuth);
+				resultBlock(JsonObject);
+			} else {
+				ErrorBlock(FXUError("Steam UserInfo Get Error"));
+				TUDebuger::WarningLog(TEXT("Steam UserInfo Get Error"));
+			}
+		}
 	}
 	else {
 		ErrorBlock(FXUError("No Login Param"));
@@ -617,5 +607,76 @@ void XUImpl::LoginSuccess(TSharedPtr<FXUUser> UserPtr, TFunction<void(const FXUU
 	OnLoginSuccess.Broadcast();
 	if (SuccessBlock) {
 		SuccessBlock(*UserPtr.Get());
+	}
+}
+
+FString XUImpl::GetSteamworksSDKPath() {
+#if WITH_EDITOR
+	return "";
+#else
+	TArray<FString> FindFiles;
+	FString Path = FPlatformProcess::BaseDir();
+	Path = Path + "../../../Engine/Binaries/ThirdParty/Steamworks";
+	IFileManager::Get().FindFilesRecursive(FindFiles, *Path, TEXT("*.dylib"), true, false);
+	if (FindFiles.Num() > 0) {
+		TUDebuger::DisplayShow(FindFiles[0]);
+		return FindFiles[0];
+	}
+	return "";
+#endif
+}
+
+void XUImpl::GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& SteamAuth) {
+	SteamID = "";
+	SteamAuth = "";
+	auto Handle = dlopen(TCHAR_TO_UTF8(*SDKPath), RTLD_NOW);
+	if (Handle) {
+		//清除之前存在的错误
+		dlerror();
+		
+		typedef int32 HSteamPipe;
+		typedef int32 HSteamUser;
+		typedef uint32 HAuthTicket;
+		typedef HSteamUser (*GetHSteamUser)();
+		typedef HSteamPipe (*GetHSteamPipe)();
+		typedef intptr_t (*CreateInterface)( const char *ver );
+		typedef intptr_t (*GetISteamUser)(intptr_t instancePtr, HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char * pchVersion);
+		typedef HAuthTicket (*GetAuthSessionTicket)(intptr_t instancePtr, void * pTicket, int cbMaxTicket, uint32 * pcbTicket);
+		typedef uint64 (*GetSteamID)(intptr_t instancePtr);
+		
+		const char * STEAMUSER_INTERFACE_VERSION = "SteamUser020";
+		const char * STEAMCLIENT_INTERFACE_VERSION = "SteamClient020";
+		
+		GetHSteamUser GetHSteamUserFunc = (GetHSteamUser)dlsym(Handle, "GetHSteamUser");
+		GetHSteamPipe GetHSteamPipeFunc = (GetHSteamPipe)dlsym(Handle, "GetHSteamPipe");
+		CreateInterface CreateInterfaceFunc = (CreateInterface)dlsym(Handle, "SteamInternal_CreateInterface");
+		GetISteamUser GetISteamUserFunc = (GetISteamUser)dlsym(Handle, "SteamAPI_ISteamClient_GetISteamUser");
+		GetSteamID GetSteamIDFunc = (GetSteamID)dlsym(Handle, "SteamAPI_ISteamUser_GetSteamID");
+		GetAuthSessionTicket GetAuthSessionTicketFunc = (GetAuthSessionTicket)dlsym(Handle, "SteamAPI_ISteamUser_GetAuthSessionTicket");
+
+		if (GetHSteamUserFunc &&
+			GetHSteamPipeFunc &&
+			CreateInterfaceFunc &&
+			GetISteamUserFunc &&
+			GetAuthSessionTicketFunc) {
+			TUDebuger::DisplayShow("funcs are exits");
+			auto user = GetHSteamUserFunc();
+			auto pipe = GetHSteamPipeFunc();
+			auto steamClient = CreateInterfaceFunc(STEAMCLIENT_INTERFACE_VERSION);
+			auto steamUser = GetISteamUserFunc(steamClient, user, pipe, STEAMUSER_INTERFACE_VERSION);
+			uint8 AuthToken[1024];
+			uint32 AuthTokenSize = 0;
+			GetAuthSessionTicketFunc(steamUser, AuthToken, UE_ARRAY_COUNT(AuthToken), &AuthTokenSize);
+			SteamAuth = BytesToHex(AuthToken, AuthTokenSize);
+			SteamID = FString::Printf(TEXT("%lld"), GetSteamIDFunc(steamUser));
+			TUDebuger::DisplayShow("SteamAuth: " + SteamAuth);
+			TUDebuger::DisplayShow("SteamID: " + SteamID);
+		}
+		else {
+			TUDebuger::WarningLog("steam funcs are not exits");
+		}
+		dlclose(Handle);
+	} else {
+		TUDebuger::WarningLog("no steam dylib");
 	}
 }

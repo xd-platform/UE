@@ -9,39 +9,6 @@ public class XDGSDK : ModuleRules
 {
 	public XDGSDK(ReadOnlyTargetRules Target) : base(Target)
 	{
-		if (Target.Platform == UnrealTargetPlatform.Mac ||
-		    Target.Platform == UnrealTargetPlatform.Win64 ||
-		    Target.Platform == UnrealTargetPlatform.Win32)
-		{
-			bool isSteamPackage = false;
-
-			string UprojectPath = GetUproject(Path.GetDirectoryName(Path.GetDirectoryName(PluginDirectory)));
-        
-			FileReference UprojectRefer = new FileReference(UprojectPath);
-			PluginInfo UprojectInfo = new PluginInfo(UprojectRefer, PluginType.Project);
-			foreach (PluginReferenceDescriptor PluginRef in UprojectInfo.Descriptor.Plugins) // 循环文件 
-			{
-				if (PluginRef.Name == "OnlineSubsystemSteam")
-				{
-					isSteamPackage = PluginRef.bEnabled;
-					break;
-				}
-			} 
-        
-			if (isSteamPackage)
-			{
-				PrivateDefinitions.Add("XD_Steam_Package");
-				// Plugin.Descriptor.Plugins.Add(new PluginReferenceDescriptor("OnlineSubsystem","", true));
-				PrivateDependencyModuleNames.AddRange(
-					new string[]
-					{
-						"OnlineSubsystem",
-						"OnlineSubsystemSteam",
-					}
-				);
-				// AddEngineThirdPartyPrivateStaticDependencies(Target, "Steamworks");
-			}
-		}
 
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		PrivateIncludePaths.Add(Path.GetFullPath(Path.Combine(ModuleDirectory, "Private")));

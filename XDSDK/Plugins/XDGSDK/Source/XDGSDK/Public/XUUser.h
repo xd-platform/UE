@@ -34,6 +34,8 @@ struct FXUUser
 
 	void SaveToLocal();
 
+	TArray<FString> GetBoundAccounts();
+
 	static TSharedPtr<FXUUser>& GetLocalModel();
 	
 	TSharedPtr<FXUTokenModel> Token();

@@ -39,6 +39,8 @@ import com.xd.intl.common.base.XDGError;
 import com.xd.intl.common.utils.CurrentSessionDataManager;
 import com.xd.intl.common.bean.XDGAgreement;
 
+com.tds.common.net.util
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -326,8 +328,11 @@ public class XDGCommonUnreal4 {
         
             if (num == 0 || num == 2) {
                 EnvHelper.setApiEnv(EnvHelper.EnvEnum.Product);
+                HostReplaceUtil.getInstance().clear();
             } else if (num == 1 || num == 3) {
                 EnvHelper.setApiEnv(EnvHelper.EnvEnum.Dev);
+                HostReplaceUtil.getInstance().addReplacedHostPair("https://login-xdsdk.xd.cn/", "http://39.107.229.24:12008/");
+                HostReplaceUtil.getInstance().addReplacedHostPair("https://login-xdsdk.xd.com/", "https://login-xdsdk-test.xd-cf-2022.workers.dev/");
             }
             initSDK(activity);
     }

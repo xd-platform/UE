@@ -74,6 +74,8 @@ private:
 
 	void LoginSuccess(TSharedPtr<FXUUser> UserPtr, TFunction<void(const FXUUser& User)> SuccessBlock);
 
-	FString GetSteamworksSDKPath(); 
-	void GetSteamInfo(const FString& SDKPath, FString& SteamID, FString& SteamAuth); 
+	FString GetSteamworksSDKPath();
+	
+	FString GetSteamUserID(const FString& SDKPath);
+	FString GetSteamUserAuth(const FString& SDKPath); 
 };

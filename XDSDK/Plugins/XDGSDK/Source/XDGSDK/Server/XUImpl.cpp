@@ -157,9 +157,15 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 
 void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock,
 	TFunction<void(const FXUError& Error)> ErrorBlock) {
-	FString SteamPath = GetSteamworksSDKPath();
-	if (!SteamPath.IsEmpty()) {
-		FString SteamID = GetSteamUserID(SteamPath);
+	UClass* ResultClass = FindObject<UClass>(ANY_PACKAGE, TEXT("XDSteamWrapperBPLibrary"));
+	if (ResultClass) {
+		bool IsSteamEnable = TUHelper::InvokeFunction<bool>("XDSteamWrapperBPLibrary", "SteamSystemIsEnable");
+		if (!IsSteamEnable) {
+			ErrorBlock(FXUError("Steam System Disable"));
+			TUDebuger::WarningLog(TEXT("Steam System Disable"));
+			return;
+		}
+		FString SteamID = TUHelper::InvokeFunction<FString>("XDSteamWrapperBPLibrary", "GetSteamID");
 		
 		if (SteamID.IsEmpty()) {
 			ErrorBlock(FXUError("SteamID is Empty"));
@@ -260,8 +266,8 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 	}
 	else if (LoginType == XUType::Steam) {
 		TUDebuger::DisplayLog("Steam Login");
-		FString SteamPath = GetSteamworksSDKPath();
-		if (SteamPath.IsEmpty()) {
+		UClass* ResultClass = FindObject<UClass>(ANY_PACKAGE, TEXT("XDSteamWrapperBPLibrary"));
+		if (!ResultClass) {
 			XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::SteamAuth,
 			                           [=](TSharedPtr<FJsonObject> AuthParas) {
 				                           AuthParas->SetNumberField("type", (int)LoginType);
@@ -269,7 +275,13 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 			                           }, ErrorBlock);
 		}
 		else {
-			FString SteamAuth = GetSteamUserAuth(SteamPath);
+			bool IsSteamEnable = TUHelper::InvokeFunction<bool>("XDSteamWrapperBPLibrary", "SteamSystemIsEnable");
+			if (!IsSteamEnable) {
+				ErrorBlock(FXUError("Steam System Disable"));
+				TUDebuger::WarningLog(TEXT("Steam System Disable"));
+				return;
+			}
+			FString SteamAuth = TUHelper::InvokeFunction<FString>("XDSteamWrapperBPLibrary", "GetAuthSessionTicket");
 			if (!SteamAuth.IsEmpty()) {
 				TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 				JsonObject->SetNumberField("type", (int)LoginType);
@@ -606,111 +618,3 @@ void XUImpl::LoginSuccess(TSharedPtr<FXUUser> UserPtr, TFunction<void(const FXUU
 	}
 }
 
-FString XUImpl::GetSteamworksSDKPath() {
-#if WITH_EDITOR
-	return "";
-#else
-	TArray<FString> FindFiles;
-	FString Path = FPlatformProcess::BaseDir();
-	Path = Path + "../../../Engine/Binaries/ThirdParty/Steamworks";
-#if PLATFORM_MAC
-	IFileManager::Get().FindFilesRecursive(FindFiles, *Path, TEXT("*.dylib"), true, false);
-#elif PLATFORM_WINDOWS
-	IFileManager::Get().FindFilesRecursive(FindFiles, *Path, TEXT("*.dll"), true, false);
-#endif
-	if (FindFiles.Num() > 0) {
-		TUDebuger::DisplayLog(FindFiles[0]);
-		return FindFiles[0];
-	}
-	return "";
-#endif
-}
-
-typedef int32 HSteamPipe;
-typedef int32 HSteamUser;
-typedef uint32 HAuthTicket;
-typedef HSteamUser (*GetHSteamUser)();
-typedef HSteamPipe (*GetHSteamPipe)();
-typedef intptr_t (*CreateInterface)( const char *ver );
-typedef intptr_t (*GetISteamUser)(intptr_t instancePtr, HSteamUser hSteamUser, HSteamPipe hSteamPipe, const char * pchVersion);
-typedef HAuthTicket (*GetAuthSessionTicket)(intptr_t instancePtr, void * pTicket, int cbMaxTicket, uint32 * pcbTicket);
-typedef uint64 (*GetSteamID)(intptr_t instancePtr);
-		
-const char * STEAMUSER_INTERFACE_VERSION = "SteamUser020";
-const char * STEAMCLIENT_INTERFACE_VERSION = "SteamClient020";
-
-FString XUImpl::GetSteamUserID(const FString& SDKPath) {
-	FString SteamID = "";
-	auto Handle = FPlatformProcess::GetDllHandle(*SDKPath);
-	if (Handle) {
-		GetHSteamUser GetHSteamUserFunc = (GetHSteamUser)FPlatformProcess::GetDllExport(Handle, TEXT("GetHSteamUser"));
-		GetHSteamPipe GetHSteamPipeFunc = (GetHSteamPipe)FPlatformProcess::GetDllExport(Handle, TEXT("GetHSteamPipe"));
-		CreateInterface CreateInterfaceFunc = (CreateInterface)FPlatformProcess::GetDllExport(Handle, TEXT("SteamInternal_CreateInterface"));
-		GetISteamUser GetISteamUserFunc = (GetISteamUser)FPlatformProcess::GetDllExport(Handle, TEXT("SteamAPI_ISteamClient_GetISteamUser"));
-		GetSteamID GetSteamIDFunc = (GetSteamID)FPlatformProcess::GetDllExport(Handle, TEXT("SteamAPI_ISteamUser_GetSteamID"));
-
-		if (GetHSteamUserFunc &&
-			GetHSteamPipeFunc &&
-			CreateInterfaceFunc &&
-			GetSteamIDFunc &&
-			GetISteamUserFunc) {
-			TUDebuger::DisplayLog("funcs are exits");
-			auto user = GetHSteamUserFunc();
-			auto pipe = GetHSteamPipeFunc();
-			auto steamClient = CreateInterfaceFunc(STEAMCLIENT_INTERFACE_VERSION);
-			auto steamUser = GetISteamUserFunc(steamClient, user, pipe, STEAMUSER_INTERFACE_VERSION);
-			SteamID = FString::Printf(TEXT("%lld"), GetSteamIDFunc(steamUser));
-			TUDebuger::DisplayLog("SteamID: " + SteamID);
-			}
-		else {
-			TUDebuger::WarningLog("steam funcs are not exits");
-		}
-		FPlatformProcess::FreeDllHandle(Handle);
-	} else {
-		TUDebuger::WarningLog("no steam dylib");
-	}
-	return SteamID;
-}
-
-FString XUImpl::GetSteamUserAuth(const FString& SDKPath) {
-	FString SteamAuth = "";
-	auto Handle = FPlatformProcess::GetDllHandle(*SDKPath);
-	if (Handle) {
-		
-		GetHSteamUser GetHSteamUserFunc = (GetHSteamUser)FPlatformProcess::GetDllExport(Handle, TEXT("GetHSteamUser"));
-		GetHSteamPipe GetHSteamPipeFunc = (GetHSteamPipe)FPlatformProcess::GetDllExport(Handle, TEXT("GetHSteamPipe"));
-		CreateInterface CreateInterfaceFunc = (CreateInterface)FPlatformProcess::GetDllExport(Handle, TEXT("SteamInternal_CreateInterface"));
-		GetISteamUser GetISteamUserFunc = (GetISteamUser)FPlatformProcess::GetDllExport(Handle, TEXT("SteamAPI_ISteamClient_GetISteamUser"));
-		GetAuthSessionTicket GetAuthSessionTicketFunc = (GetAuthSessionTicket)FPlatformProcess::GetDllExport(Handle, TEXT("SteamAPI_ISteamUser_GetAuthSessionTicket"));
-
-		if (GetHSteamUserFunc &&
-			GetHSteamPipeFunc &&
-			CreateInterfaceFunc &&
-			GetISteamUserFunc &&
-			GetAuthSessionTicketFunc) {
-			TUDebuger::DisplayLog("funcs are exits");
-			auto user = GetHSteamUserFunc();
-			auto pipe = GetHSteamPipeFunc();
-			auto steamClient = CreateInterfaceFunc(STEAMCLIENT_INTERFACE_VERSION);
-			auto steamUser = GetISteamUserFunc(steamClient, user, pipe, STEAMUSER_INTERFACE_VERSION);
-			uint8 AuthToken[1024];
-			uint32 AuthTokenSize = 0;
-			GetAuthSessionTicketFunc(steamUser, AuthToken, UE_ARRAY_COUNT(AuthToken), &AuthTokenSize);
-			if (AuthTokenSize > 0) {
-				SteamAuth = BytesToHex(AuthToken, AuthTokenSize);
-				TUDebuger::DisplayLog("SteamAuth: " + SteamAuth);
-				FPlatformProcess::Sleep(0.1f);
-			}
-			else {
-				TUDebuger::DisplayLog("Get SteamAuth Fail");
-			}
-		}
-		else {
-			TUDebuger::WarningLog("steam funcs are not exits");
-		}
-		FPlatformProcess::FreeDllHandle(Handle);
-	} else {
-		TUDebuger::WarningLog("no steam dylib");
-	}
-	return SteamAuth;
-}

@@ -73,9 +73,5 @@ private:
 	void RequestServerConfig();
 
 	void LoginSuccess(TSharedPtr<FXUUser> UserPtr, TFunction<void(const FXUUser& User)> SuccessBlock);
-
-	FString GetSteamworksSDKPath();
 	
-	FString GetSteamUserID(const FString& SDKPath);
-	FString GetSteamUserAuth(const FString& SDKPath); 
 };

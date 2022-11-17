@@ -39,20 +39,8 @@
 			]
 		},
 		{
-			"Name": "OnlineSubsystem",
-			"Enabled": true,
-			"SupportedTargetPlatforms": [
-				"Mac",
-				"Win64"
-			]
-		},
-		{
-			"Name": "OnlineSubsystemSteam",
-			"Enabled": true,
-			"SupportedTargetPlatforms": [
-				"Mac",
-				"Win64"
-			]
+			"Name": "XDSteamWrapper",
+			"Enabled": true
 		}
 	]
 }

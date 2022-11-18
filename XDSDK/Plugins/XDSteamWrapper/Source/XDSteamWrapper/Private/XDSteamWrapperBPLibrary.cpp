@@ -3,6 +3,7 @@
 #include "XDSteamWrapperBPLibrary.h"
 #include "OnlineSubsystemSteam.h"
 #include "TUDebuger.h"
+#include "TUHelper.h"
 #include "XUNotification.h"
 
 THIRD_PARTY_INCLUDES_START
@@ -37,21 +38,24 @@ SteamCallbacksListener::~SteamCallbacksListener()
 }
 
 void SteamCallbacksListener::onGetAuthSessionTicket(GetAuthSessionTicketResponse_t* _pParam) {
-	TUDebuger::DisplayShow(FString::Printf(TEXT("m_hAuthTicket: %d"), _pParam->m_hAuthTicket));
-	TUDebuger::DisplayShow(FString::Printf(TEXT("m_eResult: %d"), _pParam->m_eResult));
+	GetAuthSessionTicketResponse_t Param = * _pParam;
+	TUHelper::PerformOnGameThread([=]() {
+		TUDebuger::DisplayShow(FString::Printf(TEXT("m_hAuthTicket: %d"), Param.m_hAuthTicket));
+		TUDebuger::DisplayShow(FString::Printf(TEXT("m_eResult: %d"), Param.m_eResult));
 
-	if (_pParam->m_eResult == k_EResultOK) {
-		if (_pParam->m_hAuthTicket == k_HAuthTicketInvalid || SteamTicket.IsEmpty()) {
-			XUNotification::SteamTicketDelegate.ExecuteIfBound(0, "Steam GetAuthSessionTicket Fail");
+		if (Param.m_eResult == k_EResultOK) {
+			if (Param.m_hAuthTicket == k_HAuthTicketInvalid || SteamTicket.IsEmpty()) {
+				XUNotification::SteamTicketDelegate.ExecuteIfBound(0, "Steam GetAuthSessionTicket Fail");
+			}
+			else {
+				TUDebuger::DisplayShow("Steam AuthToken: " + SteamTicket);
+				XUNotification::SteamTicketDelegate.ExecuteIfBound(1, SteamTicket);
+			}
 		}
 		else {
-			TUDebuger::DisplayShow("Steam AuthToken: " + SteamTicket);
-			XUNotification::SteamTicketDelegate.ExecuteIfBound(1, SteamTicket);
+			XUNotification::SteamTicketDelegate.ExecuteIfBound(0, "Steam GetAuthSessionTicket Fail");
 		}
-	}
-	else {
-		XUNotification::SteamTicketDelegate.ExecuteIfBound(0, "Steam GetAuthSessionTicket Fail");
-	}
+	});
 } 
 
 UXDSteamWrapperBPLibrary::UXDSteamWrapperBPLibrary(const FObjectInitializer& ObjectInitializer)

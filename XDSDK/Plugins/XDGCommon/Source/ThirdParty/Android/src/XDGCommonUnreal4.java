@@ -39,7 +39,7 @@ import com.xd.intl.common.base.XDGError;
 import com.xd.intl.common.utils.CurrentSessionDataManager;
 import com.xd.intl.common.bean.XDGAgreement;
 
-com.tds.common.net.util
+import com.tds.common.net.util
 
 import java.io.File;
 import java.util.HashMap;

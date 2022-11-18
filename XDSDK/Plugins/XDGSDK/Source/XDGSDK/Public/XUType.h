@@ -145,7 +145,7 @@ namespace XUType {
 		/// 注销账户链接，默认
 		FString LogoutUrl;
 
-		/// 注销账户链接，默认
+		/// 支付链接，默认
 		FString WebPayUrl;
 
 		/// 协议内容

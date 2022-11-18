@@ -1,6 +1,4 @@
 #pragma once
-#include "TUAccessToken.h"
-
 #include "XUNet.h"
 #include "XUUser.h"
 
@@ -58,6 +56,7 @@ public:
 
 
 private:
+	XUImpl();
 	static TSharedPtr<XUImpl> Instance;
 	
 	void RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras, TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock, TFunction<void(FXUError error)> ErrorBlock, const FString& ConsoleID = "");

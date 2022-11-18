@@ -39,6 +39,7 @@ public class XDSteamWrapper : ModuleRules
 				"Slate",
 				"SlateCore",
 				"TapCommon",
+				"XDGSDK",
 				"OnlineSubsystem",
 				"OnlineSubsystemSteam"
 				// ... add private dependencies that you statically link with here ...	
@@ -52,5 +53,8 @@ public class XDSteamWrapper : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+		
+		AddEngineThirdPartyPrivateStaticDependencies(Target, "Steamworks");
+
 	}
 }

@@ -16,6 +16,7 @@
 #include "XDGSDK/UI/XUPayWebWidget.h"
 #include "Track/XUPaymentTracker.h"
 #include "Agreement/XUAgreementManager.h"
+#include "XUNotification.h"
 
 static int Success = 200;
 
@@ -281,16 +282,20 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 				TUDebuger::WarningLog(TEXT("Steam System Disable"));
 				return;
 			}
-			FString SteamAuth = TUHelper::InvokeFunction<FString>("XDSteamWrapperBPLibrary", "GetAuthSessionTicket");
-			if (!SteamAuth.IsEmpty()) {
-				TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
-				JsonObject->SetNumberField("type", (int)LoginType);
-				JsonObject->SetStringField("token", SteamAuth);
-				resultBlock(JsonObject);
-			} else {
-				ErrorBlock(FXUError("Steam UserInfo Get Error"));
-				TUDebuger::WarningLog(TEXT("Steam UserInfo Get Error"));
-			}
+			
+			XUNotification::SteamTicketDelegate.BindLambda([=](int Code, const FString& Content) {
+				if (Code == 1) {
+					TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
+					JsonObject->SetNumberField("type", (int)LoginType);
+					JsonObject->SetStringField("token", Content);
+					resultBlock(JsonObject);
+				} else {
+					ErrorBlock(FXUError(Content));
+					TUDebuger::WarningLog(Content);
+				}
+				XUNotification::SteamTicketDelegate.Unbind();
+			});
+			TUHelper::InvokeNoReturnFunction("XDSteamWrapperBPLibrary", "GetAuthSessionTicket");
 		}
 	}
 	else {
@@ -491,6 +496,9 @@ TSharedPtr<XUImpl>& XUImpl::Get() {
 	return Instance;
 }
 
+XUImpl::XUImpl() {
+}
+
 void XUImpl::BindByType(XUType::LoginType BindType, TFunction<void(bool Success, const FXUError& Error)> CallBack) {
 	auto LangModel = XULanguageManager::GetCurrentModel();
 	TFunction<void(TSharedPtr<FJsonObject> Paras)> BindBlock = [=](TSharedPtr<FJsonObject> Paras) {
@@ -530,7 +538,7 @@ void XUImpl::BindByType(XUType::LoginType BindType, TFunction<void(bool Success,
 void XUImpl::RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras,
                              TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock,
                              TFunction<void(FXUError error)> ErrorBlock,
-                              const FString& ConsoleID) {
+                             const FString& ConsoleID) {
 	XUNet::RequestKidToken(IsConsole, paras, [=](TSharedPtr<FXUTokenModel> kidToken, FXUError error) {
 		if (error.code == Success && kidToken != nullptr) {
 			kidToken->ConsoleID = ConsoleID;

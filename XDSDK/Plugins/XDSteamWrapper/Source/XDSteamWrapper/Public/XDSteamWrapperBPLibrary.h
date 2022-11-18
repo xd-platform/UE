@@ -34,5 +34,6 @@ class UXDSteamWrapperBPLibrary : public UBlueprintFunctionLibrary
 	static FString GetSteamID();
 
 	UFUNCTION()
-	static FString GetAuthSessionTicket();
+	static void GetAuthSessionTicket();
+
 };

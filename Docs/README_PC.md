@@ -109,6 +109,21 @@ PrivateDependencyModuleNames.AddRange(new string[] { "TapDB", "AntiAddiction"});
 
 登录的某些错误码，会需要游戏方展示弹窗用来引导用户，具体可以咨询相关开发者。
 
+### 主机自动登录
+
+我们可以把「Steam/PS/Nintendo」等平台上发行的游戏称之为主机游戏，对于这些游戏，用户们会更习惯用该平台账号登录游戏。对于这类游戏，推荐使用这个接口来登录。
+
+```cpp
+/**
+* 主机（Steam/PS/Nintendo 上发行的游戏）自动登录接口
+*
+* @param SuccessBlock    该主机的账号注册过心动账号，那么会返回登录成功（第二次登录的时候，如果主机账号没有发生改变，会直接返回登录成功，略过网络请求）
+* @param FailBlock       该主机的账号未注册过心动账号，那么会返回失败。这个时候需要调用LoginByType登录
+* @param ErrorBlock      网络请求错误或者非主机平台的游戏调用，以及其他错误
+*/
+static void LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock, TFunction<void(const FXUError& Error)> ErrorBlock);
+```
+
 ### 获取用户信息及Token
 ```cpp
 	static TSharedPtr<FXUUser> GetUserInfo();

@@ -1,3 +1,19 @@
+# 6.8.0 （2022年11月22日）
+
+## PC SDK
+### New Feature
+- 支持 Steam 登录
+- 添加主机登录接口
+
+
+## Mobile SDK
+### New Feature
+- 支持 Steam 登录
+- 增加 logout 埋点
+- 创建订单接口增加参数：
+    - price: 当前货币价格（带有货币符号）
+    - priceAmountMicros: 当前货币的价格，单位微分
+
 # 6.7.0 （2022年11月8日）
 
 ## PC SDK

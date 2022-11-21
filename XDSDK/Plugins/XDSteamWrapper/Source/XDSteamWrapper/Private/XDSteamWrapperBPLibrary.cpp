@@ -40,15 +40,15 @@ SteamCallbacksListener::~SteamCallbacksListener()
 void SteamCallbacksListener::onGetAuthSessionTicket(GetAuthSessionTicketResponse_t* _pParam) {
 	GetAuthSessionTicketResponse_t Param = * _pParam;
 	TUHelper::PerformOnGameThread([=]() {
-		TUDebuger::DisplayShow(FString::Printf(TEXT("m_hAuthTicket: %d"), Param.m_hAuthTicket));
-		TUDebuger::DisplayShow(FString::Printf(TEXT("m_eResult: %d"), Param.m_eResult));
+		TUDebuger::DisplayLog(FString::Printf(TEXT("m_hAuthTicket: %d"), Param.m_hAuthTicket));
+		TUDebuger::DisplayLog(FString::Printf(TEXT("m_eResult: %d"), Param.m_eResult));
 
 		if (Param.m_eResult == k_EResultOK) {
 			if (Param.m_hAuthTicket == k_HAuthTicketInvalid || SteamTicket.IsEmpty()) {
 				XUNotification::SteamTicketDelegate.ExecuteIfBound(0, "Steam GetAuthSessionTicket Fail");
 			}
 			else {
-				TUDebuger::DisplayShow("Steam AuthToken: " + SteamTicket);
+				TUDebuger::DisplayLog("Steam AuthToken: " + SteamTicket);
 				XUNotification::SteamTicketDelegate.ExecuteIfBound(1, SteamTicket);
 			}
 		}
@@ -76,7 +76,7 @@ FString UXDSteamWrapperBPLibrary::GetSteamID() {
 		return "";
 	}
 	FString SteamID = FString::Printf(TEXT("%lld"), UserPtr->GetSteamID().ConvertToUint64());
-	TUDebuger::DisplayShow("SteamID: " + SteamID);
+	TUDebuger::DisplayLog("SteamID: " + SteamID);
 	return SteamID;
 }
 

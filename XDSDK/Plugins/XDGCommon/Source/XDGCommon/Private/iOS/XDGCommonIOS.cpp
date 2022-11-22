@@ -31,7 +31,7 @@ void XDGCommonIOS::SetLanguage(int32 langType){
 
 void XDGCommonIOS::InitSDK(){
     [XDGSDKSettings setExitHandler:^{
-        FPlatformMisc::RequestExit( true );
+        FPlatformMisc::RequestExit( false );
     }];
     [XDGSDK initSDK:^(BOOL success, NSString *msg) {
         if (success) {

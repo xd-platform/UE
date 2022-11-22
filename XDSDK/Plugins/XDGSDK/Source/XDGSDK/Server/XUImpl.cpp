@@ -165,19 +165,37 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 
 void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock,
 	TFunction<void(const FXUError& Error)> ErrorBlock) {
-	UClass* ResultClass = FindObject<UClass>(ANY_PACKAGE, TEXT("XDSteamWrapperBPLibrary"));
 	XULoginTracker::LoginStart();
+	auto _SuccessBlock = [=](const FXUUser& User) {
+		XULoginTracker::LoginSuccess();
+		if (SuccessBlock) {
+			SuccessBlock(User);
+		}
+	};
+	auto _FailBlock = [=]() {
+		// XULoginTracker::LoginFailed(Error.msg);
+		if (FailBlock) {
+			FailBlock();
+		}
+	};
+	auto _ErrorBlock = [=](const FXUError& Error) {
+		XULoginTracker::LoginFailed(Error.msg);
+		if (ErrorBlock) {
+			ErrorBlock(Error);
+		}
+	};
+	UClass* ResultClass = FindObject<UClass>(ANY_PACKAGE, TEXT("XDSteamWrapperBPLibrary"));
 	if (ResultClass) {
 		bool IsSteamEnable = TUHelper::InvokeFunction<bool>("XDSteamWrapperBPLibrary", "SteamSystemIsEnable");
 		if (!IsSteamEnable) {
-			ErrorBlock(FXUError("Steam System Disable"));
+			_ErrorBlock(FXUError("Steam System Disable"));
 			TUDebuger::WarningLog(TEXT("Steam System Disable"));
 			return;
 		}
 		FString SteamID = TUHelper::InvokeFunction<FString>("XDSteamWrapperBPLibrary", "GetSteamID");
 		
 		if (SteamID.IsEmpty()) {
-			ErrorBlock(FXUError("SteamID is Empty"));
+			_ErrorBlock(FXUError("SteamID is Empty"));
 			TUDebuger::WarningLog(TEXT("SteamID is Empty"));
 			return;
 		}
@@ -186,7 +204,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 		auto XDUser = FXUUser::GetLocalModel();
 		// 如果有缓存，直接返回User
 		if (XDToken.IsValid() && XDUser.IsValid() && !XDToken->ConsoleID.IsEmpty() && XDToken->ConsoleID == SteamID) {
-			SuccessBlock(*XDUser.Get());
+			_SuccessBlock(*XDUser.Get());
 			RequestUserInfo([](TSharedPtr<FXUUser> ModelPtr) {
 				                ModelPtr->SaveToLocal();
 			                }, nullptr, [=](FXUError Error) {
@@ -209,9 +227,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 		TFunction<void(FXUError Error)> ErrorCallBack = [=](FXUError Error) {
 			UTUHUD::Dismiss();
 			FXUUser::ClearUserData();
-			if (ErrorBlock) {
-				ErrorBlock(Error);
-			}
+			_ErrorBlock(Error);
 			XULoginTracker::LoginRiskSuccess(Error);
 		};
 		GetAuthParam(XUType::Steam, [=](TSharedPtr<FJsonObject> paras) {
@@ -220,13 +236,13 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 					                AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
 						                UTUHUD::Dismiss();
 						                user->SaveToLocal();
-						                LoginSuccess(user, SuccessBlock);
+						                LoginSuccess(user, _SuccessBlock);
 					                }, ErrorCallBack);
 				                }, ErrorCallBack, nullptr);
 			                }, [=](FXUError Error) {
-				                if (Error.code == 40111 && FailBlock) {
+				                if (Error.code == 40111) {
 					                UTUHUD::Dismiss();
-					                FailBlock();
+					                _FailBlock();
 				                }
 				                else {
 					                ErrorCallBack(Error);
@@ -235,7 +251,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 		}, ErrorCallBack);
 		return;
 	}
-	ErrorBlock(FXUError("Not Support Platform"));
+	_ErrorBlock(FXUError("Not Support Platform"));
 }
 
 void XUImpl::GetAuthParam(XUType::LoginType LoginType,

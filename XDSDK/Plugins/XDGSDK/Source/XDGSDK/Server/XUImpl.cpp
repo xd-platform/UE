@@ -17,6 +17,7 @@
 #include "Track/XUPaymentTracker.h"
 #include "Agreement/XUAgreementManager.h"
 #include "XUNotification.h"
+#include "Track/XULoginTracker.h"
 
 static int Success = 200;
 
@@ -94,15 +95,26 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
                          TFunction<void(const FXUUser& User)> resultBlock,
                          TFunction<void(FXUError error)> ErrorBlock) {
 	auto lmd = XULanguageManager::GetCurrentModel();
+	XULoginTracker::LoginStart();
+	auto SuccessBlock = [=](const FXUUser& User) {
+		XULoginTracker::LoginSuccess();
+		if (resultBlock) {
+			resultBlock(User);
+		}
+	};
+	auto FailBlock = [=](FXUError error) {
+		XULoginTracker::LoginFailed(error.msg);
+		if (ErrorBlock) {
+			ErrorBlock(error);
+		}
+	};
 	if (LoginType == XUType::Default) {
 		bool TokenInfoIsInvalid = TUDataStorage<FXUStorage>::LoadBool(FXUStorage::TokenInfoIsInvalid);
 		if (TokenInfoIsInvalid) { // 如果token已经失效了, 清除登录缓存及协议
 			TUDataStorage<FXUStorage>::Remove(FXUStorage::TokenInfoIsInvalid);
 			FXUUser::ClearUserData();
 			OnTokenIsInvalid.Broadcast();
-			if (ErrorBlock) {
-				ErrorBlock(FXUError(lmd->tds_login_failed));
-			}
+			FailBlock(FXUError(lmd->tds_login_failed));
 			return;
 		}
 		auto localUser = XDUE::GetUserInfo();
@@ -113,21 +125,17 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 				                TUDataStorage<FXUStorage>::SaveBool(FXUStorage::TokenInfoIsInvalid, true);
 			                });
 			AsyncLocalTdsUser(localUser->userId, FXUSyncTokenModel::GetLocalModel()->sessionToken);
-			LoginSuccess(localUser, resultBlock);
+			LoginSuccess(localUser, SuccessBlock);
 		}
 		else {
-			if (ErrorBlock) {
-				ErrorBlock(FXUError(lmd->tds_login_failed));
-			}
+			FailBlock(FXUError(lmd->tds_login_failed));
 		}
 	}
 	else {
 		// 如果已经是登录状态了，那么不再重复登录
 		// User和Token保存在一起，等API改版的时候实现
 		if (XDUE::GetUserInfo().IsValid()) {
-			if (ErrorBlock) {
-				ErrorBlock(FXUError("The user is logged in"));
-			}
+			FailBlock(FXUError("The user is logged in"));
 			return;
 		}
 		GetAuthParam(LoginType, [=](TSharedPtr<FJsonObject> paras) {
@@ -139,26 +147,26 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			TFunction<void(FXUError error)> ErrorCallBack = [=](FXUError error) {
 				UTUHUD::Dismiss();
 				FXUUser::ClearUserData();
-				if (ErrorBlock) {
-					ErrorBlock(error);
-				}
+				XULoginTracker::LoginRiskSuccess(error);
+				FailBlock(error);
 			};
 			RequestKidToken(false, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
 				RequestUserInfo([=](TSharedPtr<FXUUser> user) {
 					AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
 						UTUHUD::Dismiss();
 						user->SaveToLocal();
-						LoginSuccess(user, resultBlock);
+						LoginSuccess(user, SuccessBlock);
 					}, ErrorCallBack);
 				}, ErrorCallBack, nullptr);
 			}, ErrorCallBack);
-		}, ErrorBlock);
+		}, FailBlock);
 	}
 }
 
 void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock,
 	TFunction<void(const FXUError& Error)> ErrorBlock) {
 	UClass* ResultClass = FindObject<UClass>(ANY_PACKAGE, TEXT("XDSteamWrapperBPLibrary"));
+	XULoginTracker::LoginStart();
 	if (ResultClass) {
 		bool IsSteamEnable = TUHelper::InvokeFunction<bool>("XDSteamWrapperBPLibrary", "SteamSystemIsEnable");
 		if (!IsSteamEnable) {
@@ -204,6 +212,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 			if (ErrorBlock) {
 				ErrorBlock(Error);
 			}
+			XULoginTracker::LoginRiskSuccess(Error);
 		};
 		GetAuthParam(XUType::Steam, [=](TSharedPtr<FJsonObject> paras) {
 			RequestKidToken(true, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
@@ -232,12 +241,26 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 void XUImpl::GetAuthParam(XUType::LoginType LoginType,
                           TFunction<void(TSharedPtr<FJsonObject> paras)> resultBlock,
                           TFunction<void(FXUError error)> ErrorBlock) {
-	if (LoginType == XUType::Guest) {
+	XULoginTracker::Login2Authorize();
+
+	auto SuccessBlock = [=](TSharedPtr<FJsonObject> paras) {
 		XUThirdAuthHelper::CancelAllPreAuths();
+		if (resultBlock) {
+			resultBlock(paras);
+		}
+	};
+	auto FailBlock = [=](FXUError error) {
+		XULoginTracker::Login2AuthorizeFailed(error.msg);
+		if (ErrorBlock) {
+			ErrorBlock(error);
+		}
+	};
+
+	if (LoginType == XUType::Guest) {
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 		JsonObject->SetNumberField("type", (int)LoginType);
 		JsonObject->SetStringField("token", TUDeviceInfo::GetLoginId());
-		resultBlock(JsonObject);
+		SuccessBlock(JsonObject);
 	}
 	else if (LoginType == XUType::TapTap) {
 		XUThirdAuthHelper::TapTapAuth(
@@ -246,24 +269,24 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 				JsonObject->SetNumberField("type", (int)LoginType);
 				JsonObject->SetStringField("token", AccessToken.kid);
 				JsonObject->SetStringField("secret", AccessToken.mac_key);
-				resultBlock(JsonObject);
-			}, ErrorBlock);
+				SuccessBlock(JsonObject);
+			}, FailBlock);
 	}
 	else if (LoginType == XUType::Google) {
 		TUDebuger::DisplayLog("Google Login");
 		XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::GoogleAuth,
 			[=](TSharedPtr<FJsonObject> AuthParas) {
 				AuthParas->SetNumberField("type", (int)LoginType);
-				resultBlock(AuthParas);
-			}, ErrorBlock);
+				SuccessBlock(AuthParas);
+			}, FailBlock);
 	}
 	else if (LoginType == XUType::Apple) {
 		TUDebuger::DisplayLog("Apple Login");
 		XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::AppleAuth,
 			[=](TSharedPtr<FJsonObject> AuthParas) {
 				AuthParas->SetNumberField("type", (int)LoginType);
-				resultBlock(AuthParas);
-			}, ErrorBlock);
+				SuccessBlock(AuthParas);
+			}, FailBlock);
 	}
 	else if (LoginType == XUType::Steam) {
 		TUDebuger::DisplayLog("Steam Login");
@@ -272,13 +295,13 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 			XUThirdAuthHelper::WebAuth(XUThirdAuthHelper::SteamAuth,
 			                           [=](TSharedPtr<FJsonObject> AuthParas) {
 				                           AuthParas->SetNumberField("type", (int)LoginType);
-				                           resultBlock(AuthParas);
-			                           }, ErrorBlock);
+				                           SuccessBlock(AuthParas);
+			                           }, FailBlock);
 		}
 		else {
 			bool IsSteamEnable = TUHelper::InvokeFunction<bool>("XDSteamWrapperBPLibrary", "SteamSystemIsEnable");
 			if (!IsSteamEnable) {
-				ErrorBlock(FXUError("Steam System Disable"));
+				FailBlock(FXUError("Steam System Disable"));
 				TUDebuger::WarningLog(TEXT("Steam System Disable"));
 				return;
 			}
@@ -288,9 +311,9 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 					TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 					JsonObject->SetNumberField("type", (int)LoginType);
 					JsonObject->SetStringField("token", Content);
-					resultBlock(JsonObject);
+					SuccessBlock(JsonObject);
 				} else {
-					ErrorBlock(FXUError(Content));
+					FailBlock(FXUError(Content));
 					TUDebuger::WarningLog(Content);
 				}
 				XUNotification::SteamTicketDelegate.Unbind();
@@ -299,7 +322,7 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 		}
 	}
 	else {
-		ErrorBlock(FXUError("No Login Param"));
+		FailBlock(FXUError("No Login Param"));
 	}
 }
 
@@ -546,6 +569,7 @@ void XUImpl::RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras,
 			resultBlock(kidToken);
 		}
 		else {
+			XULoginTracker::LoginPreLoginFailed(error.msg);
 			ErrorBlock(error);
 		}
 	});
@@ -556,11 +580,13 @@ void XUImpl::RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> ModelPtr)> CallB
 	XUNet::RequestUserInfo(
 	[=](TSharedPtr<FXUUser> user, FXUError error) {
 		if (error.code == Success && user != nullptr) {
+			XULoginTracker::LoginPreLoginSuccess();
 			if (CallBack) {
 				CallBack(user);
 			}
 		}
 		else {
+			XULoginTracker::LoginPreLoginFailed(error.msg);
 			if (error.IsNetWorkError == false && error.code != Success && TokenInvalidBlock) {
 				TokenInvalidBlock(error);
 			} else {

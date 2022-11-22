@@ -6,6 +6,7 @@
 #include "XUConfigManager.h"
 #include "XUImpl.h"
 #include "XULanguageManager.h"
+#include "Track/XUProtocolTracker.h"
 #include "Track/XUTracker.h"
 #include "XDGSDK/UI/XUPrivacyWidget.h"
 
@@ -101,12 +102,19 @@ void XUAgreementManager::CheckAgreementWithHandler(TFunction<void()> Handler) {
 		return;
 	}
 	UXUPrivacyWidget::ShowPrivacy([=]() {
-		XUTracker::Get()->UserAgreeProtocol();
+		int32 PrivacyType = 1;
+		if (XUConfigManager::IsGameInKoreaAndPushServiceEnable()) {
+			PrivacyType = 2;
+		} else if (XUConfigManager::IsGameInNA()) {
+			PrivacyType = 3;
+		}
+		XUProtocolTracker::AgreePrivacy(PrivacyType);
 		SharedInstance().HasSignedAgreement = true;
 		if (Handler) {
 			Handler();
 		}
 	});
+	XUProtocolTracker::AskPrivacy();
 }
 
 FString XUAgreementManager::GetAgreementUrl() {

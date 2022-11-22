@@ -14,6 +14,7 @@
 #include "XUConfigManager.h"
 #include "XUImpl.h"
 #include "XURegionConfig.h"
+#include "Track/XULoginTracker.h"
 
 //IP信息
 static FString IP_INFO = "https://ip.xindong.com/myloc2";
@@ -270,7 +271,6 @@ void XUNet::RequestKidToken(bool IsConsole, const TSharedPtr<FJsonObject>& paras
 	const TSharedPtr<TUHttpRequest> request = MakeShareable(new XUNet());
 	if (IsConsole) {
 		request->URL = XURegionConfig::Get()->ConsoleLoginUrl();
-
 	} else {
 		request->URL = XURegionConfig::Get()->CommonLoginUrl();
 	}
@@ -279,6 +279,10 @@ void XUNet::RequestKidToken(bool IsConsole, const TSharedPtr<FJsonObject>& paras
 	request->isPure = true;
 	request->Headers = request->CommonHeaders();
 	request->PostUrlParameters = request->CommonParameters();
+	FString SessionId = XULoginTracker::GetCurrentSessionId();
+	if (!SessionId.IsEmpty()) {
+		request->PostUrlParameters->SetStringField("eventSessionId", SessionId);
+	}
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromWrapperResponseCallBack(response, callback);
 	});

@@ -1,6 +1,4 @@
 #pragma once
-#include "TUAccessToken.h"
-
 #include "XUNet.h"
 #include "XUUser.h"
 
@@ -27,7 +25,9 @@ public:
 	
 	void InitSDK(TSharedPtr<XUType::Config> Config, XUInitCallback CallBack);
 	
-	void LoginByType(XUType::LoginType LoginType, TFunction<void(TSharedPtr<FXUUser> user)> resultBlock, TFunction<void(FXUError error)> ErrorBlock);
+	void LoginByType(XUType::LoginType LoginType, TFunction<void(const FXUUser& User)> resultBlock, TFunction<void(FXUError error)> ErrorBlock);
+
+	void LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock, TFunction<void(const FXUError& Error)> ErrorBlock);
 
 	void GetAuthParam(XUType::LoginType LoginType, TFunction<void(TSharedPtr<FJsonObject> paras)> resultBlock, TFunction<void(FXUError error)> ErrorBlock);
 
@@ -56,11 +56,12 @@ public:
 
 
 private:
+	XUImpl();
 	static TSharedPtr<XUImpl> Instance;
 	
-	void RequestKidToken(TSharedPtr<FJsonObject> paras, TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock, TFunction<void(FXUError error)> ErrorBlock);
+	void RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras, TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock, TFunction<void(FXUError error)> ErrorBlock, const FString& ConsoleID = "");
 
-	void RequestUserInfo(bool saveToLocal, TFunction<void(TSharedPtr<FXUUser> model)> callback, TFunction<void(FXUError error)> ErrorBlock);
+	void RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> ModelPtr)> CallBack, TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock);
 
 	void AsyncNetworkTdsUser(const FString& userId, TFunction<void(FString SessionToken)> callback, TFunction<void(FXUError error)> ErrorBlock);
 
@@ -70,6 +71,6 @@ private:
 
 	void RequestServerConfig();
 
-	void LoginSuccess(TSharedPtr<FXUUser> User, TFunction<void(TSharedPtr<FXUUser>)> SuccessBlock);
-
+	void LoginSuccess(TSharedPtr<FXUUser> UserPtr, TFunction<void(const FXUUser& User)> SuccessBlock);
+	
 };

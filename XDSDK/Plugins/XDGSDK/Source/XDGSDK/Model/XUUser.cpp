@@ -20,6 +20,10 @@ void FXUUser::SaveToLocal()
 	
 }
 
+TArray<FString> FXUUser::GetBoundAccounts() {
+	return this->loginList;
+}
+
 TSharedPtr<FXUUser>& FXUUser::GetLocalModel()
 {
 	if (CurrentModel == nullptr)

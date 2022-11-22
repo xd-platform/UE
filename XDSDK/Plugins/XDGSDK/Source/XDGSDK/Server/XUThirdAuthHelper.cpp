@@ -53,6 +53,8 @@ void XUThirdAuthHelper::WebAuth(WebAuthType AuthType, TFunction<void(TSharedPtr<
 		RouteName = "google_auth";
 	} else if (AuthType == AppleAuth) {
 		RouteName = "apple_auth";
+	} else if (AuthType == SteamAuth) {
+		RouteName = "steam_auth";
 	} else {
 		return;
 	}
@@ -104,6 +106,8 @@ void XUThirdAuthHelper::WebAuth(WebAuthType AuthType, TFunction<void(TSharedPtr<
 			FString ClientID = XUConfigManager::CurrentConfig()->AppleInfo.ServerID;
 			Paras->SetStringField("client_id", ClientID);
 			Paras->SetStringField("auth_type", "apple");
+		} else if (AuthType == SteamAuth) {
+			Paras->SetStringField("auth_type", "steam");
 		}
 		
 		FString ParaStr = TUHelper::CombinParameters(Paras);

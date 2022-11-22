@@ -1,0 +1,50 @@
+{
+	"FileVersion": 3,
+	"Version": 60800001,
+	"VersionName": "6.8.0",
+	"FriendlyName": "XDSteamWrapper",
+	"Description": "",
+	"Category": "XD",
+	"CreatedBy": "XD",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "XDSteamWrapper",
+			"Type": "Runtime",
+			"LoadingPhase": "PreLoadingScreen"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "TapCommon",
+			"Enabled": true
+		},
+		{
+			"Name": "XDGSDK",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystem",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Mac",
+				"Win64"
+			]
+		},
+		{
+			"Name": "OnlineSubsystemSteam",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Mac",
+				"Win64"
+			]
+		}
+	]
+}

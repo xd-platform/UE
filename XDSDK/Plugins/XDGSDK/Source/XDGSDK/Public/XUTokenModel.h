@@ -21,10 +21,10 @@ struct FXUTokenModel
 	FString tokenType;
 
 	UPROPERTY()
-	int64 expireIn;  //游客才有
+	int64 expireIn = 0;  //游客才有
 
 	UPROPERTY()
-	FString macAlgorithm; //tapTap才有
+	FString ConsoleID = "";
 
 	void SaveToLocal();
 

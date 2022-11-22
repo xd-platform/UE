@@ -1,6 +1,6 @@
 import os.path
 
-import xdsdk_build
+import build
 import sys
 import upload_npkg
 import slack_bot
@@ -8,19 +8,21 @@ import slack_bot
 
 if __name__ == '__main__':
     # 解析需要的平台
-    products = xdsdk_build.parse_need_products(" ".join(sys.argv[1:]))
+    products = build.parse_need_products(" ".join(sys.argv[1:]))
     if len(products) == 0:
         exit(0)
-    message = "XDSDK-UE Build"
+    message = "*XDSDK-UE Build*"
     if "CI_RUNNER_TAGS" in os.environ:
-        message = message + f" ({os.environ['CI_RUNNER_TAGS']})"
+        message = message + f" `{os.environ['CI_RUNNER_TAGS']}`"
+    if "CI_COMMIT_AUTHOR" in os.environ:
+        message = message + f"\n>{os.environ['CI_COMMIT_AUTHOR']}"
     if "CI_JOB_URL" in os.environ:
         message = message + f"\n<{os.environ['CI_JOB_URL']}|PackageStart>"
 
     thread_id = slack_bot.sendMessage(message)
     for platform_str in products:
         # 打包
-        product = xdsdk_build.product_app(platform_str)
+        product = build.product_app(platform_str)
         if product is None:
             message = f"{platform_str}打包失败"
             print(message)

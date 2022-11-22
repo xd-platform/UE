@@ -22,10 +22,11 @@ struct FXUError
 	
 	TSharedPtr<FJsonObject> ExtraData;
 
+	bool IsNetWorkError = false;
+
 	FString GetExtraString() {
 		return TUJsonHelper::GetJsonString(ExtraData);
 	}
-	
 
 	FXUError() = default;
 	FXUError(const FString& message) :code(-1), msg(message) {};

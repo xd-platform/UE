@@ -21,6 +21,7 @@ enum class ETempDemoLoginType : uint8
 	TapTap = 5,		// TapTap登录
 	Line = 6,
 	Twitter = 7,
+	Steam = 10,
 	Default	= 100,	// 自动登录
 };
 
@@ -37,6 +38,9 @@ class XDSDK_API UXDServiceWidgetAccount : public UUserWidget
 
 	UFUNCTION()
 	void OnAutoLoginClicked();
+
+	UFUNCTION()
+	void OnConsoleLoginClicked();
 
 	UFUNCTION()
 	void OnDeviceIDClicked();
@@ -86,6 +90,9 @@ protected:
 
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* AutoLogin;
+
+	UPROPERTY(Meta = (BindWidget))
+	UServiceItemWidget* ConsoleLogin;
 
 	UPROPERTY(Meta = (BindWidget))
 	UServiceItemWidget* DeviceID;

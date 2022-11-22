@@ -71,6 +71,20 @@ void UXDServiceWidgetAccount::OnAutoLoginClicked() {
 #endif
 }
 
+void UXDServiceWidgetAccount::OnConsoleLoginClicked() {
+#if PLATFORM_IOS || PLATFORM_ANDROID
+
+#elif PLATFORM_WINDOWS || PLATFORM_MAC
+	XDUE::LoginByConsole([](const FXUUser& User) {
+		TUDebuger::DisplayShow(TEXT("登录成功: ") + TUJsonHelper::GetJsonString(User));
+	}, []() {
+		TUDebuger::WarningShow(TEXT("登录失败，未绑定XDUser"));
+	}, [](const FXUError& Error) {
+		TUDebuger::WarningShow(TEXT("发生错误，错误信息") + TUJsonHelper::GetJsonString(Error));
+	});
+#endif
+}
+
 void UXDServiceWidgetAccount::OnDeviceIDClicked() {
 	TUDebuger::DisplayShow(TUDeviceInfo::GetLoginId());
 }
@@ -224,6 +238,7 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 	BindByType->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnBindByTypeClicked);
 	DeviceID->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnDeviceIDClicked);
 	AutoLogin->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnAutoLoginClicked);
+	ConsoleLogin->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnConsoleLoginClicked);
 	
 	XDUE::OnUserStatusChange.AddLambda([](XUType::UserChangeState UserState, const FString& Msg) {
 		if (UserState == XUType::UserLogout) {

@@ -26,6 +26,9 @@ struct XULoginTypeModel
 		else if (Type == (int)XUType::Apple) {
 			return "Apple";
 		}
+		else if (Type == (int)XUType::Steam) {
+			return "Steam";
+		}
 		return "";
 	}
 
@@ -34,6 +37,7 @@ struct XULoginTypeModel
 		List.Add(XULoginTypeModel(XUType::TapTap));
 		List.Add(XULoginTypeModel(XUType::Google));
 		List.Add(XULoginTypeModel(XUType::Apple));
+		List.Add(XULoginTypeModel(XUType::Steam));
 		return List;
 	}
 

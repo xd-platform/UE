@@ -45,6 +45,11 @@ void UXUUserCenterItemWidget::SetBindModel(TSharedPtr<XUUserCenterItemModel> Mod
 			nullptr, TEXT("Texture2D'/XDGSDK/Images/type_icon_apple.type_icon_apple'"));
 		TitleImage->SetBrushFromTexture(TapTexture);
 	}
+	else if (Model->LoginType == XUType::Steam) {
+		UTexture2D* TapTexture = LoadObject<UTexture2D>(
+			nullptr, TEXT("Texture2D'/XDGSDK/Images/type_icon_steam.type_icon_steam'"));
+		TitleImage->SetBrushFromTexture(TapTexture);
+	}
 	if (Model->BindState == FXDGBindState::Bind) {
 		BindLabel->SetText(FText::FromString(langModel->tds_unbind));
 		BindLabel->SetColorAndOpacity(FLinearColor(0.6f, 0.6f, 0.6f, 1));

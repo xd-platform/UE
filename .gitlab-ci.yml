@@ -10,36 +10,6 @@
 #  only:
 #    - merge_requests
 
-stages:
-  - arch_plugins
-  - check
-  - product_app
-
-  
-variables:
-  AndroidPackageDisableOnWindow: 1
-#  AndroidPackageDisableOnMac: 1
-
-product_app_mac:
-  tags:
-    - ios-builder
-  stage: product_app
-  script:
-    - echo $CI_COMMIT_TITLE
-    - export
-    - python3 package_upload.py $CI_COMMIT_TITLE
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: never
-    - if: $CI_COMMIT_TITLE =~ /-ios/
-    - if: $CI_COMMIT_TITLE =~ /-android/
-    - if: $CI_COMMIT_TITLE =~ /-mac/
-    - if: $CI_COMMIT_TITLE =~ /-mobile/
-    - if: $CI_COMMIT_TITLE =~ /-pc/
-    - if: $CI_COMMIT_TITLE =~ /-all/
-
-
-product_app_win:
 #  variables:
 #    ANDROID_HOME:                   "C:\\Users\\qiank\\AppData\\Local\\Android\\Sdk"
 #    APPDATA:                        "C:\\Users\\qiank\\AppData\\Roaming"
@@ -58,13 +28,98 @@ product_app_win:
 #    USERDOMAIN_ROAMINGPROFILE:      "TDSPC"
 #    USERNAME:                       "tdswin"
 #    USERPROFILE:                    "C:\\Users\\qiank"
+
+stages:
+  - arch_plugins
+  - check
+  - product_app
+
+  
+variables:
+#  AndroidPackageDisableOnWindow: 1
+  AndroidPackageDisableOnMac: 1
+
+product_iOS:
+  tags:
+    - ios-builder
+  stage: product_app
+  script:
+    - python3 Script/package_upload.py -ios
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+
+product_mac:
+  tags:
+    - ios-builder
+  stage: product_app
+  script:
+    - python3 Script/package_upload.py -mac
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+
+product_android(macOS):
+  tags:
+    - ios-builder
+  stage: product_app
+  script:
+    - python3 Script/package_upload.py -android
+  rules:
+    - if: $AndroidPackageDisableOnMac
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+
+product_android(windows):
+  tags:
+    - tds-packager-win
+  stage: product_app
+  script:
+    - python Script/package_upload.py -android
+  rules:
+    - if: $AndroidPackageDisableOnWindow
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+
+product_win:
+  tags:
+    - tds-packager-win
+  stage: product_app
+  script:
+    - python Script/package_upload.py -win
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+
+product_app_mac:
+  tags:
+    - ios-builder
+  stage: product_app
+  script:
+    - echo $CI_COMMIT_TITLE
+    - export
+    - python3 Script/package_upload.py $CI_COMMIT_TITLE
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_COMMIT_TITLE =~ /-ios/
+    - if: $CI_COMMIT_TITLE =~ /-android/
+    - if: $CI_COMMIT_TITLE =~ /-mac/
+    - if: $CI_COMMIT_TITLE =~ /-mobile/
+    - if: $CI_COMMIT_TITLE =~ /-pc/
+    - if: $CI_COMMIT_TITLE =~ /-all/
+
+
+product_app_win:
   tags:
     - tds-packager-win
   stage: product_app
   script:
     - echo $CI_COMMIT_TITLE
     - 'dir env:'
-    - python package_upload.py $CI_COMMIT_TITLE
+    - python Script/package_upload.py $CI_COMMIT_TITLE
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
@@ -73,31 +128,6 @@ product_app_win:
     - if: $CI_COMMIT_TITLE =~ /-mobile/
     - if: $CI_COMMIT_TITLE =~ /-pc/
     - if: $CI_COMMIT_TITLE =~ /-all/
-    
-manual_product_app_mac:
-  tags:
-    - ios-builder
-  stage: product_app
-  script:
-    - echo $CI_COMMIT_TITLE
-    - export
-    - python3 package_upload.py -all
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
-
-
-manual_product_app_win:
-  tags:
-    - tds-packager-win
-  stage: product_app
-  script:
-    - echo $CI_COMMIT_TITLE
-    - 'dir env:'
-    - python package_upload.py -all
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
 
 arch_plugins:
   tags:
@@ -106,7 +136,7 @@ arch_plugins:
   script:
     - echo "arch"
     - echo $CI_COMMIT_TITLE
-    - python3 archive_plugins.py
+    - python3 Script/archive_plugins.py
   rules:
     - if: $CI_COMMIT_TITLE =~ /-arch/
   artifacts:
@@ -122,7 +152,7 @@ check_mac:
   script:
     - echo $CI_COMMIT_TITLE
     - export
-    - python3 check_packages.py
+    - python3 Script/check_packages.py
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
@@ -136,7 +166,7 @@ check_win:
   script:
     - echo $CI_COMMIT_TITLE
     - 'dir env:'
-    - python check_packages.py
+    - python Script/check_packages.py
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never

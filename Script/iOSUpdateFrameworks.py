@@ -53,7 +53,7 @@ class Framework(object):
 
 
 iOS_frameworks_path = sys.argv[1]
-project_path = os.path.dirname(__file__)
+project_path = os.path.dirname(os.path.dirname(__file__))
 project_path = os.path.join(project_path, "XDSDK")
 
 os.chdir(iOS_frameworks_path)
@@ -65,6 +65,16 @@ def update_xdsdk():
     Framework("XDSDK/XDCommonSDK.framework", "XDGCommon").update()
     Framework("XDSDK/XDThirdLoginSDK.framework", "XDGCommon").update()
     Framework("XDSDK/XDThirdTrackSDK.framework", "XDGCommon").update()
+
+    source_path = os.path.join(iOS_frameworks_path, "XDSDK", "XDResources.bundle")
+    target_path = os.path.join(project_path, "Plugins", "XDGCommon", "Source", "ThirdParty", "iOS", "Assets", "XDResources.bundle")
+
+    if os.path.exists(source_path):
+        # 如果目标路径存在原文件夹的话就先删除
+        if os.path.exists(target_path):
+            shutil.rmtree(target_path)
+        shutil.copytree(source_path, target_path)
+        print(f'copy to {target_path}')
 
 def update_third_sdk():
     # Adjust

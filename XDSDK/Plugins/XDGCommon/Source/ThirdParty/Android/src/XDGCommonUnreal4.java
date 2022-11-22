@@ -20,13 +20,13 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.xd.intl.common.callback.Callback;
+import com.tds.common.net.util.HostReplaceUtil;
 import com.tds.common.bridge.Bridge;
 import com.tds.common.bridge.utils.BridgeJsonHelper;
 import com.tds.common.permission.RequestPermissionCallback;
 import com.tds.common.permission.TdsPermission;
 import com.tds.common.widgets.image.ImageTarget;
 import com.tds.common.widgets.image.TdsImage;
-// import com.xd.intl.common.component.share.XDGShareCallback;
 import com.xd.intl.common.XDGSDK;
 import com.xd.intl.common.callback.XDGInitCallback;
 import com.xd.intl.common.bean.XDGRegionInfo;
@@ -38,6 +38,7 @@ import com.xd.intl.common.entities.TapSdkConfig;
 import com.xd.intl.common.base.XDGError;
 import com.xd.intl.common.utils.CurrentSessionDataManager;
 import com.xd.intl.common.bean.XDGAgreement;
+
 
 import java.io.File;
 import java.util.HashMap;
@@ -326,8 +327,11 @@ public class XDGCommonUnreal4 {
         
             if (num == 0 || num == 2) {
                 EnvHelper.setApiEnv(EnvHelper.EnvEnum.Product);
+                HostReplaceUtil.getInstance().clear();
             } else if (num == 1 || num == 3) {
                 EnvHelper.setApiEnv(EnvHelper.EnvEnum.Dev);
+                HostReplaceUtil.getInstance().addReplacedHostPair("https://login-xdsdk.xd.cn/", "http://39.107.229.24:12008/");
+                HostReplaceUtil.getInstance().addReplacedHostPair("https://login-xdsdk.xd.com/", "https://login-xdsdk-test.xd-cf-2022.workers.dev/");
             }
             initSDK(activity);
     }

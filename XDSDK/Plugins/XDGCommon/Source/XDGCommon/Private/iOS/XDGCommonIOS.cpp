@@ -219,6 +219,8 @@ void XDGCommonIOS::DevelopInit(int32 num){
         [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://ecdn-xdsdk-intnl-6.xd.com" replacedHost:@"https://test-xdsdk-intnl-6.xd.com"];
         [[TDSHostReplaceUtil shareInstance] addReplacedHostPair: @"https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-cn.cn-beijing.log.aliyuncs.com/logstores/sdk6-test/track"];
         [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-prod/track" replacedHost:@"https://event-tracking-global.ap-southeast-1.log.aliyuncs.com/logstores/sdk6-test/track"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://login-xdsdk.xd.cn/" replacedHost:@"http://39.107.229.24:12008/"];
+        [[TDSHostReplaceUtil shareInstance] addReplacedHostPair:@"https://login-xdsdk.xd.com/" replacedHost:@"https://login-xdsdk-test.xd-cf-2022.workers.dev/"];
     }
     InitSDK();
 }

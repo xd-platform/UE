@@ -39,7 +39,7 @@
 			]
 		},
 		{
-			"Name": "OnlineSubsystem",
+			"Name": "XDSteamWrapper",
 			"Enabled": false
 		}
 	]

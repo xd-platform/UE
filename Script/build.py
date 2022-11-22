@@ -16,16 +16,15 @@ win = "Win64"
 client_config = "Development"
 
 # 需要设置的值
-project_dir = os.path.join(os.path.dirname(__file__), "XDSDK")
+project_path = os.path.dirname(os.path.dirname(__file__))
+project_dir = os.path.join(project_path, "XDSDK")
 project_name = "XDSDK"
-archive_dir = os.path.join(os.path.dirname(__file__), "Product")
+archive_dir = os.path.join(project_path, "Product")
 iOS_product_name = "Distro_XDSDK.ipa"
 android_product_name = "XDSDK-armv7.apk"
 
 if isMacPackager:
     engine_root = r"/Users/Shared/Epic\ Games/UE_4.26"
-    # engine_root = r"~/SourceCode/UnrealEngine"
-
     engine_uat = engine_root + r"/Engine/Build/BatchFiles/RunUAT.sh"
     engine_exe = engine_root + r"/Engine/Binaries/Mac/UE4Editor.app/Contents/MacOS/UE4Editor"
 else:

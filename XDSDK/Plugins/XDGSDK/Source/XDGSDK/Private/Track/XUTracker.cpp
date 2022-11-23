@@ -75,7 +75,7 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 	Properties->SetStringField("width", FString::FromInt(TUDeviceInfo::GetScreenWidth()));
 	Properties->SetStringField("height", FString::FromInt(TUDeviceInfo::GetScreenHeight()));
 	Properties->SetStringField("lang", XULanguageManager::GetLanguageKey());
-	auto User = XDUE::GetUserInfo();
+	auto User = FXUUser::GetLocalModel();;
 	if (User.IsValid()) {
 		Properties->SetStringField("account", User->userId);
 		Properties->SetStringField("login_type", XULoginTypeModel((XUType::LoginType)User->loginType).TypeName);

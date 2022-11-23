@@ -261,6 +261,7 @@ void XUImpl::GetAuthParam(XUType::LoginType LoginType,
 
 	auto SuccessBlock = [=](TSharedPtr<FJsonObject> paras) {
 		XUThirdAuthHelper::CancelAllPreAuths();
+		XULoginTracker::Login2AuthorizeSuccess();
 		if (resultBlock) {
 			resultBlock(paras);
 		}

@@ -113,6 +113,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 		if (TokenInfoIsInvalid) { // 如果token已经失效了, 清除登录缓存及协议
 			TUDataStorage<FXUStorage>::Remove(FXUStorage::TokenInfoIsInvalid);
 			FXUUser::ClearUserData();
+			XULoginTracker::Logout("XD Token Invalid");
 			OnTokenIsInvalid.Broadcast();
 			FailBlock(FXUError(lmd->tds_login_failed));
 			return;
@@ -519,6 +520,7 @@ void XUImpl::AccountCancellation() {
 
 void XUImpl::Logout() {
 	// await TDSUser.Logout();
+	XULoginTracker::Logout("user logout");
 	TapUELogin::Logout();
 	FXUUser::ClearUserData();
 	OnLogoutSuccess.Broadcast();

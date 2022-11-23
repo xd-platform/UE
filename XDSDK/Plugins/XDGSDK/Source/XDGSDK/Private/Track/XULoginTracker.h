@@ -1,5 +1,6 @@
 #pragma once
 #include "XUError.h"
+#include "XUType.h"
 
 class XULoginTracker {
 public:
@@ -9,7 +10,7 @@ public:
 	static void ClearCurrentSessionId();
 	
 	// 开始登录
-	static void LoginStart();
+	static void LoginStart(XUType::LoginType Type);
 
 	// 登录封控拦截成功
 	static void LoginRiskSuccess(FXUError Error);
@@ -43,5 +44,6 @@ private:
 	static TSharedPtr<FJsonObject> GetCommonProperties();
 
 	static FString EventSessionId;
-	
+	static FString LoginType;
+
 };

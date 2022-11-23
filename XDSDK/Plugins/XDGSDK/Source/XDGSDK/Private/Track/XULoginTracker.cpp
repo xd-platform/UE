@@ -1,8 +1,10 @@
 #include "XULoginTracker.h"
 
+#include "XULoginTypeModel.h"
 #include "XUTracker.h"
 
 FString XULoginTracker::EventSessionId = "";
+FString XULoginTracker::LoginType = "";
 
 FString XULoginTracker::GetCurrentSessionId() {
 	return EventSessionId;
@@ -12,8 +14,9 @@ void XULoginTracker::ClearCurrentSessionId() {
 	EventSessionId = "";
 }
 
-void XULoginTracker::LoginStart() {
+void XULoginTracker::LoginStart(XUType::LoginType Type) {
 	EventSessionId = FGuid::NewGuid().ToString();
+	LoginType = XULoginTypeModel(Type).TypeName;
 	auto Properties = GetCommonProperties();
 	LogEvent("sdklogin_start", Properties);
 }
@@ -85,5 +88,8 @@ TSharedPtr<FJsonObject> XULoginTracker::GetCommonProperties() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("tag", "sdklogin");
 	Properties->SetStringField("event_session_id", EventSessionId);
+	if (!LoginType.IsEmpty()) {
+		Properties->SetStringField("login_type", LoginType);
+	}
 	return Properties;
 }

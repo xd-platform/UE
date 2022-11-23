@@ -78,7 +78,7 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 	auto User = FXUUser::GetLocalModel();;
 	if (User.IsValid()) {
 		Properties->SetStringField("account", User->userId);
-		Properties->SetStringField("login_type", XULoginTypeModel((XUType::LoginType)User->loginType).TypeName);
+		Properties->SetStringField("user_login_type", XULoginTypeModel((XUType::LoginType)User->loginType).TypeName);
 	} else {
 		// current login type
 	}

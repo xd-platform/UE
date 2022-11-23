@@ -95,7 +95,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
                          TFunction<void(const FXUUser& User)> resultBlock,
                          TFunction<void(FXUError error)> ErrorBlock) {
 	auto lmd = XULanguageManager::GetCurrentModel();
-	XULoginTracker::LoginStart();
+	XULoginTracker::LoginStart(LoginType);
 	auto SuccessBlock = [=](const FXUUser& User) {
 		XULoginTracker::LoginSuccess();
 		if (resultBlock) {
@@ -165,7 +165,6 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 
 void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock,
 	TFunction<void(const FXUError& Error)> ErrorBlock) {
-	XULoginTracker::LoginStart();
 	auto _SuccessBlock = [=](const FXUUser& User) {
 		XULoginTracker::LoginSuccess();
 		if (SuccessBlock) {
@@ -186,6 +185,8 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 	};
 	UClass* ResultClass = FindObject<UClass>(ANY_PACKAGE, TEXT("XDSteamWrapperBPLibrary"));
 	if (ResultClass) {
+		XULoginTracker::LoginStart(XUType::Steam);
+
 		bool IsSteamEnable = TUHelper::InvokeFunction<bool>("XDSteamWrapperBPLibrary", "SteamSystemIsEnable");
 		if (!IsSteamEnable) {
 			_ErrorBlock(FXUError("Steam System Disable"));
@@ -251,6 +252,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 		}, ErrorCallBack);
 		return;
 	}
+	XULoginTracker::LoginStart((XUType::LoginType)0);
 	_ErrorBlock(FXUError("Not Support Platform"));
 }
 

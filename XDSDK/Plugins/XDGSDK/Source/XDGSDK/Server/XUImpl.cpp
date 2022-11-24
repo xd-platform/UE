@@ -124,7 +124,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 				                ModelPtr->SaveToLocal();
 			                }, nullptr, [](FXUError Error) {
 				                TUDataStorage<FXUStorage>::SaveBool(FXUStorage::TokenInfoIsInvalid, true);
-			                });
+			                }, false);
 			AsyncLocalTdsUser(localUser->userId, FXUSyncTokenModel::GetLocalModel()->sessionToken);
 			LoginSuccess(localUser, SuccessBlock);
 		}
@@ -218,7 +218,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 						                RequestUserInfo([=](TSharedPtr<FXUUser> user) {
 							                user->SaveToLocal();
 							                AsyncNetworkTdsUser(user->userId, nullptr, nullptr);
-						                }, ErrorCallBack, nullptr);
+						                }, ErrorCallBack, nullptr, false);
 					                }, ErrorCallBack);
 				                }, ErrorCallBack);
 			                });
@@ -597,17 +597,21 @@ void XUImpl::RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras,
 }
 
 void XUImpl::RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> ModelPtr)> CallBack,
-	TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock) {
+	TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock, bool IsLogin) {
 	XUNet::RequestUserInfo(
 	[=](TSharedPtr<FXUUser> user, FXUError error) {
 		if (error.code == Success && user != nullptr) {
-			XULoginTracker::LoginPreLoginSuccess();
+			if (IsLogin) {
+				XULoginTracker::LoginPreLoginSuccess();
+			}
 			if (CallBack) {
 				CallBack(user);
 			}
 		}
 		else {
-			XULoginTracker::LoginPreLoginFailed(error.msg);
+			if (IsLogin) {
+				XULoginTracker::LoginPreLoginFailed(error.msg);
+			}
 			if (error.IsNetWorkError == false && error.code != Success && TokenInvalidBlock) {
 				TokenInvalidBlock(error);
 			} else {

@@ -61,7 +61,7 @@ private:
 	
 	void RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras, TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock, TFunction<void(FXUError error)> ErrorBlock, const FString& ConsoleID = "");
 
-	void RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> ModelPtr)> CallBack, TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock);
+	void RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> ModelPtr)> CallBack, TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock, bool IsLogin = true);
 
 	void AsyncNetworkTdsUser(const FString& userId, TFunction<void(FString SessionToken)> callback, TFunction<void(FXUError error)> ErrorBlock);
 

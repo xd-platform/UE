@@ -14,22 +14,29 @@ struct XULoginTypeModel
 
 
 	static FString GetName(int Type) {
-		if (Type == (int)XUType::TapTap) {
-			return "TapTap";
+		FString Name = "";
+		auto EnumType = XUType::LoginType(Type);
+		switch (EnumType) {
+		case XUType::Default:
+			Name = "Default";
+			break;
+		case XUType::Guest:
+			Name = "Guest";
+			break;
+		case XUType::Apple:
+			Name = "Apple";
+			break;
+		case XUType::Google:
+			Name = "Google";
+			break;
+		case XUType::TapTap:
+			Name = "TapTap";
+			break;
+		case XUType::Steam:
+			Name = "Steam";
+			break;
 		}
-		else if (Type == (int)XUType::Guest) {
-			return "Guest";
-		}
-		else if (Type == (int)XUType::Google) {
-			return "Google";
-		}
-		else if (Type == (int)XUType::Apple) {
-			return "Apple";
-		}
-		else if (Type == (int)XUType::Steam) {
-			return "Steam";
-		}
-		return "";
+		return Name;
 	}
 
 	static TArray<XULoginTypeModel> GetSDKSupportTypes() {

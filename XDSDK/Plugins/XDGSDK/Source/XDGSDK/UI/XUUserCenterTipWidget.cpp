@@ -3,6 +3,8 @@
 #include "TUSettings.h"
 #include "XULanguageManager.h"
 #include "XULoginTypeModel.h"
+#include "Components/Border.h"
+#include "Components/RichTextBlock.h"
 
 UXUUserCenterTipWidget::UXUUserCenterTipWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -14,15 +16,17 @@ void UXUUserCenterTipWidget::OnTextBoxValueChange(const FText& Content)
 	if (RedTipLabel->Visibility == ESlateVisibility::Visible)
 	{
 		RedTipLabel->SetVisibility(ESlateVisibility::Hidden);
-		TextBox->WidgetStyle.BackgroundImageNormal.SetResourceObject(GetGrayTexture());
-		TextBox->WidgetStyle.BackgroundImageHovered.SetResourceObject(GetGrayTexture());
-		TextBox->WidgetStyle.BackgroundImageFocused.SetResourceObject(GetGrayTexture());
+		ShowRedBorder(false);
 	}
+}
 
+void UXUUserCenterTipWidget::ShowRedBorder(bool bShow)
+{
+	TextBorder->SetBrushColor(bShow ? FLinearColor(0.921582f, 0.072272f, 0.072272f) : FLinearColor(0.f, 0.f, 0.f, 0.078431f));
 }
 
 void UXUUserCenterTipWidget::Show(enum AlertType AlertType, ::XUType::LoginType LoginType, TFunction<void()> SureCallBack,
-                                   TFunction<void()> CancelCallBack)
+                                  TFunction<void()> CancelCallBack)
 {
 	if (UClass* MyWidgetClass = LoadClass<UXUUserCenterTipWidget>(nullptr, TEXT("WidgetBlueprint'/XDGSDK/BPXUUserCenterTIp.BPXUUserCenterTIp_C'")))
 	{
@@ -61,9 +65,7 @@ void UXUUserCenterTipWidget::OnGreenBtnClick()
 			} else
 			{
 				RedTipLabel->SetVisibility(ESlateVisibility::Visible);
-				TextBox->WidgetStyle.BackgroundImageNormal.SetResourceObject(GetRedTexture());
-				TextBox->WidgetStyle.BackgroundImageHovered.SetResourceObject(GetRedTexture());
-				TextBox->WidgetStyle.BackgroundImageFocused.SetResourceObject(GetRedTexture());
+				ShowRedBorder(true);
 			}
 		} else
 		{
@@ -77,10 +79,7 @@ void UXUUserCenterTipWidget::OnGreenBtnClick()
 			} else
 			{
 				RedTipLabel->SetVisibility(ESlateVisibility::Visible);
-				TextBox->WidgetStyle.BackgroundImageNormal.SetResourceObject(GetRedTexture());
-				TextBox->WidgetStyle.BackgroundImageHovered.SetResourceObject(GetRedTexture());
-				TextBox->WidgetStyle.BackgroundImageFocused.SetResourceObject(GetRedTexture());
-				
+				ShowRedBorder(true);
 			}
 		}
 	}
@@ -116,18 +115,18 @@ void UXUUserCenterTipWidget::FirstStepUpdate()
 		break;
 	case DeleteThird:
 		TitleLabel->SetText(FText::FromString(langModel->tds_delete_account_title));
-		DetailLabel->SetText(FText::FromString(langModel->tds_unbind_delete_content.Replace(TEXT("%s"), *XULoginTypeModel(LoginType).TypeName)));
+		DetailLabel->SetText(FText::FromString(langModel->tds_unbind_delete_content.Replace(TEXT("%s"), *FString::Printf(TEXT("<Account>%s</>"), *XULoginTypeModel(LoginType).TypeName))));
 		GreenButtonLabel->SetText(FText::FromString(langModel->tds_cancel));
 		WhiteButtonLabel->SetText(FText::FromString(langModel->tds_delete_account_sure));
 		break;
 	case UnbindThird:
 		TitleLabel->SetText(FText::FromString(langModel->tds_unbind_account_title));
-		DetailLabel->SetText(FText::FromString(langModel->tds_unbind_content.Replace(TEXT("%s"), *XULoginTypeModel(LoginType).TypeName)));
+		DetailLabel->SetText(FText::FromString(langModel->tds_unbind_content.Replace(TEXT("%s"), *FString::Printf(TEXT("<Account>%s</>"), *XULoginTypeModel(LoginType).TypeName))));
 		GreenButtonLabel->SetText(FText::FromString(langModel->tds_cancel));
 		WhiteButtonLabel->SetText(FText::FromString(langModel->tds_unbind_account));
 		break;
 	}
-	TextBox->SetVisibility(ESlateVisibility::Hidden);
+	TextBorder->SetVisibility(ESlateVisibility::Collapsed);
 	RedTipLabel->SetVisibility(ESlateVisibility::Collapsed);
 }
 
@@ -148,45 +147,32 @@ void UXUUserCenterTipWidget::SecondStepUpdate()
 		DetailLabel->SetText(FText::FromString(langModel->tds_delete_confirm_content));
 		WhiteButtonLabel->SetText(FText::FromString(langModel->tds_cancel));
 		GreenButtonLabel->SetText(FText::FromString(langModel->tds_delete_account));
+		TextBox->SetHintText(NSLOCTEXT("FXDGSDKModule", "DeleteAccount", "Delete"));
 		break;
 	case UnbindThird:
 		TitleLabel->SetText(FText::FromString(langModel->tds_unbind_account));
 		DetailLabel->SetText(FText::FromString(langModel->tds_unbind_confirm_Content));
 		WhiteButtonLabel->SetText(FText::FromString(langModel->tds_cancel));
 		GreenButtonLabel->SetText(FText::FromString(langModel->tds_unbind_account_button));
+		TextBox->SetHintText(NSLOCTEXT("FXDGSDKModule", "ConfirmUnbindAccount", "Confirm"));
 		break;
 	}
 	
 	
-	TextBox->WidgetStyle.BackgroundImageNormal.SetResourceObject(GetGrayTexture());
-	TextBox->WidgetStyle.BackgroundImageHovered.SetResourceObject(GetGrayTexture());
-	TextBox->WidgetStyle.BackgroundImageFocused.SetResourceObject(GetGrayTexture());
+	ShowRedBorder(false);
 
 	TextBox->SetText(FText::FromString(TEXT("")));
 	RedTipLabel->SetText(FText::FromString(langModel->tds_input_error));
 
-	TextBox->SetVisibility(ESlateVisibility::Visible);
+	TextBorder->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	RedTipLabel->SetVisibility(ESlateVisibility::Hidden);
 }
 
-UTexture2D*& UXUUserCenterTipWidget::GetGrayTexture()
+void UXUUserCenterTipWidget::NativeOnInitialized()
 {
-	if (GrayTexture == nullptr)
-	{
-		GrayTexture = LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/border_gray.border_gray'"));
-	}
-	return GrayTexture;
+	Super::NativeOnInitialized();
+	CloseButton->OnClicked.AddDynamic(this, &UXUUserCenterTipWidget::RemoveFromParent);
 }
-
-UTexture2D*& UXUUserCenterTipWidget::GetRedTexture()
-{
-	if (RedTexture == nullptr)
-	{
-		RedTexture = LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/border_red.border_red'"));
-	}
-	return RedTexture;
-}
-
 
 void UXUUserCenterTipWidget::NativeConstruct()
 {

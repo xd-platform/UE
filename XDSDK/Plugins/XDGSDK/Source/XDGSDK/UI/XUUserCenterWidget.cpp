@@ -1,5 +1,6 @@
 #include "XUUserCenterWidget.h"
 
+#include "TapCommon.h"
 #include "TUDebuger.h"
 #include "TUHUD.h"
 #include "TUSettings.h"
@@ -9,7 +10,10 @@
 #include "XUUserCenterTipWidget.h"
 #include "XDUE.h"
 #include "XUConfigManager.h"
+#include "XUQuitAccountWidget.h"
 #include "XUThirdAuthHelper.h"
+#include "Components/ScrollBox.h"
+#include "Components/WidgetSwitcher.h"
 #include "HAL/PlatformApplicationMisc.h"
 
 UXUUserCenterWidget::UXUUserCenterWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
@@ -25,6 +29,13 @@ void UXUUserCenterWidget::ShowWidget() {
 	}
 }
 
+void UXUUserCenterWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	ScrollPanel->OnUserScrolled.AddDynamic(this, &UXUUserCenterWidget::OnUserScroll);
+	LogoutButton->OnClicked.AddDynamic(this, &UXUUserCenterWidget::OnLogoutBtnClick);
+}
+
 
 void UXUUserCenterWidget::NativeConstruct() {
 	Super::NativeConstruct();
@@ -32,12 +43,16 @@ void UXUUserCenterWidget::NativeConstruct() {
 	userMd = FXUUser::GetLocalModel();
 	langModel = XULanguageManager::GetCurrentModel();
 
-	TitleLabel->SetText(FText::FromString(langModel->tds_account_safe_info));
-	InfoTitleLabel->SetText(FText::FromString(langModel->tds_account_info));
-	FString Content = FString::Printf(TEXT("%s (%s)"), *langModel->tds_current_account_prefix, *GetLoginTypeName());
-	CurrentLoginTitleLabel->SetText(FText::FromString(Content));
-	Content = "ID: " + userMd->userId;
-	IDTitleLabel->SetText(FText::FromString(Content));
+	StateLabel->SetText(FText::FromString(FString::Printf(TEXT("(%s)"), *langModel->tds_current_account_prefix)));
+
+	const float Offset = ScrollPanel->GetScrollOffset();
+	OnUserScroll(Offset);
+	
+	CurrentLoginTitleLabel->SetText(FText::FromString(GetLoginTypeName()));
+	StateLabel2->SetText(FText::FromString(FString::Printf(TEXT("(%s)"), *langModel->tds_current_account_prefix)));
+	
+	IDTitleLabel->SetText(FText::FromString(TEXT("ID: ") + userMd->userId));
+	
 	ErrorButtonLabel->SetText(FText::FromString(langModel->tds_network_error_retry));
 	BindInfoTitleLabel->SetText(FText::FromString(langModel->tds_account_bind_info));
 
@@ -55,17 +70,47 @@ void UXUUserCenterWidget::NativeDestruct() {
 	XUThirdAuthHelper::CancelAllPreAuths();
 }
 
+void UXUUserCenterWidget::OnUserScroll(float CurrentOffset)
+{
+	userMd = FXUUser::GetLocalModel();
+	langModel = XULanguageManager::GetCurrentModel();
+	
+	if (CurrentOffset > 10.f && userMd)
+	{
+		TitleLabel->SetText(FText::FromString(GetLoginTypeName()));
+		StateLabel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else
+	{
+		TitleLabel->SetText(FText::FromString(langModel->tds_account_safe_info));
+		StateLabel->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
 void UXUUserCenterWidget::OnCloseBtnClick() {
 	RemoveFromParent();
 }
 
 void UXUUserCenterWidget::OnCopyBtnClick() {
 	FPlatformApplicationMisc::ClipboardCopy(*userMd->userId);
-	UTUHUD::ShowToast(langModel->tds_copy_success);
+	FTapCommonModule::TapThrobberShowToast(langModel->tds_copy_success);
 }
 
 void UXUUserCenterWidget::OnErrorBtnClick() {
 	RequestList();
+}
+
+void UXUUserCenterWidget::OnLogoutBtnClick()
+{
+	if (QuitWidget && QuitWidget->IsInViewport())
+	{
+		QuitWidget->RemoveFromParent();
+	}
+	QuitWidget = CreateWidget<UXUQuitAccountWidget>(this, QuitClass);
+	check(QuitWidget);
+	QuitWidget->OnConfirm.BindUObject(this, &UXUUserCenterWidget::ConfirmLogout);
+	QuitWidget->OnCancel.BindUObject(this, &UXUUserCenterWidget::CancelLogout);
+	QuitWidget->AddToViewport(TUSettings::GetUILevel() + 10);
 }
 
 FString UXUUserCenterWidget::GetLoginTypeName() {
@@ -78,9 +123,9 @@ FString UXUUserCenterWidget::GetLoginTypeName() {
 }
 
 void UXUUserCenterWidget::RequestList() {
-	UTUHUD::ShowWait();
+	FTapCommonModule::TapThrobberShowWait();
 	XUNet::RequestBindList([=](TSharedPtr<FXUBindResponseModel> Model, FXUError Error) {
-		UTUHUD::Dismiss();
+		FTapCommonModule::TapThrobberDismiss();
 		if (Model.IsValid()) {
 			ShouldShowErrorButton(false);
 			BindModels.Reset();
@@ -105,9 +150,10 @@ void UXUUserCenterWidget::RequestList() {
 
 void UXUUserCenterWidget::ResetListBox() {
 	ListBox->ClearChildren();
-	for (auto FxdgBindModel : BindModels) {
+	for (int32 i = 0; i < BindModels.Num(); ++i) {
 		UXUUserCenterItemWidget* Item = UXUUserCenterItemWidget::GenerateItem();
-		Item->SetBindModel(FxdgBindModel);
+		Item->SetBindModel(BindModels[i]);
+		Item->SetDividingLineVisible(i != BindModels.Num() - 1);
 		ListBox->AddChild(Item);
 		Item->BindCallBack = [=](UXUUserCenterItemWidget* CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model) {
 			if (Model->BindState == FXDGBindState::Bind) {
@@ -126,16 +172,16 @@ void UXUUserCenterWidget::ResetListBox() {
 }
 
 void UXUUserCenterWidget::ShouldShowErrorButton(bool Should) {
-	if (Should) {
-		ListBox->SetVisibility(ESlateVisibility::Collapsed);
-		EmptyBox2->SetVisibility(ESlateVisibility::Collapsed);
-		ErrorButton->SetVisibility(ESlateVisibility::Visible);
-	}
-	else {
-		ListBox->SetVisibility(ESlateVisibility::Visible);
-		EmptyBox2->SetVisibility(ESlateVisibility::Visible);
-		ErrorButton->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	ErrorSwitcher->SetActiveWidgetIndex(Should ? 1 : 0);
+	// if (Should) {
+	// 	ListBox->SetVisibility(ESlateVisibility::Collapsed);
+	// 	ErrorButton->SetVisibility(ESlateVisibility::Visible);
+	// }
+	// else {
+	// 	ListBox->SetVisibility(ESlateVisibility::Visible);
+	// 	ErrorSwitcher->SetActiveWidgetIndex(0);
+	// 	ErrorButton->SetVisibility(ESlateVisibility::Collapsed);
+	// }
 }
 
 TArray<TSharedPtr<XUUserCenterItemModel>> UXUUserCenterWidget::GetSupportItemModels() {
@@ -163,7 +209,7 @@ TArray<TSharedPtr<XUUserCenterItemModel>> UXUUserCenterWidget::GetSupportItemMod
 }
 
 void UXUUserCenterWidget::DeleteAccount(const FString& Tip) {
-	UTUHUD::ShowToast(Tip);
+	FTapCommonModule::TapThrobberShowToast(Tip);
 	XDUE::Logout();
 	XUImpl::Get()->ResetPrivacy();
 	RemoveFromParent();
@@ -171,20 +217,20 @@ void UXUUserCenterWidget::DeleteAccount(const FString& Tip) {
 
 void UXUUserCenterWidget::Bind(UXUUserCenterItemWidget* CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model) {
 	TFunction<void(TSharedPtr<FJsonObject> paras)> BindBlock = [=](TSharedPtr<FJsonObject> Paras) {
-		UTUHUD::ShowWait();
+		FTapCommonModule::TapThrobberShowWait();
 		XUNet::Bind(Paras, [=](TSharedPtr<FXUResponseModel> ResponseModel, FXUError Error) {
-			UTUHUD::Dismiss();
+			FTapCommonModule::TapThrobberDismiss();
 			if (ResponseModel.IsValid()) {
 				Model->BindState = FXDGBindState::Bind;
 				CurrentWidget->SetBindModel(Model);
-				UTUHUD::ShowToast(langModel->tds_bind_success);
+				FTapCommonModule::TapThrobberShowToast(langModel->tds_bind_success);
 			}
 			else {
 				if (Error.code > 200) {
-					UTUHUD::ShowToast(Error.msg);
+					FTapCommonModule::TapThrobberShowToast(Error.msg);
 				}
 				else {
-					UTUHUD::ShowToast(langModel->tds_bind_error);
+					FTapCommonModule::TapThrobberShowToast(langModel->tds_bind_error);
 				}
 			}
 			XDUE::OnUserStatusChange.Broadcast(XUType::UserBindSuccess, Model->LoginTypeName);
@@ -195,18 +241,18 @@ void UXUUserCenterWidget::Bind(UXUUserCenterItemWidget* CurrentWidget, TSharedPt
 		                             BindBlock(Paras);
 	                             }, [=](FXUError error) {
 		                             if (error.code == 80081) {
-			                             UTUHUD::ShowToast(langModel->tds_login_cancel);
+			                             FTapCommonModule::TapThrobberShowToast(langModel->tds_login_cancel);
 		                             }
 		                             else {
-			                             UTUHUD::ShowToast(error.msg);
+			                             FTapCommonModule::TapThrobberShowToast(error.msg);
 		                             }
 	                             });
 }
 
 void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model) {
-	UTUHUD::ShowWait();
+	FTapCommonModule::TapThrobberShowWait();
 	XUNet::Unbind(Model->LoginType, [=](TSharedPtr<FXUResponseModel> ResponseModel, FXUError Error) {
-		UTUHUD::Dismiss();
+		FTapCommonModule::TapThrobberDismiss();
 		if (ResponseModel.IsValid()) {
 			if (GetBindCount() <= 1) {
 				DeleteAccount(langModel->tds_unbind_delete_success_return_sign);
@@ -214,15 +260,15 @@ void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TShared
 			else {
 				Model->BindState = FXDGBindState::UnBind;
 				CurrentWidget->SetBindModel(Model);
-				UTUHUD::ShowToast(langModel->tds_unbind_success);
+				FTapCommonModule::TapThrobberShowToast(langModel->tds_unbind_success);
 			}
 		}
 		else {
 			if (Error.code > 200) {
-				UTUHUD::ShowToast(Error.msg);
+				FTapCommonModule::TapThrobberShowToast(Error.msg);
 			}
 			else {
-				UTUHUD::ShowToast(langModel->tds_unbind_guest_return);
+				FTapCommonModule::TapThrobberShowToast(langModel->tds_unbind_guest_return);
 			}
 		}
 		XDUE::OnUserStatusChange.Broadcast(XUType::UserUnBindSuccess, Model->LoginTypeName);
@@ -235,6 +281,24 @@ void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TShared
 		}
 	});
 
+}
+
+void UXUUserCenterWidget::ConfirmLogout()
+{
+	if (QuitWidget)
+	{
+		QuitWidget->RemoveFromParent();
+	}
+	RemoveFromParent();
+	XDUE::Logout();
+}
+
+void UXUUserCenterWidget::CancelLogout()
+{
+	if (QuitWidget)
+	{
+		QuitWidget->RemoveFromParent();
+	}
 }
 
 int UXUUserCenterWidget::GetBindCount() {

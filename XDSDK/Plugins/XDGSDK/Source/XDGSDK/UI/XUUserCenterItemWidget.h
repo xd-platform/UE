@@ -32,6 +32,8 @@ public:
 
 	void SetBindModel(TSharedPtr<XUUserCenterItemModel> Model);
 
+	void SetDividingLineVisible(bool bNewVisible);
+
 	TFunction<void(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model)> BindCallBack;
 
 protected:
@@ -57,7 +59,10 @@ private:
 	UTextBlock* BindLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* ArrowImage;
+	UTextBlock* IsBindingLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Line;
 
 	TSharedPtr<XUUserCenterItemModel> BindModel;
 

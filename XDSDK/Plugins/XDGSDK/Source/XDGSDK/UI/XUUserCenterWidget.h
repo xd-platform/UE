@@ -15,6 +15,10 @@
 #include "XUUserCenterWidget.generated.h"
 
 
+class UXUQuitAccountWidget;
+class UTapAccountToast;
+class UScrollBox;
+class UWidgetSwitcher;
 UCLASS()
 class XDGSDK_API UXUUserCenterWidget : public UUserWidget
 {
@@ -26,10 +30,14 @@ public:
 	static void ShowWidget();
 
 protected:
+	virtual void NativeOnInitialized() override;
 	
 	virtual void NativeConstruct() override;
 
 	virtual void NativeDestruct() override;
+
+	UFUNCTION()
+	void OnUserScroll(float CurrentOffset);
 
 	UFUNCTION()
 	void OnCloseBtnClick();
@@ -40,16 +48,24 @@ protected:
 	UFUNCTION()
 	void OnErrorBtnClick();
 
+	UFUNCTION()
+	void OnLogoutBtnClick();
+
 private:
-	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TitleLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* InfoTitleLabel;
+	UTextBlock* StateLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	UScrollBox* ScrollPanel;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* CurrentLoginTitleLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* StateLabel2;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* IDTitleLabel;
@@ -67,15 +83,16 @@ private:
 	UVerticalBox* ListBox;
 
 	UPROPERTY(meta = (BindWidget))
-	USizeBox* EmptyBox2;
-
-	UPROPERTY(meta = (BindWidget))
 	UButton* ErrorButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ErrorButtonLabel;
-	
-	
+
+	UPROPERTY(meta = (BindWidget))
+	UWidgetSwitcher* ErrorSwitcher;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* LogoutButton;
 	
 	// TFunction<void(bool result)> Completed;
 
@@ -102,8 +119,16 @@ private:
 
 	void UnBind(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model);
 
-	
+	void ConfirmLogout();
 
-	
+	void CancelLogout();
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UXUQuitAccountWidget> QuitClass;
+
+	UPROPERTY()
+	UXUQuitAccountWidget* QuitWidget;
 };
+
+
 

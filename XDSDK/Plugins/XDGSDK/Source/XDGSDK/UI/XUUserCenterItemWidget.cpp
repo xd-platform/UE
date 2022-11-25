@@ -2,7 +2,6 @@
 
 #include "TUSettings.h"
 #include "XUConfigManager.h"
-#include "XUServerConfig.h"
 #include "XULanguageManager.h"
 
 UXUUserCenterItemWidget::UXUUserCenterItemWidget(const FObjectInitializer& ObjectInitializer) : Super(
@@ -52,18 +51,25 @@ void UXUUserCenterItemWidget::SetBindModel(TSharedPtr<XUUserCenterItemModel> Mod
 	}
 	if (Model->BindState == FXDGBindState::Bind) {
 		BindLabel->SetText(FText::FromString(langModel->tds_unbind));
-		BindLabel->SetColorAndOpacity(FLinearColor(0.6f, 0.6f, 0.6f, 1));
-		ArrowImage->SetBrushFromTexture(
-			LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/arrow_gray.arrow_gray'")));
+		BindLabel->SetColorAndOpacity(FLinearColor::Black);
+		// ArrowImage->SetBrushFromTexture(
+		// 	LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/arrow_gray.arrow_gray'")));
 		ShowBindBt(Model->CanUnbind);
+		IsBindingLabel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else {
 		BindLabel->SetText(FText::FromString(langModel->tds_bind));
-		BindLabel->SetColorAndOpacity(FLinearColor::Black);
-		ArrowImage->SetBrushFromTexture(
-			LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/arrow_black.arrow_black'")));
+		BindLabel->SetColorAndOpacity(FLinearColor(0.007499f, 0.558341f, 0.617207f, 1));
+		// ArrowImage->SetBrushFromTexture(
+			// LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/arrow_black.arrow_black'")));
 		ShowBindBt(Model->CanBind);
+		IsBindingLabel->SetVisibility(ESlateVisibility::Collapsed);
 	}
+}
+
+void UXUUserCenterItemWidget::SetDividingLineVisible(bool bNewVisible)
+{
+	Line->SetVisibility(bNewVisible ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
 }
 
 void UXUUserCenterItemWidget::NativeConstruct() {

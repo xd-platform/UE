@@ -10,7 +10,7 @@ public:
 	static void ClearCurrentSessionId();
 	
 	// 开始登录
-	static void LoginStart(XUType::LoginType Type);
+	static void LoginStart(const FString& LoginTypeString);
 
 	// 登录封控拦截成功
 	static void LoginRiskSuccess(FXUError Error);

@@ -10,6 +10,7 @@
 #include "XDGSDK.h"
 #include "XDUE.h"
 #include "XUConfigManager.h"
+#include "XULoginTypeModel.h"
 #include "XUThirdAuthHelper.h"
 #include "XUThirdPayHelper.h"
 #include "XDGSDK/UI/XUAccountCancellationWidget.h"
@@ -95,7 +96,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
                          TFunction<void(const FXUUser& User)> resultBlock,
                          TFunction<void(FXUError error)> ErrorBlock) {
 	auto lmd = XULanguageManager::GetCurrentModel();
-	XULoginTracker::LoginStart(LoginType);
+	XULoginTracker::LoginStart(XULoginTypeModel(LoginType).TypeName);
 	auto SuccessBlock = [=](const FXUUser& User) {
 		XULoginTracker::LoginSuccess();
 		if (resultBlock) {
@@ -172,8 +173,8 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 			SuccessBlock(User);
 		}
 	};
-	auto _FailBlock = [=]() {
-		// XULoginTracker::LoginFailed(Error.msg);
+	auto _FailBlock = [=](const FXUError& Error) {
+		XULoginTracker::LoginFailed(Error.msg);
 		if (FailBlock) {
 			FailBlock();
 		}
@@ -186,7 +187,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 	};
 	UClass* ResultClass = FindObject<UClass>(ANY_PACKAGE, TEXT("XDSteamWrapperBPLibrary"));
 	if (ResultClass) {
-		XULoginTracker::LoginStart(XUType::Steam);
+		XULoginTracker::LoginStart("Default_Steam");
 
 		bool IsSteamEnable = TUHelper::InvokeFunction<bool>("XDSteamWrapperBPLibrary", "SteamSystemIsEnable");
 		if (!IsSteamEnable) {
@@ -244,7 +245,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 			                }, [=](FXUError Error) {
 				                if (Error.code == 40111) {
 					                UTUHUD::Dismiss();
-					                _FailBlock();
+					                _FailBlock(Error);
 				                }
 				                else {
 					                ErrorCallBack(Error);
@@ -253,7 +254,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 		}, ErrorCallBack);
 		return;
 	}
-	XULoginTracker::LoginStart((XUType::LoginType)0);
+	XULoginTracker::LoginStart("");
 	_ErrorBlock(FXUError("Not Support Platform"));
 }
 

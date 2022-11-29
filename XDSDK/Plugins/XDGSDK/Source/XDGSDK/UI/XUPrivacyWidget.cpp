@@ -32,10 +32,13 @@ void UXUPrivacyWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	AdditionalCheckBox->OnCheckStateChanged.AddDynamic(this, &UXUPrivacyWidget::OnCheckStateChanged);
+	AmericaCheckBox->OnCheckStateChanged.AddDynamic(this, &UXUPrivacyWidget::OnCheckStateChanged);
+	KrAgeCheckBox->OnCheckStateChanged.AddDynamic(this, &UXUPrivacyWidget::OnCheckStateChanged);
+	KrPushCheckBox->OnCheckStateChanged.AddDynamic(this, &UXUPrivacyWidget::OnCheckStateChanged);
 
 	ComfirmButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnConfirmBtnClick);
 	DeclineButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnDeclineBtnClick);
+	KrPushCheckProtocolButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnKrPushCheckProtocolButtonClick);
 
 	OriginURL = XUAgreementManager::GetAgreementUrl();
 	// OriginURL = "https://protocol.xd.com/sdk/merger-test.html?language=ru_RU";
@@ -58,11 +61,18 @@ void UXUPrivacyWidget::NativeOnInitialized()
 
 	if (IsInKrAndPushEnable())
 	{
-		AdditionalCheckLabel->SetText(FText::FromString(langModel->tds_push_agreement));
+		KrPushCheckLabel->SetText(FText::FromString(langModel->tds_push_agreement));
+		auto AgeText = FString::Format(*langModel->tds_is_adult_agreement, {FStringFormatArg(14)});
+		KrAgeCheckLabel->SetText(FText::FromString(AgeText));
+		KrPushCheckLabel->SetText(FText::FromString(TEXT("我同意接受推送和")));
+		KrPushCheckProtocolLabel->SetText(FText::FromString(TEXT("《个人信息和手机使用协议》")));
+		KrAgeCheckTagLabel->SetText(FText::FromString(TEXT("[必选]")));
+		KrPushCheckTagLabel->SetText(FText::FromString(TEXT("[可选]")));
 	}
 	else if (IsInNorthAmerica())
 	{
-		AdditionalCheckLabel->SetText(FText::FromString(langModel->tds_is_adult_agreement));
+		auto AgeText = FString::Format(*langModel->tds_is_adult_agreement, {FStringFormatArg(16)});
+		AmericaCheckLabel->SetText(FText::FromString(AgeText));
 	}
 
 	UpdateComfirmBtnState();
@@ -75,7 +85,13 @@ void UXUPrivacyWidget::OnCheckStateChanged(bool isChecked)
 
 void UXUPrivacyWidget::OnConfirmBtnClick()
 {
-	if (IsInNorthAmerica() && !AdditionalCheckBox->IsChecked())
+	if (IsInNorthAmerica() && !AmericaCheckBox->IsChecked())
+	{
+		UTUHUD::ShowToast(XULanguageManager::GetCurrentModel()->xd_agreement_age_tips);
+		return;
+	}
+
+	if (IsInKrAndPushEnable() && !KrAgeCheckBox->IsChecked())
 	{
 		UTUHUD::ShowToast(XULanguageManager::GetCurrentModel()->xd_agreement_age_tips);
 		return;
@@ -83,7 +99,7 @@ void UXUPrivacyWidget::OnConfirmBtnClick()
 
 	if (IsInKrAndPushEnable())
 	{
-		XUConfigManager::RecordKRPushSetting(AdditionalCheckBox->IsChecked());
+		XUConfigManager::RecordKRPushSetting(KrPushCheckBox->IsChecked());
 	}
 	if (Completed)
 	{
@@ -95,6 +111,15 @@ void UXUPrivacyWidget::OnConfirmBtnClick()
 void UXUPrivacyWidget::OnDeclineBtnClick()
 {
 	UXUPrivacyDisagreeWidget::Show();
+}
+
+void UXUPrivacyWidget::OnKrPushCheckProtocolButtonClick() {
+	auto Ptr = XUAgreementManager::GetCurrentAgreement();
+	if (Ptr.IsValid()) {
+		TUHelper::LaunchURL(*Ptr->dataCollectionAgreementUrl, NULL, NULL);
+	} else {
+		TUDebuger::WarningLog("Current Agreement Is Null");
+	}
 }
 
 void UXUPrivacyWidget::Reload()
@@ -110,7 +135,10 @@ void UXUPrivacyWidget::OnLoadStarted()
 	ComfirmButton->SetVisibility(ESlateVisibility::Hidden);
 	BTN_Retry->SetVisibility(ESlateVisibility::Collapsed);
 	DeclineButton->SetVisibility(ESlateVisibility::Hidden);
-	AdditionalCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+	KrPushCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+	KrAgeCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+	AmericaCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+
 }
 
 void UXUPrivacyWidget::OnLoadCompleted()
@@ -124,13 +152,16 @@ void UXUPrivacyWidget::OnLoadCompleted()
 	ComfirmButton->SetVisibility(ESlateVisibility::Visible);
 	BTN_Retry->SetVisibility(ESlateVisibility::Collapsed);
 	DeclineButton->SetVisibility(ESlateVisibility::Visible);
-	if (IsInKrAndPushEnable() || IsInNorthAmerica())
-	{
-		AdditionalCheckBox->SetVisibility(ESlateVisibility::Visible);
+
+	AmericaCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+	KrAgeCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+	KrPushCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+	if (IsInNorthAmerica()) {
+		AmericaCheckBox->SetVisibility(ESlateVisibility::Visible);
 	}
-	else
-	{
-		AdditionalCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+	else if (IsInKrAndPushEnable()) {
+		KrAgeCheckBox->SetVisibility(ESlateVisibility::Visible);
+		KrPushCheckBox->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 
@@ -146,7 +177,9 @@ void UXUPrivacyWidget::OnLoadError()
 		ComfirmButton->SetVisibility(ESlateVisibility::Hidden);
 		BTN_Retry->SetVisibility(ESlateVisibility::Visible);
 		DeclineButton->SetVisibility(ESlateVisibility::Hidden);
-		AdditionalCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+		KrPushCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+		KrAgeCheckBox->SetVisibility(ESlateVisibility::Collapsed);
+		AmericaCheckBox->SetVisibility(ESlateVisibility::Collapsed);
 	}
 }
 
@@ -182,7 +215,7 @@ bool UXUPrivacyWidget::IsInNorthAmerica()
 
 void UXUPrivacyWidget::UpdateComfirmBtnState()
 {
-	if (IsInNorthAmerica() && !AdditionalCheckBox->IsChecked())
+	if ((IsInNorthAmerica() && !AmericaCheckBox->IsChecked()) || (IsInKrAndPushEnable() && !KrAgeCheckBox->IsChecked()))
 	{
 		ComfirmButtonImage->SetBrushFromTexture(
 			LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/TapLogin/Image/taptap-router-gray.taptap-router-gray'")));

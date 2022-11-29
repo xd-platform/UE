@@ -30,6 +30,9 @@ protected:
 	UFUNCTION()
 	void OnDeclineBtnClick();
 
+	UFUNCTION()
+	void OnKrPushCheckProtocolButtonClick();
+
 	virtual void Reload() override;
 
 	virtual void OnLoadStarted() override;
@@ -59,10 +62,27 @@ private:
 	UTextBlock* DeclineButtonLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UCheckBox* AdditionalCheckBox;
+	UCheckBox* AmericaCheckBox;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* AmericaCheckLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* AdditionalCheckLabel;
+	UCheckBox* KrAgeCheckBox;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* KrAgeCheckLabel;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* KrAgeCheckTagLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	UCheckBox* KrPushCheckBox;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* KrPushCheckLabel;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* KrPushCheckTagLabel;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* KrPushCheckProtocolLabel;
+	UPROPERTY(meta = (BindWidget))
+	UButton* KrPushCheckProtocolButton;
 	
 
 	bool IsInKrAndPushEnable();

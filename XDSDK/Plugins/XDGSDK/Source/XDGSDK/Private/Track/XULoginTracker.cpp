@@ -14,9 +14,10 @@ void XULoginTracker::ClearCurrentSessionId() {
 	EventSessionId = "";
 }
 
-void XULoginTracker::LoginStart(XUType::LoginType Type) {
+void XULoginTracker::LoginStart(const FString& LoginTypeString) {
 	EventSessionId = FGuid::NewGuid().ToString();
-	LoginType = XULoginTypeModel(Type).TypeName;
+	// LoginType = XULoginTypeModel(Type).TypeName;
+	LoginType = LoginTypeString;
 	auto Properties = GetCommonProperties();
 	LogEvent("sdklogin_start", Properties);
 }

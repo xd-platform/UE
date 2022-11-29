@@ -382,6 +382,9 @@ void XUNet::UploadAgreement(const TSharedPtr<FJsonObject>& Paras,
 	request->URL = XURegionConfig::Get()->UploadAgreementUrl();
 	request->Parameters = Paras;
 	request->Type = Post;
+	request->isPure = true;
+	request->Headers = request->CommonHeaders();
+	request->PostUrlParameters = request->CommonParameters();
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromWrapperResponseCallBack(response, Callback);
 	});

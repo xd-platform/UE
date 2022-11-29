@@ -10,7 +10,8 @@
 #include "XUUserCenterTipWidget.h"
 #include "XDUE.h"
 #include "XUConfigManager.h"
-#include "XUQuitAccountWidget.h"
+#include "XUConfirmWidget.h"
+#include "XULoginTypeModel.h"
 #include "XUThirdAuthHelper.h"
 #include "Components/ScrollBox.h"
 #include "Components/WidgetSwitcher.h"
@@ -102,15 +103,19 @@ void UXUUserCenterWidget::OnErrorBtnClick() {
 
 void UXUUserCenterWidget::OnLogoutBtnClick()
 {
-	if (QuitWidget && QuitWidget->IsInViewport())
+	if (ConfirmWidget && ConfirmWidget->IsInViewport())
 	{
-		QuitWidget->RemoveFromParent();
+		ConfirmWidget->RemoveFromParent();
 	}
-	QuitWidget = CreateWidget<UXUQuitAccountWidget>(this, QuitClass);
-	check(QuitWidget);
-	QuitWidget->OnConfirm.BindUObject(this, &UXUUserCenterWidget::ConfirmLogout);
-	QuitWidget->OnCancel.BindUObject(this, &UXUUserCenterWidget::CancelLogout);
-	QuitWidget->AddToViewport(TUSettings::GetUILevel() + 10);
+	ConfirmWidget = UXUConfirmWidget::Create(NSLOCTEXT("XDSDK", "Temp1", "确认退出登录？"),
+		NSLOCTEXT("XDSDK", "Temp2", "是否确认退出当前账号？"),
+		NSLOCTEXT("XDSDK", "Temp3", "取消"),
+		NSLOCTEXT("XDSDK", "Temp4", "确认"),
+		true);
+	check(ConfirmWidget);
+	ConfirmWidget->OnWhiteButtonClicked.BindUObject(this, &UXUUserCenterWidget::ConfirmLogout);
+	ConfirmWidget->OnBlueButtonClicked.BindUObject(this, &UXUUserCenterWidget::CancelLogout);
+	ConfirmWidget->AddToViewport(TUSettings::GetUILevel() + 10);
 }
 
 FString UXUUserCenterWidget::GetLoginTypeName() {
@@ -285,9 +290,10 @@ void UXUUserCenterWidget::UnBind(UXUUserCenterItemWidget* CurrentWidget, TShared
 
 void UXUUserCenterWidget::ConfirmLogout()
 {
-	if (QuitWidget)
+	if (ConfirmWidget)
 	{
-		QuitWidget->RemoveFromParent();
+		ConfirmWidget->RemoveFromParent();
+		ConfirmWidget = nullptr;
 	}
 	RemoveFromParent();
 	XDUE::Logout();
@@ -295,9 +301,10 @@ void UXUUserCenterWidget::ConfirmLogout()
 
 void UXUUserCenterWidget::CancelLogout()
 {
-	if (QuitWidget)
+	if (ConfirmWidget)
 	{
-		QuitWidget->RemoveFromParent();
+		ConfirmWidget->RemoveFromParent();
+		ConfirmWidget = nullptr;
 	}
 }
 

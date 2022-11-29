@@ -10,6 +10,9 @@ struct FXUAgreementConfig
 	
 	UPROPERTY()
 	bool isKRPushServiceSwitchEnable;
+
+	UPROPERTY()
+	FString dataCollectionAgreementUrl;
 	
 	UPROPERTY()
 	FString agreementUrl;

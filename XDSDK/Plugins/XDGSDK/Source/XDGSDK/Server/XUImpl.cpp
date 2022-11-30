@@ -19,6 +19,7 @@
 #include "Agreement/XUAgreementManager.h"
 #include "XUNotification.h"
 #include "Track/XULoginTracker.h"
+#include "XDGSDK/UI/XUConfirmWidget.h"
 
 static int Success = 200;
 
@@ -104,10 +105,63 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 		}
 	};
 	auto FailBlock = [=](FXUError error) {
-		XULoginTracker::LoginFailed(error.msg);
-		if (ErrorBlock) {
-			ErrorBlock(error);
+
+		// auto Title = FText::FromString(TEXT("你好"));
+		// auto Content = FText::FromString(TEXT("你好啊"));
+		// auto WhiteTitle = FText::FromString(TEXT("确定"));
+		//
+		// auto Widget = UXUConfirmWidget::Create(Title, Content, WhiteTitle, false, true
+		// 	);
+		// Widget->OnBlueButtonClicked.BindLambda([=]() {
+		// 	TUDebuger::DisplayShow("hehe da");
+		// 	Widget->RemoveFromParent();
+		// });
+		UXUConfirmWidget *Widget = nullptr;
+		if (error.code == 40021 && error.ExtraData.IsValid())
+		{
+			TMap<FString, FStringFormatArg> FormatMap;
+			FormatMap.Add(TEXT("Platform"), FStringFormatArg(error.ExtraData->GetStringField("loginType")));
+			FormatMap.Add(TEXT("Email"), FStringFormatArg(error.ExtraData->GetStringField("email")));
+			
+			auto Title = FText::FromString(TEXT("邮箱未验证"));
+			auto Content = FText::FromString(FString::Format(TEXT("当前 {Platform} 账号所关联的邮箱 {Email} 未被验证，请前往 {Platform} 验证邮箱后重新登录游戏"), FormatMap));
+			auto BlueTitle = FText::FromString(TEXT("我知道了"));
+			Widget = UXUConfirmWidget::Create(Title, Content, BlueTitle, false, true);
 		}
+		else if (error.code == 40902 && error.ExtraData.IsValid())
+		{
+			TMap<FString, FStringFormatArg> FormatMap;
+			FormatMap.Add(TEXT("Platform"), FStringFormatArg(error.ExtraData->GetStringField("loginType")));
+			FormatMap.Add(TEXT("Email"), FStringFormatArg(error.ExtraData->GetStringField("email")));
+			auto Conflicts = error.ExtraData->GetArrayField("conflicts");
+			TArray<FString> Accounts;
+			for (auto JsonValue : Conflicts)
+			{
+				Accounts.Add(JsonValue->AsObject()->GetStringField("loginType"));
+			}
+			FormatMap.Add(TEXT("Accounts"), FStringFormatArg(FString::Join(Accounts, TEXT("、"))));
+			
+			auto Title = FText::FromString(TEXT("账号已存在"));
+			auto Content = FText::FromString(FString::Format(TEXT("当前 {Platform} 账号所关联的邮箱（{Email}）已被用于现有账号。请使用该邮箱所关联的 {Accounts} 登录游戏账号后进入「账号安全中心」手动进行账号绑定、解绑操作。"), FormatMap));
+			auto BlueTitle = FText::FromString(TEXT("我知道了"));
+			Widget = UXUConfirmWidget::Create(Title, Content, BlueTitle, false, true);
+		}
+		XULoginTracker::LoginFailed(error.msg);
+		if (Widget == nullptr) {
+			if (ErrorBlock) {
+				ErrorBlock(error);
+			}
+		}
+		else {
+			Widget->OnBlueButtonClicked.BindLambda([=, &error]() {
+				error.ExtraData = nullptr;
+				if (ErrorBlock) {
+					ErrorBlock(error);
+				}
+				Widget->RemoveFromParent();
+			});
+		}
+		
 	};
 	if (LoginType == XUType::Default) {
 		bool TokenInfoIsInvalid = TUDataStorage<FXUStorage>::LoadBool(FXUStorage::TokenInfoIsInvalid);

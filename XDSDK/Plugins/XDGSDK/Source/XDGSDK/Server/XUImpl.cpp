@@ -128,7 +128,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			auto BlueTitle = FText::FromString(TEXT("我知道了"));
 			Widget = UXUConfirmWidget::Create(Title, Content, BlueTitle, false, true);
 		}
-		else if (error.code == 40902 && error.ExtraData.IsValid())
+		else if ((error.code == 40901 || error.code == 40902) && error.ExtraData.IsValid())
 		{
 			TMap<FString, FStringFormatArg> FormatMap;
 			FormatMap.Add(TEXT("Platform"), FStringFormatArg(error.ExtraData->GetStringField("loginType")));
@@ -153,10 +153,11 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			}
 		}
 		else {
-			Widget->OnBlueButtonClicked.BindLambda([=, &error]() {
-				error.ExtraData = nullptr;
+			Widget->OnBlueButtonClicked.BindLambda([=]() {
+				auto TempError = error;
+				TempError.ExtraData = nullptr;
 				if (ErrorBlock) {
-					ErrorBlock(error);
+					ErrorBlock(TempError);
 				}
 				Widget->RemoveFromParent();
 			});

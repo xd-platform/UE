@@ -52,8 +52,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ComfirmButtonLabel;
 
-	UPROPERTY(meta = (BindWidget))
-	UImage* ComfirmButtonImage;
+	// UPROPERTY(meta = (BindWidget))
+	// UImage* ComfirmButtonImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* DeclineButton;
@@ -84,7 +84,15 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* KrPushCheckProtocolButton;
 	
+	UPROPERTY(EditDefaultsOnly)
+	FSlateBrush ComfirmBrush;
 
+	UPROPERTY(EditDefaultsOnly)
+	FSlateBrush ComfirmDisableBrush;
+
+	UPROPERTY(EditDefaultsOnly)
+	FSlateBrush ComfirmHoverBrush;
+	
 	bool IsInKrAndPushEnable();
 
 	bool IsInNorthAmerica();

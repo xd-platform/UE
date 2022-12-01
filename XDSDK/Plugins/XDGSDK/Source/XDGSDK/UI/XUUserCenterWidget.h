@@ -2,20 +2,16 @@
 
 #include "CoreMinimal.h"
 #include "XULanguageManager.h"
-#include "XUBindModel.h"
-#include "XUError.h"
-#include "XULoginTypeModel.h"
 #include "XUUser.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
-#include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "XUUserCenterItemWidget.h"
 #include "XUUserCenterWidget.generated.h"
 
 
-class UXUQuitAccountWidget;
+class UXUConfirmWidget;
 class UTapAccountToast;
 class UScrollBox;
 class UWidgetSwitcher;
@@ -123,11 +119,8 @@ private:
 
 	void CancelLogout();
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UXUQuitAccountWidget> QuitClass;
-
 	UPROPERTY()
-	UXUQuitAccountWidget* QuitWidget;
+	UXUConfirmWidget* ConfirmWidget;
 };
 
 

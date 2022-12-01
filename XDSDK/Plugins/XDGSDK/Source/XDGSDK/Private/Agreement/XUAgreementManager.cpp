@@ -174,7 +174,7 @@ void XUAgreementManager::UploadUserAgreement() {
 		postData->SetStringField("userId", UserInfo.IsValid() ? UserInfo->userId : "");
 		if (XUConfigManager::IsGameInKoreaAndPushServiceEnable() && XUConfigManager::GetKRPushSetting()) {
 			TSharedPtr<FJsonObject> ExtraData = MakeShareable(new FJsonObject);
-			ExtraData->SetBoolField("push_agreement，value", true);
+			ExtraData->SetBoolField("push_agreement", true);
 			postData->SetObjectField("extra", ExtraData);
 		}
 		XUNet::UploadAgreement(postData, [=](TSharedPtr<FXUUploadAgreementResultModel> Model, FXUError Error) {

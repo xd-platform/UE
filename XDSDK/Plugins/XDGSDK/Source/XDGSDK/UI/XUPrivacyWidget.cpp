@@ -39,7 +39,7 @@ void UXUPrivacyWidget::NativeOnInitialized()
 	ComfirmButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnConfirmBtnClick);
 	DeclineButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnDeclineBtnClick);
 	KrPushCheckProtocolButton->OnClicked.AddDynamic(this, &UXUPrivacyWidget::OnKrPushCheckProtocolButtonClick);
-
+	
 	OriginURL = XUAgreementManager::GetAgreementUrl();
 	// OriginURL = "https://protocol.xd.com/sdk/merger-test.html?language=ru_RU";
 	if (OriginURL.Contains("?"))
@@ -217,12 +217,14 @@ void UXUPrivacyWidget::UpdateComfirmBtnState()
 {
 	if ((IsInNorthAmerica() && !AmericaCheckBox->IsChecked()) || (IsInKrAndPushEnable() && !KrAgeCheckBox->IsChecked()))
 	{
-		ComfirmButtonImage->SetBrushFromTexture(
-			LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/TapLogin/Image/taptap-router-gray.taptap-router-gray'")));
+		ComfirmButton->WidgetStyle.SetNormal(ComfirmDisableBrush);
+		ComfirmButton->WidgetStyle.SetHovered(ComfirmDisableBrush);
+		ComfirmButton->WidgetStyle.SetPressed(ComfirmDisableBrush);
 	}
 	else
 	{
-		ComfirmButtonImage->SetBrushFromTexture(
-			LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/TapLogin/Image/taptap-router.taptap-router'")));
+		ComfirmButton->WidgetStyle.SetNormal(ComfirmBrush);
+		ComfirmButton->WidgetStyle.SetHovered(ComfirmHoverBrush);
+		ComfirmButton->WidgetStyle.SetPressed(ComfirmHoverBrush);
 	}
 }

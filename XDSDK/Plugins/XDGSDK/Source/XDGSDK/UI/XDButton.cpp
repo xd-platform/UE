@@ -25,7 +25,7 @@ void UXDButton::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEve
 
 #if WITH_EDITOR
 
-const FText UButton::GetPaletteCategory()
+const FText UXDButton::GetPaletteCategory()
 {
 	return FText::FromString("XD");
 }

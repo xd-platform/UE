@@ -170,7 +170,7 @@ void XUAgreementManager::UploadUserAgreement() {
 		postData->SetStringField("deviceCode", TUDeviceInfo::GetLoginId());
 		postData->SetStringField("agreementVersion", CurrentAgreement->agreementVersion);
 		postData->SetStringField("agreementRegion", CurrentAgreement->agreementRegion);
-		auto UserInfo = XDUE::GetUserInfo();
+		auto UserInfo = FXUUser::GetLocalModel();
 		postData->SetStringField("userId", UserInfo.IsValid() ? UserInfo->userId : "");
 		if (XUConfigManager::IsGameInKoreaAndPushServiceEnable() && XUConfigManager::GetKRPushSetting()) {
 			TSharedPtr<FJsonObject> ExtraData = MakeShareable(new FJsonObject);
@@ -209,7 +209,7 @@ void XUAgreementManager::SaveAgreementConfig(TSharedPtr<FXUAgreementConfig> Agre
 	PostData->SetStringField("deviceCode", TUDeviceInfo::GetLoginId());
 	PostData->SetStringField("agreementVersion", AgreementConfig->agreementVersion);
 	PostData->SetStringField("agreementRegion", AgreementConfig->agreementRegion);
-	auto UserInfo = XDUE::GetUserInfo();
+	auto UserInfo = FXUUser::GetLocalModel();;
 	PostData->SetStringField("userId", UserInfo.IsValid() ? UserInfo->userId : "");
 	PostData->SetBoolField("upload", Upload);
 	TUDataStorage<FXUStorage>::SaveJsonObject(GetRegionAgreementCacheName(), PostData);

@@ -35,31 +35,56 @@ void XULoginTracker::LoginRiskSuccess(FXUError Error) {
 	LogEvent("sdklogin_risk_success", Properties);
 }
 
-void XULoginTracker::Login2Authorize() {
+void XULoginTracker::Login2Authorize(bool IsSilent) {
 	auto Properties = GetCommonProperties();
-	LogEvent("sdklogin_to_authorize", Properties);
+	if (IsSilent) {
+		LogEvent("silent_sdklogin_to_authorize", Properties);
+	}
+	else {
+		LogEvent("sdklogin_to_authorize", Properties);
+	}
 }
 
-void XULoginTracker::Login2AuthorizeSuccess() {
+void XULoginTracker::Login2AuthorizeSuccess(bool IsSilent) {
 	auto Properties = GetCommonProperties();
-	LogEvent("sdklogin_authorize_success", Properties);
+	if (IsSilent) {
+		LogEvent("silent_sdklogin_authorize_success", Properties);
+	}
+	else {
+		LogEvent("sdklogin_authorize_success", Properties);
+	}
 }
 
-void XULoginTracker::Login2AuthorizeFailed(const FString& Reason) {
+void XULoginTracker::Login2AuthorizeFailed(const FString& Reason, bool IsSilent) {
 	auto Properties = GetCommonProperties();
 	Properties->SetStringField("event_reason", Reason);
-	LogEvent("sdklogin_authorize_fail", Properties);
+	if (IsSilent) {
+		LogEvent("silent_sdklogin_authorize_fail", Properties);
+	}
+	else {
+		LogEvent("sdklogin_authorize_fail", Properties);
+	}
 }
 
-void XULoginTracker::LoginPreLoginSuccess() {
+void XULoginTracker::LoginPreLoginSuccess(bool IsSilent) {
 	auto Properties = GetCommonProperties();
-	LogEvent("sdklogin_pre_login_success", Properties);
+	if (IsSilent) {
+		LogEvent("silent_sdklogin_pre_login_success", Properties);
+	}
+	else {
+		LogEvent("sdklogin_pre_login_success", Properties);
+	}
 }
 
-void XULoginTracker::LoginPreLoginFailed(const FString& Reason) {
+void XULoginTracker::LoginPreLoginFailed(const FString& Reason, bool IsSilent) {
 	auto Properties = GetCommonProperties();
 	Properties->SetStringField("event_reason", Reason);
-	LogEvent("sdklogin_pre_login_fail", Properties);
+	if (IsSilent) {
+		LogEvent("silent_sdklogin_pre_login_fail", Properties);
+	}
+	else {
+		LogEvent("sdklogin_pre_login_fail", Properties);
+	}
 }
 
 void XULoginTracker::LoginSuccess() {

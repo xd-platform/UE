@@ -174,13 +174,13 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			FailBlock(FXUError(lmd->tds_login_failed));
 			return;
 		}
-		auto localUser = XDUE::GetUserInfo();
+		auto localUser = FXUUser::GetLocalModel();;
 		if (localUser.IsValid()) {
 			RequestUserInfo([](TSharedPtr<FXUUser> ModelPtr) {
 				                ModelPtr->SaveToLocal();
 			                }, nullptr, [](FXUError Error) {
 				                TUDataStorage<FXUStorage>::SaveBool(FXUStorage::TokenInfoIsInvalid, true);
-			                }, false);
+			                });
 			AsyncLocalTdsUser(localUser->userId, FXUSyncTokenModel::GetLocalModel()->sessionToken);
 			LoginSuccess(localUser, SuccessBlock);
 		}
@@ -191,7 +191,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 	else {
 		// 如果已经是登录状态了，那么不再重复登录
 		// User和Token保存在一起，等API改版的时候实现
-		if (XDUE::GetUserInfo().IsValid()) {
+		if (FXUUser::GetLocalModel().IsValid()) {
 			FailBlock(FXUError("The user is logged in"));
 			return;
 		}
@@ -215,7 +215,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 						LoginSuccess(user, SuccessBlock);
 					}, ErrorCallBack);
 				}, ErrorCallBack, nullptr);
-			}, ErrorCallBack);
+			}, ErrorCallBack, false);
 		}, FailBlock);
 	}
 }
@@ -274,9 +274,9 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 						                RequestUserInfo([=](TSharedPtr<FXUUser> user) {
 							                user->SaveToLocal();
 							                AsyncNetworkTdsUser(user->userId, nullptr, nullptr);
-						                }, ErrorCallBack, nullptr, false);
-					                }, ErrorCallBack);
-				                }, ErrorCallBack);
+						                }, ErrorCallBack, nullptr);
+					                }, ErrorCallBack, true);
+				                }, ErrorCallBack, true);
 			                });
 			TUDebuger::DisplayLog("Steam 缓存登录成功");
 			return;
@@ -305,7 +305,7 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 				                else {
 					                ErrorCallBack(Error);
 				                }
-			                }, SteamID);
+			                }, false, SteamID);
 		}, ErrorCallBack);
 		return;
 	}
@@ -315,18 +315,18 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 
 void XUImpl::GetAuthParam(XUType::LoginType LoginType,
                           TFunction<void(TSharedPtr<FJsonObject> paras)> resultBlock,
-                          TFunction<void(FXUError error)> ErrorBlock) {
-	XULoginTracker::Login2Authorize();
+                          TFunction<void(FXUError error)> ErrorBlock, bool IsSilent) {
+	XULoginTracker::Login2Authorize(IsSilent);
 
 	auto SuccessBlock = [=](TSharedPtr<FJsonObject> paras) {
 		XUThirdAuthHelper::CancelAllPreAuths();
-		XULoginTracker::Login2AuthorizeSuccess();
+		XULoginTracker::Login2AuthorizeSuccess(IsSilent);
 		if (resultBlock) {
 			resultBlock(paras);
 		}
 	};
 	auto FailBlock = [=](FXUError error) {
-		XULoginTracker::Login2AuthorizeFailed(error.msg);
+		XULoginTracker::Login2AuthorizeFailed(error.msg, IsSilent);
 		if (ErrorBlock) {
 			ErrorBlock(error);
 		}
@@ -637,37 +637,32 @@ void XUImpl::BindByType(XUType::LoginType BindType, TFunction<void(bool Success,
 
 void XUImpl::RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras,
                              TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock,
-                             TFunction<void(FXUError error)> ErrorBlock,
+                             TFunction<void(FXUError error)> ErrorBlock, bool IsSilent,
                              const FString& ConsoleID) {
 	XUNet::RequestKidToken(IsConsole, paras, [=](TSharedPtr<FXUTokenModel> kidToken, FXUError error) {
 		if (error.code == Success && kidToken != nullptr) {
+			XULoginTracker::LoginPreLoginSuccess(IsSilent);
 			kidToken->ConsoleID = ConsoleID;
 			kidToken->SaveToLocal();
 			resultBlock(kidToken);
 		}
 		else {
-			XULoginTracker::LoginPreLoginFailed(error.msg);
+			XULoginTracker::LoginPreLoginFailed(error.msg, IsSilent);
 			ErrorBlock(error);
 		}
 	});
 }
 
 void XUImpl::RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> ModelPtr)> CallBack,
-	TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock, bool IsLogin) {
+	TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock) {
 	XUNet::RequestUserInfo(
 	[=](TSharedPtr<FXUUser> user, FXUError error) {
 		if (error.code == Success && user != nullptr) {
-			if (IsLogin) {
-				XULoginTracker::LoginPreLoginSuccess();
-			}
 			if (CallBack) {
 				CallBack(user);
 			}
 		}
 		else {
-			if (IsLogin) {
-				XULoginTracker::LoginPreLoginFailed(error.msg);
-			}
 			if (error.IsNetWorkError == false && error.code != Success && TokenInvalidBlock) {
 				TokenInvalidBlock(error);
 			} else {

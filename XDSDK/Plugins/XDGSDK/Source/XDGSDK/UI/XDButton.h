@@ -16,11 +16,11 @@ class XDGSDK_API UXDButton : public UButton
 	/** The button style used at runtime */
 public:
 
-#if WITH_EDITOR
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="XDSettings", meta=( DisplayName="HighLight" ))
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(EditAnywhere, Category="XDSettings", meta=( DisplayName="HighLight" ))
 	float HighLight = 0;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="XDSettings", meta=( DisplayName="DefaultBrush" ))
+	UPROPERTY(EditAnywhere, Category="XDSettings", meta=( DisplayName="DefaultBrush" ))
 	FSlateBrush DefaultBrush;
 #endif
 

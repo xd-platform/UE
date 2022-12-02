@@ -40,7 +40,7 @@
 		},
 		{
 			"Name": "XDSteamWrapper",
-			"Enabled": false
+			"Enabled": true
 		}
 	]
 }

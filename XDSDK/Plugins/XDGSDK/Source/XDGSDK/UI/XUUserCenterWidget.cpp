@@ -43,12 +43,13 @@ void UXUUserCenterWidget::NativeConstruct() {
 
 	userMd = FXUUser::GetLocalModel();
 	langModel = XULanguageManager::GetCurrentModel();
-
+	
 	StateLabel->SetText(FText::FromString(FString::Printf(TEXT("(%s)"), *langModel->tds_current_account_prefix)));
 
 	const float Offset = ScrollPanel->GetScrollOffset();
 	OnUserScroll(Offset);
-	
+
+	LogoutLabel->SetText(FText::FromString(langModel->tds_user_center_logout));
 	CurrentLoginTitleLabel->SetText(FText::FromString(GetLoginTypeName()));
 	StateLabel2->SetText(FText::FromString(FString::Printf(TEXT("(%s)"), *langModel->tds_current_account_prefix)));
 	
@@ -107,10 +108,10 @@ void UXUUserCenterWidget::OnLogoutBtnClick()
 	{
 		ConfirmWidget->RemoveFromParent();
 	}
-	ConfirmWidget = UXUConfirmWidget::Create(NSLOCTEXT("XDSDK", "Temp1", "确认退出登录？"),
-		NSLOCTEXT("XDSDK", "Temp2", "是否确认退出当前账号？"),
-		NSLOCTEXT("XDSDK", "Temp3", "取消"),
-		NSLOCTEXT("XDSDK", "Temp4", "确认"),
+	ConfirmWidget = UXUConfirmWidget::Create(FText::FromString(langModel->tds_confirm_logout_title),
+		FText::FromString(langModel->tds_confirm_logout_content),
+		FText::FromString(langModel->tds_cancel),
+		FText::FromString(langModel->tds_button_confirm),
 		true);
 	check(ConfirmWidget);
 	ConfirmWidget->OnWhiteButtonClicked.BindUObject(this, &UXUUserCenterWidget::ConfirmLogout);

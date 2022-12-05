@@ -89,6 +89,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* LogoutButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* LogoutLabel;
 	
 	// TFunction<void(bool result)> Completed;
 

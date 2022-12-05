@@ -55,6 +55,7 @@ void UXUUserCenterItemWidget::SetBindModel(TSharedPtr<XUUserCenterItemModel> Mod
 		// ArrowImage->SetBrushFromTexture(
 		// 	LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/XDGSDK/Images/arrow_gray.arrow_gray'")));
 		ShowBindBt(Model->CanUnbind);
+		IsBindingLabel->SetText(FText::FromString(langModel->tds_bound));
 		IsBindingLabel->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
 	else {

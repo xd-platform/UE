@@ -137,6 +137,18 @@ struct FXULanguageModel
 	FString tds_login_button_title;
 
 	UPROPERTY()
+	FString tds_confirm_logout_title;
+
+	UPROPERTY()
+	FString tds_confirm_logout_content;
+
+	UPROPERTY()
+	FString tds_bound;
+
+	UPROPERTY()
+	FString tds_user_center_logout;
+	
+	UPROPERTY()
 	FString tds_logout;
 
 	UPROPERTY()

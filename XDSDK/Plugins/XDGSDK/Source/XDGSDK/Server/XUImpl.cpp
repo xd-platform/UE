@@ -112,19 +112,19 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 		if (error.code == 40021 && error.ExtraData.IsValid())
 		{
 			TMap<FString, FStringFormatArg> FormatMap;
-			FormatMap.Add(TEXT("第三方平台名称"), FStringFormatArg(error.ExtraData->GetStringField("loginType")));
-			FormatMap.Add(TEXT("从第三方平台获取的邮箱信息"), FStringFormatArg(error.ExtraData->GetStringField("email")));
+			FormatMap.Add(TEXT("loginType"), FStringFormatArg(error.ExtraData->GetStringField("loginType")));
+			FormatMap.Add(TEXT("email"), FStringFormatArg(error.ExtraData->GetStringField("email")));
 			
 			auto Title = FText::FromString(lmd->tds_login_dialog_email_title_1);
 			auto Content = FText::FromString(FString::Format(*lmd->tds_login_dialog_email_content_1, FormatMap));
 			auto BlueTitle = FText::FromString(lmd->tds_login_dialog_email_right_text);
-			Widget = UXUConfirmWidget::Create(Title, Content, BlueTitle, false, true);
+			Widget = UXUConfirmWidget::Create(Title, Content, BlueTitle, true, true);
 		}
 		else if ((error.code == 40901 || error.code == 40902) && error.ExtraData.IsValid())
 		{
 			TMap<FString, FStringFormatArg> FormatMap;
-			FormatMap.Add(TEXT("第三方平台名称"), FStringFormatArg(error.ExtraData->GetStringField("loginType")));
-			FormatMap.Add(TEXT("从第三方平台获取的邮箱信息"), FStringFormatArg(error.ExtraData->GetStringField("email")));
+			FormatMap.Add(TEXT("loginType"), FStringFormatArg(error.ExtraData->GetStringField("loginType")));
+			FormatMap.Add(TEXT("email"), FStringFormatArg(error.ExtraData->GetStringField("email")));
 			auto Conflicts = error.ExtraData->GetArrayField("conflicts");
 			TArray<FString> Accounts;
 			for (auto JsonValue : Conflicts)
@@ -142,7 +142,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			}
 			auto Content = FText::FromString(Content_Format);
 			auto BlueTitle = FText::FromString(lmd->tds_login_dialog_email_right_text);
-			Widget = UXUConfirmWidget::Create(Title, Content, BlueTitle, false, true);
+			Widget = UXUConfirmWidget::Create(Title, Content, BlueTitle, true, true);
 		}
 		XULoginTracker::LoginFailed(error.msg);
 		if (Widget == nullptr) {
@@ -159,8 +159,14 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 				}
 				Widget->RemoveFromParent();
 			});
+			Widget->OnCloseButtonClicked.BindLambda([=]() {
+				auto TempError = error;
+				TempError.ExtraData = nullptr;
+				if (ErrorBlock) {
+					ErrorBlock(TempError);
+				}
+			});
 		}
-		
 	};
 	if (LoginType == XUType::Default) {
 		bool TokenInfoIsInvalid = TUDataStorage<FXUStorage>::LoadBool(FXUStorage::TokenInfoIsInvalid);

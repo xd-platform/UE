@@ -1,5 +1,6 @@
 #include "XUProtocolTracker.h"
 
+#include "XUConfigManager.h"
 #include "XUTracker.h"
 #include "Agreement/XUAgreementManager.h"
 
@@ -15,6 +16,9 @@ void XUProtocolTracker::AgreePrivacy(int32 PrivacyType) {
 	XUTracker::Get()->UserAgreeProtocol();
 	auto Properties = GetCommonProperties();
 	Properties->SetStringField("popup_type", FString::Printf(TEXT("%d"), PrivacyType));
+	if (XUConfigManager::IsGameInKoreaAndPushServiceEnable()) {
+		Properties->SetStringField("extras", XUConfigManager::GetKRPushSetting() ? "kr_push_enable" : "kr_push_disable");
+	}
 	LogEvent("sdkprotocol_privacy_agree", Properties);
 }
 

@@ -23,7 +23,7 @@ UXUConfirmWidget* UXUConfirmWidget::Create(const FText& InTitle, const FText& In
 				UI->Content->SetText(InContent);
 				UI->BlueButtonText->SetText(InBlueButtonText);
 				UI->WhiteButtonText->SetText(InWhiteButtonText);
-				UI->CloseButtonPanel->SetVisibility(bShowCloseButton ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+				UI->CloseButton->SetVisibility(bShowCloseButton ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 				
 				if (bAddToViewport)
 				{
@@ -49,7 +49,7 @@ UXUConfirmWidget* UXUConfirmWidget::Create(const FText& InTitle, const FText& In
 				UI->Title->SetText(InTitle);
 				UI->Content->SetText(InContent);
 				UI->BlueButtonText_1->SetText(InBlueButtonText);
-				UI->CloseButtonPanel->SetVisibility(bShowCloseButton ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed);
+				UI->CloseButton->SetVisibility(bShowCloseButton ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
 
 				if (bAddToViewport)
 				{

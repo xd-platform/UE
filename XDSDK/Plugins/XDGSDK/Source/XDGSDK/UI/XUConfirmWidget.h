@@ -56,9 +56,6 @@ protected:
 	UTextBlock* BlueButtonText_1;
 
 	UPROPERTY(Meta = (BindWidget))
-	UPanelWidget* CloseButtonPanel;
-
-	UPROPERTY(Meta = (BindWidget))
 	UTextBlock* Title;
 
 	UPROPERTY(Meta = (BindWidget))

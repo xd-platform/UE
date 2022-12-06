@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TapWebBrowser.h"
+#include "Components/RichTextBlock.h"
 #include "XUPrivacyWidget.generated.h"
 
 class UCheckBox;
@@ -76,13 +77,11 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UCheckBox* KrPushCheckBox;
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* KrPushCheckLabel;
-	UPROPERTY(meta = (BindWidget))
 	UTextBlock* KrPushCheckTagLabel;
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* KrPushCheckProtocolLabel;
-	UPROPERTY(meta = (BindWidget))
 	UButton* KrPushCheckProtocolButton;
+	UPROPERTY(meta = (BindWidget))
+	URichTextBlock* KrPushCheckLabel;
 	
 	UPROPERTY(EditDefaultsOnly)
 	FSlateBrush ComfirmBrush;

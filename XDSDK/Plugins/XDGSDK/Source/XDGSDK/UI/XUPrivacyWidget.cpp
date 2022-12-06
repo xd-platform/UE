@@ -62,16 +62,26 @@ void UXUPrivacyWidget::NativeOnInitialized()
 	if (IsInKrAndPushEnable())
 	{
 		KrPushCheckLabel->SetText(FText::FromString(langModel->tds_push_agreement));
-		auto AgeText = FString::Format(*langModel->tds_is_adult_agreement, {FStringFormatArg(14)});
+		TArray<FStringFormatArg> AgeArg = {FStringFormatArg(14)};
+		auto AgeText = FString::Format(*langModel->tds_is_adult_agreement, AgeArg);
 		KrAgeCheckLabel->SetText(FText::FromString(AgeText));
-		KrPushCheckLabel->SetText(FText::FromString(TEXT("我同意接受推送和")));
-		KrPushCheckProtocolLabel->SetText(FText::FromString(TEXT("《个人信息和手机使用协议》")));
-		KrAgeCheckTagLabel->SetText(FText::FromString(TEXT("[必选]")));
-		KrPushCheckTagLabel->SetText(FText::FromString(TEXT("[可选]")));
+
+		FString ServiceAgree = langModel->tds_service_agree;
+		FString ServiceAgreeProtocol = langModel->tds_service_user_info;
+		auto Index = ServiceAgree.Find(*ServiceAgreeProtocol);
+		if (Index != INDEX_NONE) {
+			ServiceAgree.InsertAt(Index + ServiceAgreeProtocol.Len(), "</>");
+			ServiceAgree.InsertAt(Index, "<KRProtocol>");
+		}
+		KrPushCheckLabel->SetText(FText::FromString(ServiceAgree));
+		// KrPushCheckProtocolLabel->SetText(FText::FromString(langModel->tds_protocol_kr));
+		KrAgeCheckTagLabel->SetText(FText::FromString(FString::Printf(TEXT("%s"), *langModel->tds_service_required)));
+		KrPushCheckTagLabel->SetText(FText::FromString(FString::Printf(TEXT("%s"), *langModel->tds_service_optional)));
 	}
 	else if (IsInNorthAmerica())
 	{
-		auto AgeText = FString::Format(*langModel->tds_is_adult_agreement, {FStringFormatArg(16)});
+		TArray<FStringFormatArg> AgeArg = {FStringFormatArg(16)};
+		auto AgeText = FString::Format(*langModel->tds_is_adult_agreement, AgeArg);
 		AmericaCheckLabel->SetText(FText::FromString(AgeText));
 	}
 

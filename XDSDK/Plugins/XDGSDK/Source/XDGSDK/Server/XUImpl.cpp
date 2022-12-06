@@ -131,7 +131,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			{
 				Accounts.Add(JsonValue->AsObject()->GetStringField("loginType"));
 			}
-			FormatMap.Add(TEXT("邮箱所关联账号下绑定该邮箱的其他登录方式"), FStringFormatArg(FString::Join(Accounts, TEXT("、"))));
+			FormatMap.Add(TEXT("conflicts"), FStringFormatArg(FString::Join(Accounts, TEXT("、"))));
 			
 			auto Title = FText::FromString(lmd->tds_login_dialog_email_title_2);
 			FString Content_Format;

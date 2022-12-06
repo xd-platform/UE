@@ -3,6 +3,7 @@
 
 #include "XUPrivacyWidget.h"
 #include "SWebBrowser.h"
+#include "TapCommon.h"
 #include "XULanguageManager.h"
 #include "TUHelper.h"
 #include "TUHUD.h"
@@ -87,13 +88,13 @@ void UXUPrivacyWidget::OnConfirmBtnClick()
 {
 	if (IsInNorthAmerica() && !AmericaCheckBox->IsChecked())
 	{
-		UTUHUD::ShowToast(XULanguageManager::GetCurrentModel()->xd_agreement_age_tips);
+		FTapCommonModule::TapThrobberShowToast(XULanguageManager::GetCurrentModel()->xd_agreement_age_tips);
 		return;
 	}
 
 	if (IsInKrAndPushEnable() && !KrAgeCheckBox->IsChecked())
 	{
-		UTUHUD::ShowToast(XULanguageManager::GetCurrentModel()->xd_agreement_age_tips);
+		FTapCommonModule::TapThrobberShowToast(XULanguageManager::GetCurrentModel()->xd_agreement_age_tips);
 		return;
 	}
 

@@ -1,11 +1,12 @@
 #include "XUImpl.h"
+
+#include "TapCommon.h"
 #include "XUStorage.h"
 #include "TUDeviceInfo.h"
 #include "TUJsonHelper.h"
 #include "XULanguageManager.h"
 #include "TapUELogin.h"
 #include "TUHelper.h"
-#include "TUHUD.h"
 #include "URLParser.h"
 #include "XDGSDK.h"
 #include "XDUE.h"
@@ -200,9 +201,9 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 				TUDebuger::WarningLog("Login Token Has Exist");
 				FXUTokenModel::ClearToken();
 			}
-			UTUHUD::ShowWait();
+			FTapCommonModule::TapThrobberShowWait();
 			TFunction<void(FXUError error)> ErrorCallBack = [=](FXUError error) {
-				UTUHUD::Dismiss();
+				FTapCommonModule::TapThrobberDismiss();
 				FXUUser::ClearUserData();
 				XULoginTracker::LoginRiskSuccess(error);
 				FailBlock(error);
@@ -210,7 +211,7 @@ void XUImpl::LoginByType(XUType::LoginType LoginType,
 			RequestKidToken(false, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
 				RequestUserInfo([=](TSharedPtr<FXUUser> user) {
 					AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
-						UTUHUD::Dismiss();
+						FTapCommonModule::TapThrobberDismiss();
 						user->SaveToLocal();
 						LoginSuccess(user, SuccessBlock);
 					}, ErrorCallBack);
@@ -281,9 +282,9 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 			TUDebuger::DisplayLog("Steam 缓存登录成功");
 			return;
 		}
-		UTUHUD::ShowWait();
+		FTapCommonModule::TapThrobberShowWait();
 		TFunction<void(FXUError Error)> ErrorCallBack = [=](FXUError Error) {
-			UTUHUD::Dismiss();
+			FTapCommonModule::TapThrobberDismiss();
 			FXUUser::ClearUserData();
 			_ErrorBlock(Error);
 			XULoginTracker::LoginRiskSuccess(Error);
@@ -292,14 +293,14 @@ void XUImpl::LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, T
 			RequestKidToken(true, paras, [=](TSharedPtr<FXUTokenModel> kidToken) {
 				                RequestUserInfo([=](TSharedPtr<FXUUser> user) {
 					                AsyncNetworkTdsUser(user->userId, [=](FString SessionToken) {
-						                UTUHUD::Dismiss();
+						                FTapCommonModule::TapThrobberDismiss();
 						                user->SaveToLocal();
 						                LoginSuccess(user, _SuccessBlock);
 					                }, ErrorCallBack);
 				                }, ErrorCallBack, nullptr);
 			                }, [=](FXUError Error) {
 				                if (Error.code == 40111) {
-					                UTUHUD::Dismiss();
+					                FTapCommonModule::TapThrobberDismiss();
 					                _FailBlock(Error);
 				                }
 				                else {

@@ -14,7 +14,8 @@
     },
     "permissions": [
       "public_profile",
-      "user_friends"
+      "user_friends",
+      "email"
     ]
   },
   "logout_url": "http://172.26.234.138:8081/",

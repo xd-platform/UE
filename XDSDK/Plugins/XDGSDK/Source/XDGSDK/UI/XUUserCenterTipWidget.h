@@ -11,6 +11,8 @@
 #include "XUUserCenterTipWidget.generated.h"
 
 
+class URichTextBlock;
+class UBorder;
 UCLASS()
 class XDGSDK_API UXUUserCenterTipWidget : public UUserWidget
 {
@@ -29,7 +31,8 @@ public:
 
 
 protected:
-
+	virtual void NativeOnInitialized() override;
+	
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
@@ -41,20 +44,27 @@ protected:
 	UFUNCTION()
 	void OnTextBoxValueChange(const FText& Content);
 
+	void ShowRedBorder(bool bShow);
+
 
 private:
-	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TitleLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* DetailLabel;
+	URichTextBlock* DetailLabel;
 
 	UPROPERTY(meta = (BindWidget))
 	UEditableTextBox* TextBox;
 
 	UPROPERTY(meta = (BindWidget))
+	UBorder* TextBorder;
+
+	UPROPERTY(meta = (BindWidget))
 	UButton* GreenButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* CloseButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* GreenButtonLabel;
@@ -84,15 +94,4 @@ private:
 	};
 
 	Step Step;
-
-	UPROPERTY()
-	UTexture2D * GrayTexture = nullptr;
-
-	UTexture2D *&GetGrayTexture();
-	
-	UPROPERTY()
-	UTexture2D * RedTexture = nullptr;
-
-	UTexture2D *&GetRedTexture();
-	
 };

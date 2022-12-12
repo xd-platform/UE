@@ -146,7 +146,7 @@ void AAUVietnamImpl::Login(const FString& AccessToken, EAAUAgeLimit AgeLimit) {
 			}
 			else {
 				TryAgainLogin("");
-				// UTUHUD::ShowToast(TEXT("Prevent addiction into failure"));
+				// FTapCommonModule::TapThrobberShowToast(TEXT("Prevent addiction into failure"));
 				// PerformLoginCallBack(false, "Time Limit");
 			}
 		}

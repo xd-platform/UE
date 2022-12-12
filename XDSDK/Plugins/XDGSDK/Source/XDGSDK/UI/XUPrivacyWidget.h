@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TapWebBrowser.h"
+#include "Components/RichTextBlock.h"
 #include "XUPrivacyWidget.generated.h"
 
 class UCheckBox;
@@ -30,6 +31,9 @@ protected:
 	UFUNCTION()
 	void OnDeclineBtnClick();
 
+	UFUNCTION()
+	void OnKrPushCheckProtocolButtonClick();
+
 	virtual void Reload() override;
 
 	virtual void OnLoadStarted() override;
@@ -49,8 +53,8 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ComfirmButtonLabel;
 
-	UPROPERTY(meta = (BindWidget))
-	UImage* ComfirmButtonImage;
+	// UPROPERTY(meta = (BindWidget))
+	// UImage* ComfirmButtonImage;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* DeclineButton;
@@ -59,12 +63,35 @@ private:
 	UTextBlock* DeclineButtonLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UCheckBox* AdditionalCheckBox;
+	UCheckBox* AmericaCheckBox;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* AmericaCheckLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* AdditionalCheckLabel;
-	
+	UCheckBox* KrAgeCheckBox;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* KrAgeCheckLabel;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* KrAgeCheckTagLabel;
 
+	UPROPERTY(meta = (BindWidget))
+	UCheckBox* KrPushCheckBox;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* KrPushCheckTagLabel;
+	UPROPERTY(meta = (BindWidget))
+	UButton* KrPushCheckProtocolButton;
+	UPROPERTY(meta = (BindWidget))
+	URichTextBlock* KrPushCheckLabel;
+	
+	UPROPERTY(EditDefaultsOnly)
+	FSlateBrush ComfirmBrush;
+
+	UPROPERTY(EditDefaultsOnly)
+	FSlateBrush ComfirmDisableBrush;
+
+	UPROPERTY(EditDefaultsOnly)
+	FSlateBrush ComfirmHoverBrush;
+	
 	bool IsInKrAndPushEnable();
 
 	bool IsInNorthAmerica();

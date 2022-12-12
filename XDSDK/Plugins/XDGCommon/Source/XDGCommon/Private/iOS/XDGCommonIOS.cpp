@@ -3,9 +3,10 @@
 #include "XDGCommonIOS.h"
 #include "Engine.h"
 #include "IOSHelper.h"
-#include "TUDebuger.h"
+#include "TUHelper.h"
 #include "XDGCommon.h"
-
+#include "IOS/IOSAppDelegate.h"
+#include "TUHelper.h"
 
 
 XDGCommonIOS::XDGCommonIOS()
@@ -31,7 +32,12 @@ void XDGCommonIOS::SetLanguage(int32 langType){
 
 void XDGCommonIOS::InitSDK(){
     [XDGSDKSettings setExitHandler:^{
-        FPlatformMisc::RequestExit( true );
+        TUHelper::PerformOnGameThread([]() {
+            FPlatformMisc::RequestExit( false );
+        });
+        [NSTimer scheduledTimerWithTimeInterval:0.1 repeats:false block:^(NSTimer * _Nonnull timer) {
+            _Exit(0);  
+        }];
     }];
     [XDGSDK initSDK:^(BOOL success, NSString *msg) {
         if (success) {

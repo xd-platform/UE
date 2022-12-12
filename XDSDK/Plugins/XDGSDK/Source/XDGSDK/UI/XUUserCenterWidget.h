@@ -2,19 +2,19 @@
 
 #include "CoreMinimal.h"
 #include "XULanguageManager.h"
-#include "XUBindModel.h"
-#include "XUError.h"
-#include "XULoginTypeModel.h"
 #include "XUUser.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Button.h"
-#include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "XUUserCenterItemWidget.h"
 #include "XUUserCenterWidget.generated.h"
 
 
+class UXUConfirmWidget;
+class UTapAccountToast;
+class UScrollBox;
+class UWidgetSwitcher;
 UCLASS()
 class XDGSDK_API UXUUserCenterWidget : public UUserWidget
 {
@@ -26,10 +26,14 @@ public:
 	static void ShowWidget();
 
 protected:
+	virtual void NativeOnInitialized() override;
 	
 	virtual void NativeConstruct() override;
 
 	virtual void NativeDestruct() override;
+
+	UFUNCTION()
+	void OnUserScroll(float CurrentOffset);
 
 	UFUNCTION()
 	void OnCloseBtnClick();
@@ -40,16 +44,24 @@ protected:
 	UFUNCTION()
 	void OnErrorBtnClick();
 
+	UFUNCTION()
+	void OnLogoutBtnClick();
+
 private:
-	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* TitleLabel;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* InfoTitleLabel;
+	UTextBlock* StateLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	UScrollBox* ScrollPanel;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* CurrentLoginTitleLabel;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* StateLabel2;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* IDTitleLabel;
@@ -67,15 +79,19 @@ private:
 	UVerticalBox* ListBox;
 
 	UPROPERTY(meta = (BindWidget))
-	USizeBox* EmptyBox2;
-
-	UPROPERTY(meta = (BindWidget))
 	UButton* ErrorButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* ErrorButtonLabel;
-	
-	
+
+	UPROPERTY(meta = (BindWidget))
+	UWidgetSwitcher* ErrorSwitcher;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* LogoutButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* LogoutLabel;
 	
 	// TFunction<void(bool result)> Completed;
 
@@ -102,8 +118,13 @@ private:
 
 	void UnBind(UXUUserCenterItemWidget *CurrentWidget, TSharedPtr<XUUserCenterItemModel> Model);
 
-	
+	void ConfirmLogout();
 
-	
+	void CancelLogout();
+
+	UPROPERTY()
+	UXUConfirmWidget* ConfirmWidget;
 };
+
+
 

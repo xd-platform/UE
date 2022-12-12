@@ -47,6 +47,7 @@ XUTracker::XUTracker() {
 TSharedPtr<FJsonObject> XUTracker::GetDeviceInfos() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("device_id", TUDeviceInfo::GetLoginId());
+	Properties->SetStringField("os", TUDeviceInfo::GetPlatform());
 	Properties->SetStringField("os_version", TUDeviceInfo::GetOSVersion());
 	Properties->SetStringField("brand", TUDeviceInfo::GetGPU());
 	Properties->SetStringField("model", TUDeviceInfo::GetCPU());
@@ -73,11 +74,15 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 	Properties->SetStringField("orientation", OrientationString);
 	Properties->SetStringField("width", FString::FromInt(TUDeviceInfo::GetScreenWidth()));
 	Properties->SetStringField("height", FString::FromInt(TUDeviceInfo::GetScreenHeight()));
-	Properties->SetStringField("lang", XULanguageManager::GetLanguageKey());
-	auto User = XDUE::GetUserInfo();
+	FString Lang;
+	FString Country;
+	TUDeviceInfo::GetCountryAndLanguage(Country, Lang);
+	Properties->SetStringField("lang", Lang);
+	Properties->SetStringField("loc", Country);
+	auto User = FXUUser::GetLocalModel();;
 	if (User.IsValid()) {
 		Properties->SetStringField("account", User->userId);
-		Properties->SetStringField("login_type", XULoginTypeModel((XUType::LoginType)User->loginType).TypeName);
+		Properties->SetStringField("user_login_type", XULoginTypeModel((XUType::LoginType)User->loginType).TypeName);
 	} else {
 		// current login type
 	}
@@ -87,7 +92,6 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 TSharedPtr<FJsonObject> XUTracker::GetStaticPresetProperties() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("source", "client");
-	Properties->SetStringField("os", TUDeviceInfo::GetPlatform());
 	Properties->SetStringField("app_version", XUConfigManager::CurrentConfig()->GameVersion);
 	Properties->SetStringField("sdk_version", XDUESDK_VERSION);
 	Properties->SetStringField("session_uuid", FGuid::NewGuid().ToString());

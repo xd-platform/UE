@@ -6,6 +6,7 @@
 #include "XUConfigManager.h"
 #include "XUImpl.h"
 #include "XULanguageManager.h"
+#include "Track/XUProtocolTracker.h"
 #include "Track/XUTracker.h"
 #include "XDGSDK/UI/XUPrivacyWidget.h"
 
@@ -101,12 +102,19 @@ void XUAgreementManager::CheckAgreementWithHandler(TFunction<void()> Handler) {
 		return;
 	}
 	UXUPrivacyWidget::ShowPrivacy([=]() {
-		XUTracker::Get()->UserAgreeProtocol();
+		int32 PrivacyType = 1;
+		if (XUConfigManager::IsGameInKoreaAndPushServiceEnable()) {
+			PrivacyType = 2;
+		} else if (XUConfigManager::IsGameInNA()) {
+			PrivacyType = 3;
+		}
+		XUProtocolTracker::AgreePrivacy(PrivacyType);
 		SharedInstance().HasSignedAgreement = true;
 		if (Handler) {
 			Handler();
 		}
 	});
+	XUProtocolTracker::AskPrivacy();
 }
 
 FString XUAgreementManager::GetAgreementUrl() {
@@ -162,9 +170,13 @@ void XUAgreementManager::UploadUserAgreement() {
 		postData->SetStringField("deviceCode", TUDeviceInfo::GetLoginId());
 		postData->SetStringField("agreementVersion", CurrentAgreement->agreementVersion);
 		postData->SetStringField("agreementRegion", CurrentAgreement->agreementRegion);
-		auto UserInfo = XDUE::GetUserInfo();
+		auto UserInfo = FXUUser::GetLocalModel();
 		postData->SetStringField("userId", UserInfo.IsValid() ? UserInfo->userId : "");
-
+		if (XUConfigManager::IsGameInKoreaAndPushServiceEnable()) {
+			TSharedPtr<FJsonObject> ExtraData = MakeShareable(new FJsonObject);
+			ExtraData->SetBoolField("push_agreement", XUConfigManager::GetKRPushSetting());
+			postData->SetObjectField("extra", ExtraData);
+		}
 		XUNet::UploadAgreement(postData, [=](TSharedPtr<FXUUploadAgreementResultModel> Model, FXUError Error) {
 			if (Model.IsValid() && Model->isSuccess) {
 				SaveAgreementConfig(CurrentAgreement, Model->isSuccess);
@@ -197,7 +209,7 @@ void XUAgreementManager::SaveAgreementConfig(TSharedPtr<FXUAgreementConfig> Agre
 	PostData->SetStringField("deviceCode", TUDeviceInfo::GetLoginId());
 	PostData->SetStringField("agreementVersion", AgreementConfig->agreementVersion);
 	PostData->SetStringField("agreementRegion", AgreementConfig->agreementRegion);
-	auto UserInfo = XDUE::GetUserInfo();
+	auto UserInfo = FXUUser::GetLocalModel();;
 	PostData->SetStringField("userId", UserInfo.IsValid() ? UserInfo->userId : "");
 	PostData->SetBoolField("upload", Upload);
 	TUDataStorage<FXUStorage>::SaveJsonObject(GetRegionAgreementCacheName(), PostData);

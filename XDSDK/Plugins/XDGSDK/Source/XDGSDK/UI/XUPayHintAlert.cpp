@@ -1,5 +1,4 @@
 #include "XUPayHintAlert.h"
-
 #include "TUSettings.h"
 #include "XULanguageManager.h"
 #include "XDUE.h"

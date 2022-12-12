@@ -1,7 +1,5 @@
 #include "XDUE.h"
-#include "TapCommonBPLibrary.h"
 #include "TapUEDB.h"
-#include "TapUELogin.h"
 #include "TUDebuger.h"
 #include "TUHelper.h"
 #include "XUConfigManager.h"

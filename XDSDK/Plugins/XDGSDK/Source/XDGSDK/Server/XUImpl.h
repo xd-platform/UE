@@ -29,7 +29,7 @@ public:
 
 	void LoginByConsole(TFunction<void(const FXUUser& User)> SuccessBlock, TFunction<void()> FailBlock, TFunction<void(const FXUError& Error)> ErrorBlock);
 
-	void GetAuthParam(XUType::LoginType LoginType, TFunction<void(TSharedPtr<FJsonObject> paras)> resultBlock, TFunction<void(FXUError error)> ErrorBlock);
+	void GetAuthParam(XUType::LoginType LoginType, TFunction<void(TSharedPtr<FJsonObject> paras)> resultBlock, TFunction<void(FXUError error)> ErrorBlock, bool IsSilent = false);
 
 	void CheckPay(TFunction<void(XUType::CheckPayType CheckType)> SuccessBlock, TFunction<void(const FXUError& Error)> FailBlock);
 
@@ -59,7 +59,7 @@ private:
 	XUImpl();
 	static TSharedPtr<XUImpl> Instance;
 	
-	void RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras, TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock, TFunction<void(FXUError error)> ErrorBlock, const FString& ConsoleID = "");
+	void RequestKidToken(bool IsConsole, TSharedPtr<FJsonObject> paras, TFunction<void(TSharedPtr<FXUTokenModel> kidToken)> resultBlock, TFunction<void(FXUError error)> ErrorBlock, bool IsSilent, const FString& ConsoleID = "");
 
 	void RequestUserInfo(TFunction<void(TSharedPtr<FXUUser> ModelPtr)> CallBack, TFunction<void(FXUError Error)> ErrorBlock, TFunction<void(FXUError Error)> TokenInvalidBlock);
 

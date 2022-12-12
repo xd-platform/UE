@@ -137,6 +137,18 @@ struct FXULanguageModel
 	FString tds_login_button_title;
 
 	UPROPERTY()
+	FString tds_confirm_logout_title;
+
+	UPROPERTY()
+	FString tds_confirm_logout_content;
+
+	UPROPERTY()
+	FString tds_bound;
+
+	UPROPERTY()
+	FString tds_user_center_logout;
+	
+	UPROPERTY()
 	FString tds_logout;
 
 	UPROPERTY()
@@ -277,6 +289,37 @@ struct FXULanguageModel
 	UPROPERTY()
 	FString tds_load_error;
 
+	UPROPERTY()
+	FString tds_login_dialog_email_title_1;
+
+	UPROPERTY()
+	FString tds_login_dialog_email_title_2;
+
+	UPROPERTY()
+	FString tds_login_dialog_email_content_1;
+
+	UPROPERTY()
+	FString tds_login_dialog_email_content_2;
+
+	UPROPERTY()
+	FString tds_login_dialog_email_content_3;
+
+	UPROPERTY()
+	FString tds_login_dialog_email_right_text;
+
+	UPROPERTY()
+	FString tds_service_required;
+
+	UPROPERTY()
+	FString tds_service_optional;
+	
+	UPROPERTY()
+	FString tds_service_agree;
+
+	UPROPERTY()
+	FString tds_service_user_info;
+
+	
 };
 
 		

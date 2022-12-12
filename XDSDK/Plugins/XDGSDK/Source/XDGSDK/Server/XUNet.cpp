@@ -14,6 +14,7 @@
 #include "XUConfigManager.h"
 #include "XUImpl.h"
 #include "XURegionConfig.h"
+#include "Track/XULoginTracker.h"
 
 //IP信息
 static FString IP_INFO = "https://ip.xindong.com/myloc2";
@@ -37,37 +38,29 @@ TSharedPtr<FJsonObject> XUNet::CommonParameters()
 	TSharedPtr<FJsonObject> query = TUHttpRequest::CommonParameters();
 	
 	query->SetStringField("clientId", XUConfigManager::CurrentConfig()->ClientId);
-
+	query->SetStringField("sdkVer", XDUESDK_VERSION);
 	query->SetStringField("sdkLang", XULanguageManager::GetLanguageKey());
-	query->SetStringField("lang", XULanguageManager::GetLanguageKey());
-	
-	auto ipInfoModel = FXUIpInfoModel::GetLocalModel();
-	if (ipInfoModel == nullptr)
-	{
-		ipInfoModel = MakeShareable(new FXUIpInfoModel);
-	}
-	query->SetStringField("loc", ipInfoModel->country_code);
-	query->SetStringField("city", ipInfoModel->city);
-	query->SetStringField("timeZone", ipInfoModel->timeZone);
+	query->SetStringField("appVer", XUConfigManager::CurrentConfig()->GameVersion);
+	query->SetStringField("appVerCode", XUConfigManager::CurrentConfig()->GameVersion);
+	query->SetStringField("time", FString::Printf(TEXT("%lld"), FDateTime::UtcNow().ToUnixTimestamp()));
+
+	FString Lang;
+	FString Country;
+	TUDeviceInfo::GetCountryAndLanguage(Country, Lang);
+	query->SetStringField("loc", Country);
+	query->SetStringField("lang", Lang);
+
+	query->SetStringField("did", TUDeviceInfo::GetLoginId());
+	query->SetStringField("res", FString::Printf(TEXT("%d_%d"), TUDeviceInfo::GetScreenWidth(), TUDeviceInfo::GetScreenHeight()));
+	query->SetStringField("cpu", TUDeviceInfo::GetCPU());
+	query->SetStringField("pt", TUDeviceInfo::GetPlatform());
+	query->SetStringField("os", TUDeviceInfo::GetOSVersion());
+	query->SetStringField("pkgName", TUDeviceInfo::GetProjectName());
+
 	if (!XUConfigManager::SharedInstance().TargetRegion.IsEmpty()) {
 		query->SetStringField("countryCode", XUConfigManager::SharedInstance().TargetRegion);
 	}
-	
-	query->SetStringField("locationInfoType", "ip");
 	query->SetStringField("chn", "PC");
-
-	query->SetStringField("sdkVer", XDUESDK_VERSION);
-
-	query->SetStringField("did", TUDeviceInfo::GetLoginId());
-	query->SetStringField("pt", TUDeviceInfo::GetPlatform());
-	query->SetStringField("pkgName", TUDeviceInfo::GetProjectName());
-	query->SetStringField("os", TUDeviceInfo::GetOSVersion());
-	query->SetStringField("res", FString::Printf(TEXT("%d_%d"), TUDeviceInfo::GetScreenWidth(), TUDeviceInfo::GetScreenHeight()));
-	
-	query->SetStringField("time", FString::Printf(TEXT("%lld"), FDateTime::UtcNow().ToUnixTimestamp()));
-	
-	query->SetStringField("appVer", XUConfigManager::CurrentConfig()->GameVersion);
-	query->SetStringField("appVerCode", XUConfigManager::CurrentConfig()->GameVersion);
 	
 	auto cfgMd = XUConfigManager::CurrentConfig();
 	query->SetStringField("appId", cfgMd == nullptr ? "" : cfgMd->AppID);
@@ -270,7 +263,6 @@ void XUNet::RequestKidToken(bool IsConsole, const TSharedPtr<FJsonObject>& paras
 	const TSharedPtr<TUHttpRequest> request = MakeShareable(new XUNet());
 	if (IsConsole) {
 		request->URL = XURegionConfig::Get()->ConsoleLoginUrl();
-
 	} else {
 		request->URL = XURegionConfig::Get()->CommonLoginUrl();
 	}
@@ -279,6 +271,10 @@ void XUNet::RequestKidToken(bool IsConsole, const TSharedPtr<FJsonObject>& paras
 	request->isPure = true;
 	request->Headers = request->CommonHeaders();
 	request->PostUrlParameters = request->CommonParameters();
+	FString SessionId = XULoginTracker::GetCurrentSessionId();
+	if (!SessionId.IsEmpty()) {
+		request->PostUrlParameters->SetStringField("eventSessionId", SessionId);
+	}
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromWrapperResponseCallBack(response, callback);
 	});
@@ -378,6 +374,9 @@ void XUNet::UploadAgreement(const TSharedPtr<FJsonObject>& Paras,
 	request->URL = XURegionConfig::Get()->UploadAgreementUrl();
 	request->Parameters = Paras;
 	request->Type = Post;
+	request->isPure = true;
+	request->Headers = request->CommonHeaders();
+	request->PostUrlParameters = request->CommonParameters();
 	request->onCompleted.BindLambda([=](TSharedPtr<TUHttpResponse> response) {
 		PerfromWrapperResponseCallBack(response, Callback);
 	});

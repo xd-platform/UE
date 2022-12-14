@@ -112,9 +112,9 @@
                 flatDir{ dirs 'src/main/libs/' }
             }
             dependencies { 
-                implementation(name: 'XDGCommon_6.8.1',ext:'aar')
-                implementation(name: 'XDGThirdLogin_6.8.1',ext:'aar')
-                implementation(name: 'XDGThirdTrack_6.8.1',ext:'aar')
+                implementation(name: 'XDGCommon_6.8.2',ext:'aar')
+                implementation(name: 'XDGThirdLogin_6.8.2',ext:'aar')
+                implementation(name: 'XDGThirdTrack_6.8.2',ext:'aar')
 
                 implementation(name: 'reactor-0.0.8.5',ext:'aar')
                 implementation(name: 'skynet-1.0.16',ext:'aar')

@@ -47,6 +47,7 @@ XUTracker::XUTracker() {
 TSharedPtr<FJsonObject> XUTracker::GetDeviceInfos() {
 	TSharedPtr<FJsonObject> Properties = MakeShareable(new FJsonObject);
 	Properties->SetStringField("device_id", TUDeviceInfo::GetLoginId());
+	Properties->SetStringField("device_id_in_db", TUDeviceInfo::GetLoginId());
 	Properties->SetStringField("os", TUDeviceInfo::GetPlatform());
 	Properties->SetStringField("os_version", TUDeviceInfo::GetOSVersion());
 	Properties->SetStringField("brand", TUDeviceInfo::GetGPU());
@@ -78,7 +79,6 @@ TSharedPtr<FJsonObject> XUTracker::GetCommonProperties() {
 	FString Country;
 	TUDeviceInfo::GetCountryAndLanguage(Country, Lang);
 	Properties->SetStringField("lang", Lang);
-	Properties->SetStringField("loc", Country);
 	auto User = FXUUser::GetLocalModel();;
 	if (User.IsValid()) {
 		Properties->SetStringField("account", User->userId);

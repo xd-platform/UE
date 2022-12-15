@@ -192,6 +192,7 @@ void XUAgreementManager::ShowAgreementWhenLogout() {
 	ResetAgreement();
 	CheckAgreementWithHandler([]() {
 		// 这里不需要做啥
+		XDUE::OnUserStatusChange.Broadcast(XUType::ProtocolAgreedAfterLogout, "");
 	});
 }
 

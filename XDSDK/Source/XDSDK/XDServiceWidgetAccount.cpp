@@ -247,6 +247,8 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 			TUDebuger::DisplayShow(Msg + TEXT("账号被绑定"));
 		} else if (UserState == XUType::UserUnBindSuccess) {
 			TUDebuger::DisplayShow(Msg + TEXT("账号被解绑"));
+		} else if (UserState == XUType::ProtocolAgreedAfterLogout) {
+			TUDebuger::DisplayShow(Msg + TEXT("账号登出后协议同意"));
 		}
 	});
 

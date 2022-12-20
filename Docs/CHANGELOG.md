@@ -1,3 +1,11 @@
+
+# 6.8.2 （2022 年 12 月 20 日）
+
+### New Feature
+- SDK 会在用户点击退出登录时显示的协议弹窗中的同意按钮时，在 用户状态回调 中给到对应的 code (0x2001/8193)
+- SDK 移动端埋点中新增 TapDB 中的 deviceID (device_id_in_db) 和 Firebase 中的 app_instance_id (firebase_app_instance_id)
+
+
 # 6.8.1 （2022 年 12 月 12 日）
 
 ## PC SDK

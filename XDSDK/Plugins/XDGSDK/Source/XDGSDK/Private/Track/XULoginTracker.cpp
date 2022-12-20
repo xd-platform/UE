@@ -117,5 +117,9 @@ TSharedPtr<FJsonObject> XULoginTracker::GetCommonProperties() {
 	if (!LoginType.IsEmpty()) {
 		Properties->SetStringField("login_type", LoginType);
 	}
+	UClass* ResultClass = FindObject<UClass>(ANY_PACKAGE, TEXT("XDSteamWrapperBPLibrary"));
+	if (ResultClass) {
+		Properties->SetStringField("console_type", "steam");
+	}
 	return Properties;
 }

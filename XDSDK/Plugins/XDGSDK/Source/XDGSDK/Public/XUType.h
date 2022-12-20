@@ -16,9 +16,10 @@ namespace XUType {
 	};
 
 	enum UserChangeState {
-		UserLogout          = 0x9001,   // user logout
-		UserBindSuccess     = 0x1001,   // user bind success,msg = entry type in string,eg: @"TAPTAP"
-		UserUnBindSuccess   = 0x1002,   // user unbind success,msg = entry type in string
+		UserLogout					= 0x9001,   // user logout
+		UserBindSuccess				= 0x1001,   // user bind success,msg = entry type in string,eg: @"TAPTAP"
+		UserUnBindSuccess			= 0x1002,   // user unbind success,msg = entry type in string
+		ProtocolAgreedAfterLogout   = 0x2001,   // user clicked confirm in agreement dialog showed after logout
 	};
 
 	enum LangType {

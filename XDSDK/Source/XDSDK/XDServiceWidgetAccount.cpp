@@ -241,12 +241,15 @@ void UXDServiceWidgetAccount::NativeOnInitialized()
 	ConsoleLogin->GetClickButton()->OnClicked.AddDynamic(this, &UXDServiceWidgetAccount::OnConsoleLoginClicked);
 	
 	XDUE::OnUserStatusChange.AddLambda([](XUType::UserChangeState UserState, const FString& Msg) {
+		TUDebuger::DisplayShow(FString::Printf(TEXT("UserState: %d, Msg: %s"), UserState, *Msg));
 		if (UserState == XUType::UserLogout) {
 			TUDebuger::DisplayShow(TEXT("游戏账号应登出"));
 		} else if (UserState == XUType::UserBindSuccess) {
 			TUDebuger::DisplayShow(Msg + TEXT("账号被绑定"));
 		} else if (UserState == XUType::UserUnBindSuccess) {
 			TUDebuger::DisplayShow(Msg + TEXT("账号被解绑"));
+		} else if (UserState == XUType::ProtocolAgreedAfterLogout) {
+			TUDebuger::DisplayShow(Msg + TEXT("账号登出后协议同意"));
 		}
 	});
 
